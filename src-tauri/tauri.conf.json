@@ -12,9 +12,11 @@
   "app": {
     "windows": [
       {
-        "title": "voice-chat-app",
+        "title": "Voice Chat",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "minWidth": 800,
+        "minHeight": 600
       }
     ],
     "security": {

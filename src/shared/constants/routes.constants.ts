@@ -1,4 +1,4 @@
 export const ROUTES = {
   WELCOME: "/",
-  AUTHORIZATION: "/authorization",
+  AUTHORIZATION: "/login",
 } as const;

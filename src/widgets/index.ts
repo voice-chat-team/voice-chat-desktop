@@ -1,1 +1,1 @@
-export * from "./authorization-form";
+export * from "./auth-switcher-forms";

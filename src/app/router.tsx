@@ -9,7 +9,7 @@ const LazyWelcomePage = lazy(
   () => import("@/pages/welcome-page/ui/WelcomePage"),
 );
 const LazyAuthorizationPage = lazy(
-  () => import("@/pages/authorization-page/ui/AuthorizationPage"),
+  () => import("@/pages/authorization-page/ui/AuthrizationPage"),
 );
 
 const SuspenseFallback = () => (

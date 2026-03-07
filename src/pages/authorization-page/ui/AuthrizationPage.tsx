@@ -1,9 +1,9 @@
-import { AuthorizationForm } from "@/widgets/authorization-form/ui/AuthorizationForm";
+import { AuthSwitcherForms } from "@/widgets";
 
 function AuthorizationPage() {
   return (
     <main className="flex justify-center items-center h-svh">
-      <AuthorizationForm />
+      <AuthSwitcherForms />
     </main>
   );
 }

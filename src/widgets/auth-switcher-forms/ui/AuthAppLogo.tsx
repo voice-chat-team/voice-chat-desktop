@@ -1,6 +1,6 @@
 import { Mic2 } from "lucide-react";
 
-export function AuthAppLogo() {
+export function SwitcherAppLogo() {
   return (
     <div className="flex items-center gap-3 justify-center">
       <div className="bg-violet-600 p-3 rounded-xl">

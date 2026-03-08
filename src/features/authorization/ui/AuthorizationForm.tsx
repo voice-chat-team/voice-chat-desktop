@@ -8,9 +8,13 @@ import {
   CardTitle,
   Input,
   Label,
+  ROUTES,
 } from "@/shared";
+import { useNavigate } from "react-router";
 
 function AuthorizationForm() {
+  const navigate = useNavigate();
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -19,7 +23,7 @@ function AuthorizationForm() {
       </CardHeader>
       <CardContent>
         <form>
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
             <div className="grid gap-2">
               <Label htmlFor="email">Электронная почта</Label>
               <Input
@@ -50,7 +54,11 @@ function AuthorizationForm() {
         </form>
       </CardContent>
       <CardFooter className="flex-col gap-2">
-        <Button type="submit" className="w-full">
+        <Button
+          type="submit"
+          className="w-full"
+          onClick={() => navigate(ROUTES.WELCOME)}
+        >
           Войти
         </Button>
       </CardFooter>

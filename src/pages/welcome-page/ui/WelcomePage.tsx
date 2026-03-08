@@ -1,5 +1,5 @@
 function WelcomePage() {
-  return <main className="text-2xl text-red">Welcome Page</main>;
+  return <main className="text-2xl text-red"></main>;
 }
 
 export default WelcomePage;

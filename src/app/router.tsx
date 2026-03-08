@@ -1,16 +1,9 @@
-import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router";
 
 import { ROUTES } from "@/shared";
 
 import { authMiddleware } from "./middlewares";
-
-const LazyWelcomePage = lazy(
-  () => import("@/pages/welcome-page/ui/WelcomePage"),
-);
-const LazyAuthorizationPage = lazy(
-  () => import("@/pages/authorization-page/ui/AuthrizationPage"),
-);
+import { SidebarLayout } from "./layouts";
 
 const SuspenseFallback = () => (
   <div className="flex items-center justify-center h-screen">
@@ -18,29 +11,39 @@ const SuspenseFallback = () => (
   </div>
 );
 
-const LazyRoute = ({ children }: { children: React.ReactNode }) => (
-  <Suspense fallback={<SuspenseFallback />}>{children}</Suspense>
-);
-
 export const router = createBrowserRouter([
   {
     middleware: [authMiddleware],
+    HydrateFallback: SuspenseFallback,
     children: [
       {
-        path: ROUTES.WELCOME,
-        Component: () => (
-          <LazyRoute>
-            <LazyWelcomePage />
-          </LazyRoute>
-        ),
+        Component: SidebarLayout,
+        children: [
+          {
+            path: ROUTES.WELCOME,
+            lazy: async () => {
+              const { default: Component } =
+                await import("@/pages/welcome-page/ui/WelcomePage");
+
+              return {
+                Component,
+                loader: SuspenseFallback,
+              };
+            },
+          },
+        ],
       },
       {
         path: ROUTES.AUTHORIZATION,
-        Component: () => (
-          <LazyRoute>
-            <LazyAuthorizationPage />
-          </LazyRoute>
-        ),
+        lazy: async () => {
+          const { default: Component } =
+            await import("@/pages/authorization-page/ui/AuthrizationPage");
+
+          return {
+            Component,
+            loader: SuspenseFallback,
+          };
+        },
       },
     ],
   },

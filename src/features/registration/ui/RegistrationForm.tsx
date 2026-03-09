@@ -10,7 +10,7 @@ import {
   Label,
 } from "@/shared";
 
-function RegistrationForm() {
+export function RegistrationForm() {
   return (
     <Card className="w-full">
       <CardHeader>
@@ -60,5 +60,3 @@ function RegistrationForm() {
     </Card>
   );
 }
-
-export default RegistrationForm;

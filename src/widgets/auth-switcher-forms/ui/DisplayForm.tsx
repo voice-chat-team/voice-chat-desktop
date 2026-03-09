@@ -1,7 +1,6 @@
-import AuthorizationForm from "@/features/authorization/ui/AuthorizationForm";
 import { useFormSwitcher } from "../context";
 import { FormTypeModel } from "../model/form-type.model";
-import RegistrationForm from "@/features/registration/ui/RegistrationForm";
+import { AuthorizationForm, RegistrationForm } from "@/features";
 
 export const DisplayForm = () => {
   const { activeForm } = useFormSwitcher();

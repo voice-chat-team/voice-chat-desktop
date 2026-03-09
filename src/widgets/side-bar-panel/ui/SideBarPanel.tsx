@@ -8,27 +8,27 @@ export function SideBarPanel() {
     <aside className="p-2 flex flex-col justify-between">
       <div className="flex flex-col gap-2">
         <SideBarActionButton tooltipContent={"Главная"}>
-          <SideBarInnerButton isActive to={ROUTES.WELCOME}>
+          <SideBarInnerButton to={ROUTES.WELCOME}>
             <Mic2 className=" text-white" size={25} />
           </SideBarInnerButton>
         </SideBarActionButton>
 
         <Separator />
 
-        <SideBarActionButton tooltipContent={"Общая комната"}>
+        <SideBarActionButton tooltipContent={"Сервер #1"}>
           <SideBarInnerButton to={ROUTES.SERVER("general")}>
             <p className="font-medium">ОБ</p>
           </SideBarInnerButton>
         </SideBarActionButton>
 
-        <SideBarActionButton tooltipContent={"Игровая комната"}>
+        <SideBarActionButton tooltipContent={"Сервер #2"}>
           <SideBarInnerButton to={ROUTES.SERVER("games")}>
             <p className="font-medium">ИГ</p>
           </SideBarInnerButton>
         </SideBarActionButton>
 
         <SideBarActionButton
-          tooltipContent={"Создать / Присоединиться к комнате"}
+          tooltipContent={"Создать / Присоединиться к серверу / комнате"}
         >
           <SideBarInnerButton
             to={"#"}
@@ -40,7 +40,7 @@ export function SideBarPanel() {
       </div>
 
       <div>
-        <SideBarActionButton tooltipContent={"Настройки"}>
+        <SideBarActionButton tooltipContent={"Настройки приложения"}>
           <SideBarInnerButton
             to={"#"}
             className="bg-accent/50 hover:bg-accent/90"

@@ -8,7 +8,7 @@ export function SidebarLayout() {
       <TooltipProvider>
         <SideBarPanel />
       </TooltipProvider>
-      <main className="h-svh w-full bg-card p-2">
+      <main className="h-svh w-full bg-card ">
         <Outlet />
       </main>
     </div>

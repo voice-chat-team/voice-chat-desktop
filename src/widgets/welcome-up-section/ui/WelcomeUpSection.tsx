@@ -10,7 +10,7 @@ export function WelcomeUpSection() {
         <h2 className="text-2xl font-bold text-center">
           Добро пожаловать в VoiceChat
         </h2>
-        <small className="text-center text-sm text-gray-400 leading-normal">
+        <small className="text-center text-sm text-secondary leading-normal">
           Выберите комнату из списка слева или создайте новую для начала
           голосового общения
         </small>

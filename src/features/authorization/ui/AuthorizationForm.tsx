@@ -12,7 +12,7 @@ import {
 } from "@/shared";
 import { useNavigate } from "react-router";
 
-function AuthorizationForm() {
+export function AuthorizationForm() {
   const navigate = useNavigate();
 
   return (
@@ -65,5 +65,3 @@ function AuthorizationForm() {
     </Card>
   );
 }
-
-export default AuthorizationForm;

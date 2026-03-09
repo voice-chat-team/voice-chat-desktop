@@ -27,12 +27,23 @@ export const router = createBrowserRouter([
 
               return {
                 Component,
-                loader: SuspenseFallback,
+              };
+            },
+          },
+          {
+            path: ROUTES.SERVER() + "/:serverId",
+            lazy: async () => {
+              const { default: Component } =
+                await import("@/pages/server-page/ui/ServerPage");
+
+              return {
+                Component,
               };
             },
           },
         ],
       },
+
       {
         path: ROUTES.AUTHORIZATION,
         lazy: async () => {
@@ -41,7 +52,6 @@ export const router = createBrowserRouter([
 
           return {
             Component,
-            loader: SuspenseFallback,
           };
         },
       },

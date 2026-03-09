@@ -16,13 +16,13 @@ export function SideBarPanel() {
         <Separator />
 
         <SideBarActionButton tooltipContent={"Общая комната"}>
-          <SideBarInnerButton to={"#"}>
+          <SideBarInnerButton to={ROUTES.SERVER("general")}>
             <p className="font-medium">ОБ</p>
           </SideBarInnerButton>
         </SideBarActionButton>
 
         <SideBarActionButton tooltipContent={"Игровая комната"}>
-          <SideBarInnerButton to={"#"}>
+          <SideBarInnerButton to={ROUTES.SERVER("games")}>
             <p className="font-medium">ИГ</p>
           </SideBarInnerButton>
         </SideBarActionButton>
@@ -30,7 +30,10 @@ export function SideBarPanel() {
         <SideBarActionButton
           tooltipContent={"Создать / Присоединиться к комнате"}
         >
-          <SideBarInnerButton to={"#"} className="group hover:bg-green-600">
+          <SideBarInnerButton
+            to={"#"}
+            className="group hover:bg-green-600 bg-accent"
+          >
             <Plus className="text-green-500 group-hover:text-white" size={25} />
           </SideBarInnerButton>
         </SideBarActionButton>
@@ -38,7 +41,10 @@ export function SideBarPanel() {
 
       <div>
         <SideBarActionButton tooltipContent={"Настройки"}>
-          <SideBarInnerButton to={"#"} className="bg-accent/50">
+          <SideBarInnerButton
+            to={"#"}
+            className="bg-accent/50 hover:bg-accent/90"
+          >
             <Settings />
           </SideBarInnerButton>
         </SideBarActionButton>

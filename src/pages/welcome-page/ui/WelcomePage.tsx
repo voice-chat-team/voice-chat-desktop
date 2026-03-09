@@ -1,5 +1,11 @@
+import { WelcomeUpSection } from "@/widgets";
+
 function WelcomePage() {
-  return <main className="text-2xl text-red"></main>;
+  return (
+    <div className="flex justify-center items-center h-full">
+      <WelcomeUpSection />
+    </div>
+  );
 }
 
 export default WelcomePage;

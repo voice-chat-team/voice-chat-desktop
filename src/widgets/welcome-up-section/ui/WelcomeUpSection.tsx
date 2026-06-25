@@ -8,10 +8,10 @@ export function WelcomeUpSection() {
           <Mic2 className=" text-white" size={45} strokeWidth={1.5} />
         </div>
         <h2 className="text-2xl font-bold text-center">
-          Добро пожаловать в VoiceChat
+          Добро пожаловать в VoiceChat !
         </h2>
         <small className="text-center text-sm text-secondary leading-normal">
-          Выберите комнату из списка слева или создайте новую для начала
+          Выберите сервер из списка слева или создайте новую для начала
           голосового общения
         </small>
       </div>

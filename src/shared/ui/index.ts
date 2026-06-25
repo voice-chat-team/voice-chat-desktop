@@ -5,3 +5,4 @@ export * from "./label";
 export * from "./tooltip";
 export * from "./separator";
 export * from "./avatar";
+export * from "./textarea";

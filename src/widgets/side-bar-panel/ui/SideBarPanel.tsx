@@ -39,7 +39,7 @@ export function SideBarPanel() {
         </SideBarActionButton>
       </div>
 
-      <div>
+      {/*<div>
         <SideBarActionButton tooltipContent={"Настройки приложения"}>
           <SideBarInnerButton
             to={"#"}
@@ -48,7 +48,7 @@ export function SideBarPanel() {
             <Settings />
           </SideBarInnerButton>
         </SideBarActionButton>
-      </div>
+      </div>*/}
     </aside>
   );
 }

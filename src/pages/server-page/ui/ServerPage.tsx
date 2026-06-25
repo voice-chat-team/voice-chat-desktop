@@ -1,4 +1,4 @@
-import { ServerAsideSection } from "@/widgets";
+import { ServerAsideSection, ServerChat } from "@/widgets";
 import { SplitPane, Pane } from "react-split-pane";
 
 function ServerPage() {
@@ -12,7 +12,9 @@ function ServerPage() {
       <Pane minSize={200} defaultSize={250} maxSize={500}>
         <ServerAsideSection />
       </Pane>
-      <Pane>1</Pane>
+      <Pane>
+        <ServerChat />
+      </Pane>
     </SplitPane>
   );
 }

@@ -46,6 +46,7 @@ export const router = createBrowserRouter([
 
       {
         path: ROUTES.AUTHORIZATION,
+        index: true,
         lazy: async () => {
           const { default: Component } =
             await import("@/pages/authorization-page/ui/AuthrizationPage");

@@ -1,9 +1,11 @@
-import { ROUTES } from "@/shared";
+import { createAbbr, ROUTES, useUserServers } from "@/shared";
 import { Separator } from "@/shared/ui/separator";
-import { Mic2, Plus, Settings } from "lucide-react";
+import { Mic2, Plus } from "lucide-react";
 import { SideBarActionButton, SideBarInnerButton } from "./SideBarButton";
 
 export function SideBarPanel() {
+  const { data: guilds } = useUserServers();
+
   return (
     <aside className="p-2 flex flex-col justify-between">
       <div className="flex flex-col gap-2">
@@ -15,17 +17,13 @@ export function SideBarPanel() {
 
         <Separator />
 
-        <SideBarActionButton tooltipContent={"Сервер #1"}>
-          <SideBarInnerButton to={ROUTES.SERVER("general")}>
-            <p className="font-medium">ОБ</p>
-          </SideBarInnerButton>
-        </SideBarActionButton>
-
-        <SideBarActionButton tooltipContent={"Сервер #2"}>
-          <SideBarInnerButton to={ROUTES.SERVER("games")}>
-            <p className="font-medium">ИГ</p>
-          </SideBarInnerButton>
-        </SideBarActionButton>
+        {guilds?.map((guild) => (
+          <SideBarActionButton key={guild.id} tooltipContent={guild.name}>
+            <SideBarInnerButton to={ROUTES.SERVER(guild.id)}>
+              <p className="font-medium">{createAbbr(guild.name, 2)}</p>
+            </SideBarInnerButton>
+          </SideBarActionButton>
+        ))}
 
         <SideBarActionButton
           tooltipContent={"Создать / Присоединиться к серверу / комнате"}

@@ -35,7 +35,6 @@ export const router = createBrowserRouter([
             lazy: async () => {
               const { default: Component } =
                 await import("@/pages/server-page/ui/ServerPage");
-
               return {
                 Component,
               };
@@ -43,10 +42,8 @@ export const router = createBrowserRouter([
           },
         ],
       },
-
       {
         path: ROUTES.AUTHORIZATION,
-        index: true,
         lazy: async () => {
           const { default: Component } =
             await import("@/pages/authorization-page/ui/AuthrizationPage");

@@ -207,7 +207,7 @@ export const GuildApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async guildControllerCreateGuild(createGuildDto: CreateGuildDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<CreateGuildResponseDto>>> {
+        async guildControllerCreateGuild(createGuildDto: CreateGuildDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CreateGuildResponseDto>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.guildControllerCreateGuild(createGuildDto, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['GuildApi.guildControllerCreateGuild']?.[localVarOperationServerIndex]?.url;
@@ -220,7 +220,7 @@ export const GuildApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async guildControllerDeleteGuild(deleteGuildDto: DeleteGuildDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<DeleteGuildResponseDto>>> {
+        async guildControllerDeleteGuild(deleteGuildDto: DeleteGuildDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DeleteGuildResponseDto>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.guildControllerDeleteGuild(deleteGuildDto, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['GuildApi.guildControllerDeleteGuild']?.[localVarOperationServerIndex]?.url;
@@ -232,7 +232,7 @@ export const GuildApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async guildControllerGetUserGuilds(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<GetUserGuildsResponseDto>>> {
+        async guildControllerGetUserGuilds(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetUserGuildsResponseDto>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.guildControllerGetUserGuilds(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['GuildApi.guildControllerGetUserGuilds']?.[localVarOperationServerIndex]?.url;
@@ -245,7 +245,7 @@ export const GuildApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async guildControllerRemoveGuild(removeGuildDto: RemoveGuildDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<RemoveGuildResponseDto>>> {
+        async guildControllerRemoveGuild(removeGuildDto: RemoveGuildDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RemoveGuildResponseDto>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.guildControllerRemoveGuild(removeGuildDto, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['GuildApi.guildControllerRemoveGuild']?.[localVarOperationServerIndex]?.url;
@@ -267,7 +267,7 @@ export const GuildApiFactory = function (configuration?: Configuration, basePath
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        guildControllerCreateGuild(createGuildDto: CreateGuildDto, options?: RawAxiosRequestConfig): AxiosPromise<Array<CreateGuildResponseDto>> {
+        guildControllerCreateGuild(createGuildDto: CreateGuildDto, options?: RawAxiosRequestConfig): AxiosPromise<CreateGuildResponseDto> {
             return localVarFp.guildControllerCreateGuild(createGuildDto, options).then((request) => request(axios, basePath));
         },
         /**
@@ -277,7 +277,7 @@ export const GuildApiFactory = function (configuration?: Configuration, basePath
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        guildControllerDeleteGuild(deleteGuildDto: DeleteGuildDto, options?: RawAxiosRequestConfig): AxiosPromise<Array<DeleteGuildResponseDto>> {
+        guildControllerDeleteGuild(deleteGuildDto: DeleteGuildDto, options?: RawAxiosRequestConfig): AxiosPromise<DeleteGuildResponseDto> {
             return localVarFp.guildControllerDeleteGuild(deleteGuildDto, options).then((request) => request(axios, basePath));
         },
         /**
@@ -286,7 +286,7 @@ export const GuildApiFactory = function (configuration?: Configuration, basePath
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        guildControllerGetUserGuilds(options?: RawAxiosRequestConfig): AxiosPromise<Array<GetUserGuildsResponseDto>> {
+        guildControllerGetUserGuilds(options?: RawAxiosRequestConfig): AxiosPromise<GetUserGuildsResponseDto> {
             return localVarFp.guildControllerGetUserGuilds(options).then((request) => request(axios, basePath));
         },
         /**
@@ -296,7 +296,7 @@ export const GuildApiFactory = function (configuration?: Configuration, basePath
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        guildControllerRemoveGuild(removeGuildDto: RemoveGuildDto, options?: RawAxiosRequestConfig): AxiosPromise<Array<RemoveGuildResponseDto>> {
+        guildControllerRemoveGuild(removeGuildDto: RemoveGuildDto, options?: RawAxiosRequestConfig): AxiosPromise<RemoveGuildResponseDto> {
             return localVarFp.guildControllerRemoveGuild(removeGuildDto, options).then((request) => request(axios, basePath));
         },
     };

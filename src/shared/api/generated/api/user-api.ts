@@ -77,7 +77,7 @@ export const UserApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async userControllerGetCurrentUser(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<GetMeResponseDto>>> {
+        async userControllerGetCurrentUser(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetMeResponseDto>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.userControllerGetCurrentUser(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UserApi.userControllerGetCurrentUser']?.[localVarOperationServerIndex]?.url;
@@ -98,7 +98,7 @@ export const UserApiFactory = function (configuration?: Configuration, basePath?
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        userControllerGetCurrentUser(options?: RawAxiosRequestConfig): AxiosPromise<Array<GetMeResponseDto>> {
+        userControllerGetCurrentUser(options?: RawAxiosRequestConfig): AxiosPromise<GetMeResponseDto> {
             return localVarFp.userControllerGetCurrentUser(options).then((request) => request(axios, basePath));
         },
     };

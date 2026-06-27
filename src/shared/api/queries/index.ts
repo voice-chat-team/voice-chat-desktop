@@ -1,2 +1,2 @@
-export { useCurrentUser, currentUserQueryKey } from "./use-current-user";
-export { useUserServers, userServersQueryKey } from "./use-user-servers";
+export * from "./use-current-user";
+export * from "./use-user-servers";

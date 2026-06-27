@@ -22,6 +22,10 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
 // @ts-ignore
+import type { CreateChannelDto } from '../models';
+// @ts-ignore
+import type { CreateChannelResponseDto } from '../models';
+// @ts-ignore
 import type { CreateGuildDto } from '../models';
 // @ts-ignore
 import type { CreateGuildResponseDto } from '../models';
@@ -29,6 +33,10 @@ import type { CreateGuildResponseDto } from '../models';
 import type { DeleteGuildDto } from '../models';
 // @ts-ignore
 import type { DeleteGuildResponseDto } from '../models';
+// @ts-ignore
+import type { GetChannelsResponseDto } from '../models';
+// @ts-ignore
+import type { GetGuildMembersResponseDto } from '../models';
 // @ts-ignore
 import type { GetUserGuildsResponseDto } from '../models';
 // @ts-ignore
@@ -40,6 +48,45 @@ import type { RemoveGuildResponseDto } from '../models';
  */
 export const GuildApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
+        /**
+         * 
+         * @summary Создать канал
+         * @param {CreateChannelDto} createChannelDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        guildControllerCreateChannels: async (createChannelDto: CreateChannelDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'createChannelDto' is not null or undefined
+            assertParamExists('guildControllerCreateChannels', 'createChannelDto', createChannelDto)
+            const localVarPath = `/guild/create-channel`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(createChannelDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
         /**
          * 
          * @summary Создание нового сервера
@@ -112,6 +159,88 @@ export const GuildApiAxiosParamCreator = function (configuration?: Configuration
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(deleteGuildDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Получить каналы сервера
+         * @param {string} guildId ID сервера
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        guildControllerGetChannels: async (guildId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'guildId' is not null or undefined
+            assertParamExists('guildControllerGetChannels', 'guildId', guildId)
+            const localVarPath = `/guild/channels`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (guildId !== undefined) {
+                localVarQueryParameter['guildId'] = guildId;
+            }
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Получить участников сервера
+         * @param {string} guildId ID сервера
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        guildControllerGetGuildMembers: async (guildId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'guildId' is not null or undefined
+            assertParamExists('guildControllerGetGuildMembers', 'guildId', guildId)
+            const localVarPath = `/guild/members`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (guildId !== undefined) {
+                localVarQueryParameter['guildId'] = guildId;
+            }
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -202,6 +331,19 @@ export const GuildApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
+         * @summary Создать канал
+         * @param {CreateChannelDto} createChannelDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async guildControllerCreateChannels(createChannelDto: CreateChannelDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CreateChannelResponseDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.guildControllerCreateChannels(createChannelDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GuildApi.guildControllerCreateChannels']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @summary Создание нового сервера
          * @param {CreateGuildDto} createGuildDto 
          * @param {*} [options] Override http request option.
@@ -224,6 +366,32 @@ export const GuildApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.guildControllerDeleteGuild(deleteGuildDto, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['GuildApi.guildControllerDeleteGuild']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Получить каналы сервера
+         * @param {string} guildId ID сервера
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async guildControllerGetChannels(guildId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetChannelsResponseDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.guildControllerGetChannels(guildId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GuildApi.guildControllerGetChannels']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Получить участников сервера
+         * @param {string} guildId ID сервера
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async guildControllerGetGuildMembers(guildId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetGuildMembersResponseDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.guildControllerGetGuildMembers(guildId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GuildApi.guildControllerGetGuildMembers']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -262,6 +430,16 @@ export const GuildApiFactory = function (configuration?: Configuration, basePath
     return {
         /**
          * 
+         * @summary Создать канал
+         * @param {CreateChannelDto} createChannelDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        guildControllerCreateChannels(createChannelDto: CreateChannelDto, options?: RawAxiosRequestConfig): AxiosPromise<CreateChannelResponseDto> {
+            return localVarFp.guildControllerCreateChannels(createChannelDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Создание нового сервера
          * @param {CreateGuildDto} createGuildDto 
          * @param {*} [options] Override http request option.
@@ -279,6 +457,26 @@ export const GuildApiFactory = function (configuration?: Configuration, basePath
          */
         guildControllerDeleteGuild(deleteGuildDto: DeleteGuildDto, options?: RawAxiosRequestConfig): AxiosPromise<DeleteGuildResponseDto> {
             return localVarFp.guildControllerDeleteGuild(deleteGuildDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Получить каналы сервера
+         * @param {string} guildId ID сервера
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        guildControllerGetChannels(guildId: string, options?: RawAxiosRequestConfig): AxiosPromise<GetChannelsResponseDto> {
+            return localVarFp.guildControllerGetChannels(guildId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Получить участников сервера
+         * @param {string} guildId ID сервера
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        guildControllerGetGuildMembers(guildId: string, options?: RawAxiosRequestConfig): AxiosPromise<GetGuildMembersResponseDto> {
+            return localVarFp.guildControllerGetGuildMembers(guildId, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -308,6 +506,17 @@ export const GuildApiFactory = function (configuration?: Configuration, basePath
 export class GuildApi extends BaseAPI {
     /**
      * 
+     * @summary Создать канал
+     * @param {CreateChannelDto} createChannelDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public guildControllerCreateChannels(createChannelDto: CreateChannelDto, options?: RawAxiosRequestConfig) {
+        return GuildApiFp(this.configuration).guildControllerCreateChannels(createChannelDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary Создание нового сервера
      * @param {CreateGuildDto} createGuildDto 
      * @param {*} [options] Override http request option.
@@ -326,6 +535,28 @@ export class GuildApi extends BaseAPI {
      */
     public guildControllerDeleteGuild(deleteGuildDto: DeleteGuildDto, options?: RawAxiosRequestConfig) {
         return GuildApiFp(this.configuration).guildControllerDeleteGuild(deleteGuildDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Получить каналы сервера
+     * @param {string} guildId ID сервера
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public guildControllerGetChannels(guildId: string, options?: RawAxiosRequestConfig) {
+        return GuildApiFp(this.configuration).guildControllerGetChannels(guildId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Получить участников сервера
+     * @param {string} guildId ID сервера
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public guildControllerGetGuildMembers(guildId: string, options?: RawAxiosRequestConfig) {
+        return GuildApiFp(this.configuration).guildControllerGetGuildMembers(guildId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

@@ -2,7 +2,7 @@ import {
   ServerAsideList,
   ServerAsideListItem,
   ServerAsideListItemHeader,
-  ServerAsideListItemUser,
+  // ServerAsideListItemUser,
   ServerAsideListTitle,
   ServerAsideUnorderList,
 } from "@/features";
@@ -36,8 +36,8 @@ export const ServerAsideVoiceChannels = () => {
               </ServerAsideListTitle>
             </ServerAsideListItemHeader>
             <div className="flex flex-col gap-2">
-              <ServerAsideListItemUser username="Алексей" />
-              <ServerAsideListItemUser username="Иван" />
+              {/*<ServerAsideListItemUser username="Алексей" />*/}
+              {/*<ServerAsideListItemUser username="Иван" />*/}
             </div>
           </ServerAsideListItem>
           <ServerAsideListItem>

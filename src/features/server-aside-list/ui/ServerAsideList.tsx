@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, cn } from "@/shared";
+import { Avatar, AvatarFallback, cn, UserProfileDto } from "@/shared";
 import { ComponentProps, PropsWithChildren, ReactNode } from "react";
 
 interface ServerAsideListProps {
@@ -94,9 +94,13 @@ export const ServerAsideListItemHeader = ({
 
 export const ServerAsideListItemUser = ({
   children,
-  username,
+  user,
+  isOwner,
   ...props
-}: PropsWithChildren<ComponentProps<"div">> & { username: string }) => {
+}: PropsWithChildren<ComponentProps<"div">> & {
+  user: UserProfileDto;
+  isOwner?: boolean;
+}) => {
   return (
     <div
       {...props}
@@ -106,9 +110,13 @@ export const ServerAsideListItemUser = ({
       )}
     >
       <Avatar size="sm">
-        <AvatarFallback>{username.slice(0, 1).toUpperCase()}</AvatarFallback>
+        <AvatarFallback>
+          {user?.username.slice(0, 1).toUpperCase()}
+        </AvatarFallback>
       </Avatar>
-      <p>{username}</p>
+      <p>
+        {user?.username} {isOwner && "👑"}
+      </p>
     </div>
   );
 };

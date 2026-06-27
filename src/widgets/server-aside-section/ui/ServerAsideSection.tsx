@@ -1,9 +1,11 @@
+import { Suspense } from "react";
 import { Separator } from "@/shared";
 import { ServerAsideVoiceChannels } from "./ServerAsideVoiceChannels";
 import { ServerAsideTextChannels } from "./ServerAsideTextChannels";
-import { ServerAsideMembersList } from "./ServerAsideMembersList";
 import { ServerAsideHeader } from "./ServerAsideHeader";
 import { ServerAsideFooter } from "./ServerAsideFooter";
+import { ServerAsideMembersListContainer } from "./ServerAsideMembersList";
+import { Skeleton } from "@/shared/ui/skeleton";
 
 export const ServerAsideSection = () => {
   return (
@@ -21,7 +23,9 @@ export const ServerAsideSection = () => {
 
         <Separator />
 
-        <ServerAsideMembersList />
+        <Suspense fallback={<Skeleton className="w-full h-20" />}>
+          <ServerAsideMembersListContainer />
+        </Suspense>
       </div>
 
       <div>

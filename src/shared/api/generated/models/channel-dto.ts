@@ -14,30 +14,42 @@
 
 
 
-export interface GuildDto {
+export interface ChannelDto {
     /**
-     * ID сервера
+     * ID канала
      */
     'id': string;
     /**
-     * Название сервера
+     * ID сервера
+     */
+    'guildId': string;
+    /**
+     * Название канала
      */
     'name': string;
     /**
-     * Описание сервера
+     * Тип канала
      */
-    'description': string | null;
+    'type': ChannelDtoTypeEnum;
     /**
-     * Публичный сервер
+     * Приватный канал
      */
-    'isPublic': boolean;
+    'isPrivate': boolean;
     /**
-     * Дата создания сервера
+     * Дата создания
      */
     'createdAt': string;
     /**
-     * Дата обновления сервера
+     * Дата обновления
      */
     'updatedAt': string;
 }
+
+export const ChannelDtoTypeEnum = {
+    NUMBER_0: 0,
+    NUMBER_1: 1,
+} as const;
+
+export type ChannelDtoTypeEnum = typeof ChannelDtoTypeEnum[keyof typeof ChannelDtoTypeEnum];
+
 

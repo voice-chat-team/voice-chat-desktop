@@ -14,30 +14,22 @@
 
 
 
-export interface GuildDto {
+export interface CreateChannelDto {
     /**
      * ID сервера
      */
-    'id': string;
+    'guildId': string;
     /**
-     * Название сервера
+     * Название канала
      */
     'name': string;
     /**
-     * Описание сервера
+     * Тип канала
      */
-    'description': string | null;
+    'type': number;
     /**
-     * Публичный сервер
+     * Является приватным каналом
      */
-    'isPublic': boolean;
-    /**
-     * Дата создания сервера
-     */
-    'createdAt': string;
-    /**
-     * Дата обновления сервера
-     */
-    'updatedAt': string;
+    'isPrivate': boolean;
 }
 

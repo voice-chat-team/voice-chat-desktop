@@ -1,10 +1,19 @@
 import { createAbbr, ROUTES, useUserServers } from "@/shared";
 import { Separator } from "@/shared/ui/separator";
-import { Mic2, Plus } from "lucide-react";
-import { SideBarActionButton, SideBarInnerButton } from "./SideBarButton";
+import { Mic2 } from "lucide-react";
+import {
+  SideBarActionButton,
+  SideBarInnerButton,
+  SideBarSkeletonButton,
+} from "./SideBarButton";
+import { lazy, Suspense } from "react";
+
+const SideBarCreateServerButtonDynamic = lazy(
+  () => import("./SideBarCreateServerButton"),
+);
 
 export function SideBarPanel() {
-  const { data: guilds } = useUserServers();
+  const { data: guilds, isLoading: isLoadingGuilds } = useUserServers();
 
   return (
     <aside className="p-2 flex flex-col justify-between">
@@ -17,24 +26,21 @@ export function SideBarPanel() {
 
         <Separator />
 
-        {guilds?.map((guild) => (
-          <SideBarActionButton key={guild.id} tooltipContent={guild.name}>
-            <SideBarInnerButton to={ROUTES.SERVER(guild.id)}>
-              <p className="font-medium">{createAbbr(guild.name, 2)}</p>
-            </SideBarInnerButton>
-          </SideBarActionButton>
-        ))}
+        {!isLoadingGuilds ? (
+          guilds?.map((guild) => (
+            <SideBarActionButton key={guild.id} tooltipContent={guild.name}>
+              <SideBarInnerButton to={ROUTES.SERVER(guild.id)}>
+                <p className="font-medium">{createAbbr(guild.name, 2)}</p>
+              </SideBarInnerButton>
+            </SideBarActionButton>
+          ))
+        ) : (
+          <SideBarSkeletonButton />
+        )}
 
-        <SideBarActionButton
-          tooltipContent={"Создать / Присоединиться к серверу / комнате"}
-        >
-          <SideBarInnerButton
-            to={"#"}
-            className="group hover:bg-green-600 bg-accent"
-          >
-            <Plus className="text-green-500 group-hover:text-white" size={25} />
-          </SideBarInnerButton>
-        </SideBarActionButton>
+        <Suspense fallback={<SideBarSkeletonButton />}>
+          <SideBarCreateServerButtonDynamic />
+        </Suspense>
       </div>
 
       {/*<div>

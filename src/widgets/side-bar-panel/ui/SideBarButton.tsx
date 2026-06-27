@@ -1,4 +1,5 @@
 import { cn, Tooltip, TooltipContent, TooltipTrigger } from "@/shared";
+import { Skeleton } from "@/shared/ui/skeleton";
 import { ComponentProps, PropsWithChildren } from "react";
 import { NavLink } from "react-router";
 
@@ -20,6 +21,13 @@ export const SideBarActionButton = ({
   );
 };
 
+const sideBarInnerButtonDefaultClass =
+  "bg-accent p-2 rounded-xl w-12 h-12 flex items-center justify-center transition-colors hover:bg-accent/90";
+
+export const SideBarSkeletonButton = () => {
+  return <Skeleton className={sideBarInnerButtonDefaultClass} />;
+};
+
 interface SideBarInnerButtonProps extends PropsWithChildren<
   ComponentProps<"a">
 > {
@@ -38,7 +46,7 @@ export const SideBarInnerButton = ({
       to={to}
       className={({ isActive }) =>
         cn(
-          "bg-accent p-2 rounded-xl w-12 h-12 flex items-center justify-center transition-colors hover:bg-accent/90",
+          sideBarInnerButtonDefaultClass,
           { "bg-violet-600 hover:bg-violet-600": isActive },
           className,
         )

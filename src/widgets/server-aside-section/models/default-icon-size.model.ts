@@ -1,0 +1,2 @@
+export const DEFAILT_ICONS_TOP_TITLE_SIZE = 12;
+export const DEFAILT_ICONS_TITLE_SIZE = 15;

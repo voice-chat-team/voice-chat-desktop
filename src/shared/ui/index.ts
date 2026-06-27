@@ -6,3 +6,5 @@ export * from "./tooltip";
 export * from "./separator";
 export * from "./avatar";
 export * from "./textarea";
+export * from "./dialog";
+export * from "./switch";

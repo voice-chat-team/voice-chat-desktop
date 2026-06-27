@@ -8,6 +8,7 @@ import {
   DialogTitle,
 } from "@/shared";
 import { FormInput, FormSwitch, FormTextarea } from "./form-controls";
+import { useCreateServer } from "../hooks";
 
 type CreateNewServerModalProps = {
   open: boolean;
@@ -18,6 +19,17 @@ export const CreateNewServerModal = ({
   open,
   onOpenChange,
 }: CreateNewServerModalProps) => {
+  const onSuccesCreateCallBack = () => onOpenChange(false);
+
+  const {
+    form: {
+      handleSubmit,
+      register,
+      formState: { isValid },
+    },
+    onSubmit,
+  } = useCreateServer(onSuccesCreateCallBack);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-zinc-900 border-zinc-800 text-white">
@@ -27,17 +39,29 @@ export const CreateNewServerModal = ({
             Введите название и описание для вашего сервера
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col gap-4">
-          <FormInput labelTitle="Название" />
-          <FormTextarea labelTitle="Описание" />
-          <FormSwitch switchTitle="Частный сервер" />
-        </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Отмена
-          </Button>
-          <Button variant="default">Создать сервер</Button>
-        </DialogFooter>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4">
+            <FormInput
+              labelTitle="Название"
+              autoComplete="off"
+              {...register("name", { required: true })}
+            />
+            <FormTextarea
+              labelTitle="Описание"
+              autoComplete="off"
+              {...register("description")}
+            />
+            <FormSwitch switchTitle="Частный сервер" />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
+              Отмена
+            </Button>
+            <Button variant="default" type="submit" disabled={!isValid}>
+              Создать сервер
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

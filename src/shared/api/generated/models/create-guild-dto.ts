@@ -22,10 +22,10 @@ export interface CreateGuildDto {
     /**
      * Описание сервера
      */
-    'description': object;
+    'description': string | null;
     /**
      * Является ли сервре публичным (по умолчанию true)
      */
-    'isPublic': object;
+    'isPublic': boolean | null;
 }
 

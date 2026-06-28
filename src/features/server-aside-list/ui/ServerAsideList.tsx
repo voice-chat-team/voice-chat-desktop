@@ -13,7 +13,7 @@ export const ServerAsideList = ({
   renderList,
 }: ServerAsideListProps) => {
   return (
-    <div className="text-secondary/70 text-xs flex flex-col gap-0.5">
+    <div className="text-secondary/70 text-xs flex flex-col gap-1">
       <div className="flex justify-between ">
         {renderTitle()}
         {renderTitleButton && renderTitleButton()}

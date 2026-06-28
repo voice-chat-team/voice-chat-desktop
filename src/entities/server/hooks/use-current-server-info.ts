@@ -4,7 +4,7 @@ import { useServerStore } from "@/entities/server/store";
 
 export function useCurrentServerInfo(guildId: string) {
   const { data: guilds, isLoading } = useUserServers();
-  const setGuild = useServerStore((s) => s.setGuild);
+  const setGuild = useServerStore((s) => s.actions.setGuild);
 
   const guild = guilds?.find((g) => g.id === guildId) ?? null;
 

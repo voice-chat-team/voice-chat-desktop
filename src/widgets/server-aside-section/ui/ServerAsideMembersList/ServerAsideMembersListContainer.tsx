@@ -4,15 +4,14 @@ import { guildApi } from "@/shared";
 import { useServerStore } from "@/entities/server";
 
 export const ServerAsideMembersListContainer = () => {
-  const guild = useServerStore((s) => s.guild);
+  const guild = useServerStore((s) => s.state.guild);
 
   const { data: members } = useSuspenseQuery({
     queryKey: ["get-guild-members", guild!.id],
-    queryFn: async () => {
-      const { data } = await guildApi.guildControllerGetGuildMembers(guild!.id);
-      return data.members;
-    },
+    queryFn: async () =>
+      await guildApi.guildControllerGetGuildMembers(guild!.id),
+    select: (data) => data.data.members,
   });
 
-  return <ServerAsideMembersList members={members} />;
+  return <ServerAsideMembersList members={members ?? []} />;
 };

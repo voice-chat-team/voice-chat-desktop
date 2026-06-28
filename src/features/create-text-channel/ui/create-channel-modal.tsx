@@ -7,18 +7,20 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/shared";
-import { FormInput, FormSwitch, FormTextarea } from "./form-controls";
-import { useCreateServer } from "../hooks";
+import { FormInput, FormSwitch } from "./form-controls";
+import { useCreateChannel } from "../hooks/useCreateChannel";
 
-type CreateNewServerModalProps = {
+type CreateChannelModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  guildId: string;
 };
 
-export const CreateNewServerModal = ({
+export const CreateChannelModal = ({
   open,
   onOpenChange,
-}: CreateNewServerModalProps) => {
+  guildId,
+}: CreateChannelModalProps) => {
   const onSuccesCreateCallBack = () => onOpenChange(false);
 
   const {
@@ -28,15 +30,15 @@ export const CreateNewServerModal = ({
       formState: { isValid },
     },
     onSubmit,
-  } = useCreateServer(onSuccesCreateCallBack);
+  } = useCreateChannel(guildId, onSuccesCreateCallBack);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-zinc-900 border-zinc-800 text-white">
         <DialogHeader>
-          <DialogTitle>Создание нового сервера</DialogTitle>
+          <DialogTitle>Создание текстового канала</DialogTitle>
           <DialogDescription className="text-zinc-400">
-            Введите название и описание для вашего сервера
+            Введите название канала и выберите его тип
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -46,12 +48,7 @@ export const CreateNewServerModal = ({
               autoComplete="off"
               {...register("name", { required: true })}
             />
-            <FormTextarea
-              labelTitle="Описание"
-              autoComplete="off"
-              {...register("description")}
-            />
-            <FormSwitch switchTitle="Частный сервер" />
+            <FormSwitch switchTitle="Закрытый канал" />
           </div>
           <DialogFooter>
             <Button
@@ -62,7 +59,7 @@ export const CreateNewServerModal = ({
               Отмена
             </Button>
             <Button variant="default" type="submit" disabled={!isValid}>
-              Создать сервер
+              Создать канал
             </Button>
           </DialogFooter>
         </form>

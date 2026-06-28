@@ -17,7 +17,7 @@ export const ServerAsideMembersList = ({
     <ServerAsideList
       renderTitle={() => (
         <ServerAsideListTitle className="uppercase">
-          Участники ({members?.length})
+          Участники - {members?.length}
         </ServerAsideListTitle>
       )}
       renderTitleButton={() => (

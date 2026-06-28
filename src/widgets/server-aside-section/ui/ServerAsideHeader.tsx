@@ -1,7 +1,7 @@
 import { useServerStore } from "@/entities/server";
 
 export const ServerAsideHeader = () => {
-  const guild = useServerStore((s) => s.guild);
+  const guild = useServerStore((s) => s.state.guild);
 
   if (!guild) return null;
 

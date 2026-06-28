@@ -1,12 +1,28 @@
 import { create } from "zustand";
 import type { GuildDto } from "@/shared/api/generated/models/guild-dto";
+// import { ChannelDto } from "@/shared";
 
-type ServerState = {
-  guild: GuildDto | null;
-  setGuild: (guild: GuildDto | null) => void;
+type GuildState = {
+  state: {
+    guild: GuildDto | null;
+  };
+  actions: {
+    setGuild: (guild: GuildDto | null) => void;
+  };
 };
 
-export const useServerStore = create<ServerState>((set) => ({
+const initialState: GuildState["state"] = {
   guild: null,
-  setGuild: (guild) => set({ guild }),
+};
+
+export const useServerStore = create<GuildState>((set) => ({
+  state: { ...initialState },
+  actions: {
+    setGuild: (guild) =>
+      set({
+        state: {
+          guild,
+        },
+      }),
+  },
 }));

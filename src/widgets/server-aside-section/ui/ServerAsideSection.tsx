@@ -1,11 +1,13 @@
 import { Suspense } from "react";
 import { Separator } from "@/shared";
 import { ServerAsideVoiceChannels } from "./ServerAsideVoiceChannels";
-import { ServerAsideTextChannels } from "./ServerAsideTextChannels";
+import { ServerAsideTextChannels } from "./ServerAsideTextChannels/ServerAsideTextChannels";
 import { ServerAsideHeader } from "./ServerAsideHeader";
 import { ServerAsideFooter } from "./ServerAsideFooter";
 import { ServerAsideMembersListContainer } from "./ServerAsideMembersList";
-import { Skeleton } from "@/shared/ui/skeleton";
+
+import { SkeletonAsideSectionItem } from "./SkeletonAsideSectionItem";
+import { ServerAsideTextChannelsContainer } from "./ServerAsideTextChannels";
 
 export const ServerAsideSection = () => {
   return (
@@ -13,17 +15,19 @@ export const ServerAsideSection = () => {
       <div className="flex flex-col gap-3 overflow-auto scrollbar-none pt-4">
         <ServerAsideHeader />
 
-        <Separator />
+        {/*<Separator />
 
-        <ServerAsideVoiceChannels />
-
-        <Separator />
-
-        <ServerAsideTextChannels />
+        <ServerAsideVoiceChannels />*/}
 
         <Separator />
 
-        <Suspense fallback={<Skeleton className="w-full h-20" />}>
+        <Suspense fallback={<SkeletonAsideSectionItem />}>
+          <ServerAsideTextChannelsContainer />
+        </Suspense>
+
+        <Separator />
+
+        <Suspense fallback={<SkeletonAsideSectionItem />}>
           <ServerAsideMembersListContainer />
         </Suspense>
       </div>

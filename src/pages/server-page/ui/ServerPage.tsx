@@ -1,33 +1,24 @@
-import { useParams } from "react-router";
+import { useLoaderData } from "react-router";
 import { SplitPane, Pane } from "react-split-pane";
 
 import { ServerAsideSection, ServerChat } from "@/widgets";
-import { useCurrentServerInfo } from "@/entities/server";
+import { useServerStore } from "@/entities/server";
+import { useEffect } from "react";
+import { GuildDto } from "@/shared";
 
 function ServerPage() {
-  const { serverId } = useParams<{ serverId: string }>();
-  const { isLoading, guild } = useCurrentServerInfo(serverId!);
+  const guild = useLoaderData() as GuildDto;
+  const setGuild = useServerStore((s) => s.actions.setGuild);
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-lg text-muted-foreground">Загрузка сервера...</div>
-      </div>
-    );
-  }
-
-  if (!guild) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-lg text-destructive">Сервер не найден</div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    setGuild(guild);
+    return () => setGuild(null);
+  }, [guild, setGuild]);
 
   return (
     <SplitPane
       direction="horizontal"
-      dividerStyle={{ backgroundColor: "oklch(1 0 0 / 20%)" }}
+      dividerStyle={{ backgroundColor: "oklch(1 0 0 / 5%)" }}
     >
       <Pane minSize={200} defaultSize={250} maxSize={500}>
         <ServerAsideSection />

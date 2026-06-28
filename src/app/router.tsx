@@ -33,9 +33,15 @@ export const router = createBrowserRouter([
           {
             path: ROUTES.SERVER() + "/:serverId",
             lazy: async () => {
+              const { serverLoader } =
+                await import("@/pages/server-page/loader/page.loader");
+
               const { default: Component } =
                 await import("@/pages/server-page/ui/ServerPage");
+
               return {
+                loader: serverLoader,
+                HydrateFallback: SuspenseFallback,
                 Component,
               };
             },

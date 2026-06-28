@@ -6,8 +6,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  FormInput,
+  FormSwitch,
+  FormTextarea,
 } from "@/shared";
-import { FormInput, FormSwitch, FormTextarea } from "./form-controls";
 import { useCreateServer } from "../hooks";
 
 type CreateNewServerModalProps = {

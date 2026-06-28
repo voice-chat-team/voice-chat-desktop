@@ -4,7 +4,7 @@ import { type CreateChannelDto, schemaFor } from "@/shared";
 export const CreateChannelDtoSchema = schemaFor<CreateChannelDto>()(
   z.object({
     guildId: z.string(),
-    name: z.string(),
+    name: z.string().nonempty(),
     type: z.number(),
     isPrivate: z.boolean(),
   }),

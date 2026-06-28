@@ -1,4 +1,10 @@
-import { Avatar, AvatarFallback, cn, UserProfileDto } from "@/shared";
+import {
+  Avatar,
+  AvatarFallback,
+  cn,
+  createAbbr,
+  UserProfileDto,
+} from "@/shared";
 import { ComponentProps, PropsWithChildren, ReactNode } from "react";
 
 interface ServerAsideListProps {
@@ -110,9 +116,7 @@ export const ServerAsideListItemUser = ({
       )}
     >
       <Avatar size="sm">
-        <AvatarFallback>
-          {user?.username.slice(0, 1).toUpperCase()}
-        </AvatarFallback>
+        <AvatarFallback>{createAbbr(user?.username ?? "", 1)}</AvatarFallback>
       </Avatar>
       <p>
         {user?.username} {isOwner && "👑"}

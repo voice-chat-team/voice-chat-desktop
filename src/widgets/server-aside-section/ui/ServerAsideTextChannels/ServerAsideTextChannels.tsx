@@ -6,7 +6,7 @@ import {
   ServerAsideListTitle,
   ServerAsideUnorderList,
 } from "@/features";
-import { Hash, Plus } from "lucide-react";
+import { Hash, Lock, Plus } from "lucide-react";
 import {
   DEFAILT_ICONS_TITLE_SIZE,
   DEFAILT_ICONS_TOP_TITLE_SIZE,
@@ -47,11 +47,12 @@ export const ServerAsideTextChannels = ({
         renderList={() => (
           <ServerAsideUnorderList>
             {channels.map((ch) => (
-              <ServerAsideListItem>
+              <ServerAsideListItem key={ch.id}>
                 <ServerAsideListItemHeader>
                   <ServerAsideListTitle>
                     <Hash size={DEFAILT_ICONS_TITLE_SIZE} /> {ch.name}
                   </ServerAsideListTitle>
+                  {ch.isPrivate && <Lock size={DEFAILT_ICONS_TITLE_SIZE} />}
                 </ServerAsideListItemHeader>
               </ServerAsideListItem>
             ))}

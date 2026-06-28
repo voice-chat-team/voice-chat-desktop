@@ -31,16 +31,22 @@ export const FormTextarea = ({ labelTitle, ...props }: FormTextareaProps) => {
   );
 };
 
-type FormSwitchProps = ComponentProps<"button"> & {
+type FormSwitchProps = {
   switchTitle?: string;
+  checked?: boolean;
+  onCheckedChange?: (checked: boolean) => void;
 };
 
-export const FormSwitch = ({ switchTitle, ...props }: FormSwitchProps) => {
+export const FormSwitch = ({
+  switchTitle,
+  checked,
+  onCheckedChange,
+}: FormSwitchProps) => {
   const id = useId();
 
   return (
     <FormControlWrapper className="flex-row w-fit cursor-pointer">
-      <Switch {...props} id={id} />
+      <Switch checked={checked} onCheckedChange={onCheckedChange} id={id} />
       <Label htmlFor={id}>{switchTitle}</Label>
     </FormControlWrapper>
   );

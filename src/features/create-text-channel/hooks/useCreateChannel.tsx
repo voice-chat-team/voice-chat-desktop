@@ -1,6 +1,7 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { guildApi } from "@/shared";
 import {
   CreateChannelDtoSchema,
@@ -22,6 +23,14 @@ export const useCreateChannel = (
       type: 0,
     },
   });
+
+  useEffect(() => {
+    form.reset({
+      guildId,
+      isPrivate: false,
+      type: 0,
+    });
+  }, [guildId, form]);
 
   const { mutateAsync } = useMutation({
     mutationKey: ["create-new-channel"],

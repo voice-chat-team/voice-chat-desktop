@@ -6,9 +6,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  FormInput,
+  FormSwitch,
 } from "@/shared";
-import { FormInput, FormSwitch } from "./form-controls";
 import { useCreateChannel } from "../hooks/useCreateChannel";
+import { Controller } from "react-hook-form";
 
 type CreateChannelModalProps = {
   open: boolean;
@@ -27,6 +29,7 @@ export const CreateChannelModal = ({
     form: {
       handleSubmit,
       register,
+      control,
       formState: { isValid },
     },
     onSubmit,
@@ -48,7 +51,17 @@ export const CreateChannelModal = ({
               autoComplete="off"
               {...register("name", { required: true })}
             />
-            <FormSwitch switchTitle="Закрытый канал" />
+            <Controller
+              control={control}
+              name="isPrivate"
+              render={({ field: { value, onChange } }) => (
+                <FormSwitch
+                  switchTitle="Закрытый канал"
+                  checked={value}
+                  onCheckedChange={onChange}
+                />
+              )}
+            />
           </div>
           <DialogFooter>
             <Button

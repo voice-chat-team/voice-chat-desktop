@@ -8,3 +8,4 @@ export * from "./avatar";
 export * from "./textarea";
 export * from "./dialog";
 export * from "./switch";
+export * from "./form-controls";

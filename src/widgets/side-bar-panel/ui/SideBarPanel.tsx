@@ -1,6 +1,6 @@
 import { createAbbr, ROUTES, useUserServers } from "@/shared";
 import { Separator } from "@/shared/ui/separator";
-import { Mic2 } from "lucide-react";
+import { Bell, Mic2, Settings } from "lucide-react";
 import {
   SideBarActionButton,
   SideBarInnerButton,
@@ -43,7 +43,15 @@ export function SideBarPanel() {
         </Suspense>
       </div>
 
-      {/*<div>
+      <div className="flex flex-col gap-2">
+        <SideBarActionButton tooltipContent={"Уведомления"}>
+          <SideBarInnerButton
+            to={"#"}
+            className="bg-accent/50 hover:bg-accent/90"
+          >
+            <Bell />
+          </SideBarInnerButton>
+        </SideBarActionButton>
         <SideBarActionButton tooltipContent={"Настройки приложения"}>
           <SideBarInnerButton
             to={"#"}
@@ -52,7 +60,7 @@ export function SideBarPanel() {
             <Settings />
           </SideBarInnerButton>
         </SideBarActionButton>
-      </div>*/}
+      </div>
     </aside>
   );
 }

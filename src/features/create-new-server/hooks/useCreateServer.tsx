@@ -14,7 +14,7 @@ export const useCreateServer = (onSuccesCreateCb?: () => void) => {
     mode: "onChange",
     resolver: zodResolver(CreateServerDtoSchema),
     defaultValues: {
-      isPublic: false,
+      isPublic: true,
     },
   });
 
@@ -25,17 +25,23 @@ export const useCreateServer = (onSuccesCreateCb?: () => void) => {
   });
 
   const onSubmit: SubmitHandler<CreateServerSchemaModel> = async (data) => {
-    mutateAsync(data, {
-      onSuccess: async () => {
-        await queryClient.invalidateQueries({
-          queryKey: userServersQueryKey,
-        });
-
-        form.reset();
-
-        onSuccesCreateCb && onSuccesCreateCb();
+    mutateAsync(
+      {
+        ...data,
+        isPublic: data.isPublic,
       },
-    });
+      {
+        onSuccess: async () => {
+          await queryClient.invalidateQueries({
+            queryKey: userServersQueryKey,
+          });
+
+          form.reset();
+
+          onSuccesCreateCb && onSuccesCreateCb();
+        },
+      },
+    );
   };
 
   return {

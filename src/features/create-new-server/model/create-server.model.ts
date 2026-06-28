@@ -5,7 +5,7 @@ export const CreateServerDtoSchema = schemaFor<CreateGuildDto>()(
   z.object({
     name: z.string().nonempty(),
     description: z.string().nullable(),
-    isPublic: z.boolean().nullable(),
+    isPublic: z.boolean(),
   }),
 );
 

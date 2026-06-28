@@ -11,6 +11,7 @@ import {
   FormTextarea,
 } from "@/shared";
 import { useCreateServer } from "../hooks";
+import { Controller } from "react-hook-form";
 
 type CreateNewServerModalProps = {
   open: boolean;
@@ -26,6 +27,7 @@ export const CreateNewServerModal = ({
   const {
     form: {
       handleSubmit,
+      control,
       register,
       formState: { isValid },
     },
@@ -53,7 +55,17 @@ export const CreateNewServerModal = ({
               autoComplete="off"
               {...register("description")}
             />
-            <FormSwitch switchTitle="Частный сервер" />
+            <Controller
+              control={control}
+              name="isPublic"
+              render={({ field: { value, onChange } }) => (
+                <FormSwitch
+                  switchTitle="Публичный сервер"
+                  checked={value}
+                  onCheckedChange={onChange}
+                />
+              )}
+            />
           </div>
           <DialogFooter>
             <Button

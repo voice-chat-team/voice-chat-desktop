@@ -44,18 +44,21 @@ export function SideBarPanel() {
       </div>
 
       <div className="flex flex-col gap-2">
+        <Separator />
+
         <SideBarActionButton tooltipContent={"Уведомления"}>
           <SideBarInnerButton
             to={"#"}
-            className="bg-accent/50 hover:bg-accent/90"
+            className="bg-accent/20 hover:bg-accent/60"
           >
             <Bell />
           </SideBarInnerButton>
         </SideBarActionButton>
+
         <SideBarActionButton tooltipContent={"Настройки приложения"}>
           <SideBarInnerButton
             to={"#"}
-            className="bg-accent/50 hover:bg-accent/90"
+            className="bg-accent/20 hover:bg-accent/60"
           >
             <Settings />
           </SideBarInnerButton>

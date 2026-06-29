@@ -21,7 +21,7 @@ export const ServerAsideFooter = () => {
         <p className="truncate">{user?.username}</p>
       </div>
 
-      <Button className="bg-accent/20">
+      <Button className="bg-accent/30">
         <Settings2 />
       </Button>
     </div>

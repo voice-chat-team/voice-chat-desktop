@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import { Separator } from "@/shared";
-import { ServerAsideVoiceChannels } from "./ServerAsideVoiceChannels";
-import { ServerAsideTextChannels } from "./ServerAsideTextChannels/ServerAsideTextChannels";
+
 import { ServerAsideHeader } from "./ServerAsideHeader";
 import { ServerAsideFooter } from "./ServerAsideFooter";
 import { ServerAsideMembersListContainer } from "./ServerAsideMembersList";

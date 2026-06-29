@@ -5,6 +5,7 @@ import {
   createAbbr,
   UserProfileDto,
 } from "@/shared";
+import { Crown } from "lucide-react";
 import { ComponentProps, PropsWithChildren, ReactNode } from "react";
 
 interface ServerAsideListProps {
@@ -118,8 +119,9 @@ export const ServerAsideListItemUser = ({
       <Avatar size="sm">
         <AvatarFallback>{createAbbr(user?.username ?? "", 1)}</AvatarFallback>
       </Avatar>
-      <p>
-        {user?.username} {isOwner && "👑"}
+      <p className="flex gap-2 items-center">
+        {user?.username}{" "}
+        {isOwner && <Crown size={12} className=" text-yellow-500" />}
       </p>
     </div>
   );

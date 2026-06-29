@@ -8,6 +8,8 @@ export * from "./avatar";
 export * from "./textarea";
 export * from "./dialog";
 export * from "./switch";
+export * from "./error-boundary";
 export * from "./form-controls";
 export * from "./scroll-area";
 export * from "./select";
+export * from "./popover";

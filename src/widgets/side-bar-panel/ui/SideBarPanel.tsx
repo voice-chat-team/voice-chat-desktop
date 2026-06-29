@@ -1,5 +1,4 @@
-import { createAbbr, ROUTES, useUserServers } from "@/shared";
-import { Separator } from "@/shared/ui/separator";
+import { ErrorBoundary, ROUTES, Separator } from "@/shared";
 import { Bell, Mic2, Settings } from "lucide-react";
 import {
   SideBarActionButton,
@@ -7,14 +6,14 @@ import {
   SideBarSkeletonButton,
 } from "./SideBarButton";
 import { lazy, Suspense } from "react";
+import NotificationsPopover from "@/entities/notifications/ui/NotificationPopover";
+import { SideBarGuildList } from "./SideBarGuildList";
 
 const SideBarCreateServerButtonDynamic = lazy(
   () => import("./SideBarCreateServerButton"),
 );
 
 export function SideBarPanel() {
-  const { data: guilds, isLoading: isLoadingGuilds } = useUserServers();
-
   return (
     <aside className="p-2 flex flex-col justify-between">
       <div className="flex flex-col gap-2">
@@ -26,17 +25,11 @@ export function SideBarPanel() {
 
         <Separator />
 
-        {!isLoadingGuilds ? (
-          guilds?.map((guild) => (
-            <SideBarActionButton key={guild.id} tooltipContent={guild.name}>
-              <SideBarInnerButton to={ROUTES.SERVER(guild.id)}>
-                <p className="font-medium">{createAbbr(guild.name, 2)}</p>
-              </SideBarInnerButton>
-            </SideBarActionButton>
-          ))
-        ) : (
-          <SideBarSkeletonButton />
-        )}
+        <ErrorBoundary fallback={<SideBarSkeletonButton />}>
+          <Suspense fallback={<SideBarSkeletonButton />}>
+            <SideBarGuildList />
+          </Suspense>
+        </ErrorBoundary>
 
         <Suspense fallback={<SideBarSkeletonButton />}>
           <SideBarCreateServerButtonDynamic />
@@ -47,12 +40,14 @@ export function SideBarPanel() {
         <Separator />
 
         <SideBarActionButton tooltipContent={"Уведомления"}>
-          <SideBarInnerButton
-            to={"#"}
-            className="bg-accent/20 hover:bg-accent/60"
-          >
-            <Bell />
-          </SideBarInnerButton>
+          <NotificationsPopover>
+            <SideBarInnerButton
+              to={"#"}
+              className="bg-accent/20 hover:bg-accent/60"
+            >
+              <Bell />
+            </SideBarInnerButton>
+          </NotificationsPopover>
         </SideBarActionButton>
 
         <SideBarActionButton tooltipContent={"Настройки приложения"}>

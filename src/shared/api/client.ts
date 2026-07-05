@@ -51,7 +51,7 @@ export const tokenStore = {
 
 // ── Axios instance ──────────────────────────────────────────────────
 
-const BASE_URL = "http://localhost:4000";
+const BASE_URL = "https://api.voice-chat-app.ru";
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,

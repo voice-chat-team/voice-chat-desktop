@@ -14,8 +14,10 @@
 
 
 
-export * from './api/auth-api';
-export * from './api/guild-api';
-export * from './api/invitation-api';
-export * from './api/user-api';
+export interface RefreshTokenRequestDto {
+    /**
+     * Refresh токен
+     */
+    'refreshToken': string;
+}
 

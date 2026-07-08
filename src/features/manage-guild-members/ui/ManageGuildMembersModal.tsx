@@ -21,7 +21,7 @@ export function ManageMembersDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-zinc-900 border-zinc-800 text-white min-w-xl">
         <DialogHeader>
-          <DialogTitle>Управление участниками</DialogTitle>
+          <DialogTitle>Управление участниками сервера</DialogTitle>
           <DialogDescription className="text-zinc-400">
             Приглашайте участников и управляйте их правами
           </DialogDescription>

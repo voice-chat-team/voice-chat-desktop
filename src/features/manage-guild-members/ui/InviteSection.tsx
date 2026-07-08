@@ -8,10 +8,11 @@ export const InviteSection = () => {
       <div className="flex gap-2">
         <Input
           id="invite-id"
-          placeholder="ID или email пользователя"
+          placeholder="Username или ID пользователя"
           className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500"
         />
-        <Button className="bg-violet-600 hover:bg-violet-700 h-8 w-8">
+        <Button className="bg-violet-600 hover:bg-violet-700 h-8 ">
+          Отправить
           <UserPlus />
         </Button>
       </div>

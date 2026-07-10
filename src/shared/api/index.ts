@@ -4,3 +4,4 @@ export * from "./client";
 export * from "./generated";
 export * from "./queries";
 export * from "./query-client.api";
+export * from "./centrifuge";

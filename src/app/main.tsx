@@ -5,6 +5,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient, tokenStore } from "@/shared";
 import "../shared/styles";
 import { router } from "./router";
+import { CentrifugeProvider } from "./providers/CentrifugeProvider";
 
 async function main() {
   await tokenStore.init();
@@ -12,7 +13,9 @@ async function main() {
   ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
+        <CentrifugeProvider>
+          <RouterProvider router={router} />
+        </CentrifugeProvider>
       </QueryClientProvider>
     </React.StrictMode>,
   );

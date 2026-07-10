@@ -3,13 +3,14 @@ import { ComponentProps, PropsWithChildren, useId } from "react";
 
 type FormInputProps = ComponentProps<"input"> & {
   labelTitle?: string;
+  wrapperClassName?: string;
 };
 
-export const FormInput = ({ labelTitle, ...props }: FormInputProps) => {
+export const FormInput = ({ labelTitle, wrapperClassName, ...props }: FormInputProps) => {
   const id = useId();
 
   return (
-    <FormControlWrapper>
+    <FormControlWrapper className={wrapperClassName}>
       {labelTitle && <Label htmlFor={id}>{labelTitle}</Label>}
       <Input {...props} id={id} />
     </FormControlWrapper>

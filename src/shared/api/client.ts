@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Store } from "@tauri-apps/plugin-store";
 import { Configuration } from "./generated/configuration";
-import { AuthApi, GuildApi, UserApi } from "./generated";
+import { AuthApi, GuildApi, UserApi, InvitationApi } from "./generated";
 
 // ── Tauri Store ─────────────────────────────────────────────────────
 
@@ -129,3 +129,4 @@ const config = new Configuration({
 export const authApi = new AuthApi(config, undefined, axiosInstance);
 export const guildApi = new GuildApi(config, undefined, axiosInstance);
 export const userApi = new UserApi(config, undefined, axiosInstance);
+export const inviteApi = new InvitationApi(config, undefined, axiosInstance);

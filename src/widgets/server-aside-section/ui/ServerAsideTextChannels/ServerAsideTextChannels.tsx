@@ -21,6 +21,7 @@ export const ServerAsideTextChannels = ({
   channels: ChannelDto[];
 }) => {
   const guildId = useServerStore((store) => store.state.guild?.id);
+  const setActiveTextChannel = useServerStore((store) => store.actions.setActiveTextChannel);
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
@@ -47,7 +48,7 @@ export const ServerAsideTextChannels = ({
         renderList={() => (
           <ServerAsideUnorderList>
             {channels.map((ch) => (
-              <ServerAsideListItem key={ch.id}>
+              <ServerAsideListItem key={ch.id} onClick={() => setActiveTextChannel(ch)}>
                 <ServerAsideListItemHeader>
                   <ServerAsideListTitle>
                     <Hash size={DEFAILT_ICONS_TITLE_SIZE} /> {ch.name}

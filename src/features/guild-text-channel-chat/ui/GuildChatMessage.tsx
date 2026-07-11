@@ -5,7 +5,7 @@ interface ServerChatMessageProps {
   message: string;
 }
 
-export const ServerChatMessage = ({
+export const GuildChatMessage = ({
   usename,
   message,
 }: ServerChatMessageProps) => {

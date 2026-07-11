@@ -1,19 +1,20 @@
 import { Separator } from "@/shared";
-import { ServerChatHeader } from "./ServerChatHeader";
-import { ServerChatFooter } from "./ServerChatFooter";
-import { ServerChatWrapper } from "./ServerChatWrapper";
-import { ServerChatMessage } from "./ServerChatMessage";
+import { GuildChatHeader } from "./GuildChatHeader";
+import { GuildChatFooter } from "./GuildChatFooter";
+import { GuildChatWrapper } from "./GuildChatWrapper";
+import { GuildChatMessage } from "./GuildChatMessage";
 
-export const ServerChat = () => {
+export const GuildChat = () => {
+
   return (
     <div className="flex flex-col h-full">
-      <ServerChatHeader />
+      <GuildChatHeader />
 
       <Separator />
 
-      <ServerChatWrapper>
-        <ServerChatMessage usename="Алексей" message="Всем привет!" />
-        <ServerChatMessage
+      <GuildChatWrapper>
+        <GuildChatMessage usename="Алексей" message="Всем привет!" />
+        <GuildChatMessage
           usename="Николай"
           message={`
           Я успешно создал полнофункциональное десктопное приложение
@@ -31,7 +32,7 @@ export const ServerChat = () => {
           реальным backend.
           `}
         />
-        <ServerChatMessage
+        <GuildChatMessage
           usename="Николай"
           message={`
           Я успешно создал полнофункциональное десктопное приложение
@@ -49,7 +50,7 @@ export const ServerChat = () => {
           реальным backend.
           `}
         />
-        <ServerChatMessage
+        <GuildChatMessage
           usename="Николай"
           message={`
           Я успешно создал полнофункциональное десктопное приложение
@@ -67,29 +68,12 @@ export const ServerChat = () => {
           реальным backend.
           `}
         />
-        <ServerChatMessage
-          usename="Николай"
-          message={`
-          Я успешно создал полнофункциональное десктопное приложение
-          "VoiceChat" с современным минималистичным дизайном в темной теме.
-          Приложение включает страницу авторизации/регистрации с
-          анимированным логотипом, главную страницу с боковой панелью
-          серверов, систему управления комнатами с голосовыми и текстовыми
-          каналами, возможность создания и настройки комнат, управление
-          участниками с назначением ролей (владелец, модератор, участник),
-          текстовый чат с возможностью отправки сообщений, элементы
-          управления голосовыми каналами (микрофон, наушники), и
-          toast-уведомления для обратной связи. Приложение использует React
-          Router для навигации между страницами и работает с
-          демонстрационными данными, полностью готово к интеграции с
-          реальным backend.
-          `}
-        />
-      </ServerChatWrapper>
+
+      </GuildChatWrapper>
 
       <Separator />
 
-      <ServerChatFooter />
+      <GuildChatFooter />
     </div>
   );
 };

@@ -15,12 +15,12 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import type { InvitationDto } from './invitation-dto';
+import type { NotificationDto } from './notification-dto';
 
-export interface CreateInvitationResponseDto {
+export interface GetNotificationsResponseDto {
     /**
-     * Информация об отправленном приглашении
+     * Список уведомлений
      */
-    'invitation': InvitationDto;
+    'notifications': Array<NotificationDto>;
 }
 

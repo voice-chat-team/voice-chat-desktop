@@ -17,10 +17,10 @@
 // @ts-ignore
 import type { InvitationDto } from './invitation-dto';
 
-export interface CreateInvitationResponseDto {
+export interface GetInvitationsResponseDto {
     /**
-     * Информация об отправленном приглашении
+     * Список приглашений
      */
-    'invitation': InvitationDto;
+    'invitation': Array<InvitationDto>;
 }
 

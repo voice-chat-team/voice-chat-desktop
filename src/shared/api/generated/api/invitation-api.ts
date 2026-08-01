@@ -22,14 +22,61 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
 // @ts-ignore
+import type { AcceptInvitationRequestDto } from '../models';
+// @ts-ignore
+import type { AcceptInvitationResponseDto } from '../models';
+// @ts-ignore
 import type { CreateInvitationRequestDto } from '../models';
 // @ts-ignore
 import type { CreateInvitationResponseDto } from '../models';
+// @ts-ignore
+import type { GetInvitationsResponseDto } from '../models';
+// @ts-ignore
+import type { RevokeInvitationRequestDto } from '../models';
 /**
  * InvitationApi - axios parameter creator
  */
 export const InvitationApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
+        /**
+         * 
+         * @summary Принять приглашение на вступление на сервер.
+         * @param {AcceptInvitationRequestDto} acceptInvitationRequestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        invitationControllerAcceptInvitation: async (acceptInvitationRequestDto: AcceptInvitationRequestDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'acceptInvitationRequestDto' is not null or undefined
+            assertParamExists('invitationControllerAcceptInvitation', 'acceptInvitationRequestDto', acceptInvitationRequestDto)
+            const localVarPath = `/invitation/accept`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(acceptInvitationRequestDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
         /**
          * 
          * @summary Отправить приглашение на вступление на сервер.
@@ -69,6 +116,94 @@ export const InvitationApiAxiosParamCreator = function (configuration?: Configur
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @summary Получить список приглашений по определенному параметру
+         * @param {string} [guildId] ID сервреа
+         * @param {string} [senderId] ID отправителя
+         * @param {string} [receiverId] ID получателя
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        invitationControllerGetInvitations: async (guildId?: string, senderId?: string, receiverId?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/invitation`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (guildId !== undefined) {
+                localVarQueryParameter['guildId'] = guildId;
+            }
+
+            if (senderId !== undefined) {
+                localVarQueryParameter['senderId'] = senderId;
+            }
+
+            if (receiverId !== undefined) {
+                localVarQueryParameter['receiverId'] = receiverId;
+            }
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Отклонить приглашение на вступление на сервер.
+         * @param {RevokeInvitationRequestDto} revokeInvitationRequestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        invitationControllerRevokeInvitation: async (revokeInvitationRequestDto: RevokeInvitationRequestDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'revokeInvitationRequestDto' is not null or undefined
+            assertParamExists('invitationControllerRevokeInvitation', 'revokeInvitationRequestDto', revokeInvitationRequestDto)
+            const localVarPath = `/invitation/revoke`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(revokeInvitationRequestDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -78,6 +213,19 @@ export const InvitationApiAxiosParamCreator = function (configuration?: Configur
 export const InvitationApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = InvitationApiAxiosParamCreator(configuration)
     return {
+        /**
+         * 
+         * @summary Принять приглашение на вступление на сервер.
+         * @param {AcceptInvitationRequestDto} acceptInvitationRequestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async invitationControllerAcceptInvitation(acceptInvitationRequestDto: AcceptInvitationRequestDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AcceptInvitationResponseDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.invitationControllerAcceptInvitation(acceptInvitationRequestDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['InvitationApi.invitationControllerAcceptInvitation']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
         /**
          * 
          * @summary Отправить приглашение на вступление на сервер.
@@ -91,6 +239,34 @@ export const InvitationApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['InvitationApi.invitationControllerCreateInvitation']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * 
+         * @summary Получить список приглашений по определенному параметру
+         * @param {string} [guildId] ID сервреа
+         * @param {string} [senderId] ID отправителя
+         * @param {string} [receiverId] ID получателя
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async invitationControllerGetInvitations(guildId?: string, senderId?: string, receiverId?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetInvitationsResponseDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.invitationControllerGetInvitations(guildId, senderId, receiverId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['InvitationApi.invitationControllerGetInvitations']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Отклонить приглашение на вступление на сервер.
+         * @param {RevokeInvitationRequestDto} revokeInvitationRequestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async invitationControllerRevokeInvitation(revokeInvitationRequestDto: RevokeInvitationRequestDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AcceptInvitationResponseDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.invitationControllerRevokeInvitation(revokeInvitationRequestDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['InvitationApi.invitationControllerRevokeInvitation']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -102,6 +278,16 @@ export const InvitationApiFactory = function (configuration?: Configuration, bas
     return {
         /**
          * 
+         * @summary Принять приглашение на вступление на сервер.
+         * @param {AcceptInvitationRequestDto} acceptInvitationRequestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        invitationControllerAcceptInvitation(acceptInvitationRequestDto: AcceptInvitationRequestDto, options?: RawAxiosRequestConfig): AxiosPromise<AcceptInvitationResponseDto> {
+            return localVarFp.invitationControllerAcceptInvitation(acceptInvitationRequestDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Отправить приглашение на вступление на сервер.
          * @param {CreateInvitationRequestDto} createInvitationRequestDto 
          * @param {*} [options] Override http request option.
@@ -109,6 +295,28 @@ export const InvitationApiFactory = function (configuration?: Configuration, bas
          */
         invitationControllerCreateInvitation(createInvitationRequestDto: CreateInvitationRequestDto, options?: RawAxiosRequestConfig): AxiosPromise<CreateInvitationResponseDto> {
             return localVarFp.invitationControllerCreateInvitation(createInvitationRequestDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Получить список приглашений по определенному параметру
+         * @param {string} [guildId] ID сервреа
+         * @param {string} [senderId] ID отправителя
+         * @param {string} [receiverId] ID получателя
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        invitationControllerGetInvitations(guildId?: string, senderId?: string, receiverId?: string, options?: RawAxiosRequestConfig): AxiosPromise<GetInvitationsResponseDto> {
+            return localVarFp.invitationControllerGetInvitations(guildId, senderId, receiverId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Отклонить приглашение на вступление на сервер.
+         * @param {RevokeInvitationRequestDto} revokeInvitationRequestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        invitationControllerRevokeInvitation(revokeInvitationRequestDto: RevokeInvitationRequestDto, options?: RawAxiosRequestConfig): AxiosPromise<AcceptInvitationResponseDto> {
+            return localVarFp.invitationControllerRevokeInvitation(revokeInvitationRequestDto, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -119,6 +327,17 @@ export const InvitationApiFactory = function (configuration?: Configuration, bas
 export class InvitationApi extends BaseAPI {
     /**
      * 
+     * @summary Принять приглашение на вступление на сервер.
+     * @param {AcceptInvitationRequestDto} acceptInvitationRequestDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public invitationControllerAcceptInvitation(acceptInvitationRequestDto: AcceptInvitationRequestDto, options?: RawAxiosRequestConfig) {
+        return InvitationApiFp(this.configuration).invitationControllerAcceptInvitation(acceptInvitationRequestDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary Отправить приглашение на вступление на сервер.
      * @param {CreateInvitationRequestDto} createInvitationRequestDto 
      * @param {*} [options] Override http request option.
@@ -126,6 +345,30 @@ export class InvitationApi extends BaseAPI {
      */
     public invitationControllerCreateInvitation(createInvitationRequestDto: CreateInvitationRequestDto, options?: RawAxiosRequestConfig) {
         return InvitationApiFp(this.configuration).invitationControllerCreateInvitation(createInvitationRequestDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Получить список приглашений по определенному параметру
+     * @param {string} [guildId] ID сервреа
+     * @param {string} [senderId] ID отправителя
+     * @param {string} [receiverId] ID получателя
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public invitationControllerGetInvitations(guildId?: string, senderId?: string, receiverId?: string, options?: RawAxiosRequestConfig) {
+        return InvitationApiFp(this.configuration).invitationControllerGetInvitations(guildId, senderId, receiverId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Отклонить приглашение на вступление на сервер.
+     * @param {RevokeInvitationRequestDto} revokeInvitationRequestDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public invitationControllerRevokeInvitation(revokeInvitationRequestDto: RevokeInvitationRequestDto, options?: RawAxiosRequestConfig) {
+        return InvitationApiFp(this.configuration).invitationControllerRevokeInvitation(revokeInvitationRequestDto, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

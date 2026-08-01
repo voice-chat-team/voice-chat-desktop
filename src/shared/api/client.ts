@@ -1,7 +1,13 @@
 import axios from "axios";
 import { Store } from "@tauri-apps/plugin-store";
 import { Configuration } from "./generated/configuration";
-import { AuthApi, GuildApi, UserApi, InvitationApi } from "./generated";
+import {
+  AuthApi,
+  GuildApi,
+  UserApi,
+  InvitationApi,
+  NotificationApi,
+} from "./generated";
 
 // ── Tauri Store ─────────────────────────────────────────────────────
 
@@ -80,7 +86,7 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-
+    console.log(error.response?.status, originalRequest._retry, isRefreshing);
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
@@ -130,3 +136,8 @@ export const authApi = new AuthApi(config, undefined, axiosInstance);
 export const guildApi = new GuildApi(config, undefined, axiosInstance);
 export const userApi = new UserApi(config, undefined, axiosInstance);
 export const inviteApi = new InvitationApi(config, undefined, axiosInstance);
+export const notificationApi = new NotificationApi(
+  config,
+  undefined,
+  axiosInstance,
+);

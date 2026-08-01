@@ -14,26 +14,30 @@
 
 
 
-export interface UserProfileDto {
+export interface NotificationDto {
     /**
-     * ID пользователя
+     * ID уведомления
      */
     'id': string;
     /**
-     * Username пользователя
+     * ID отправителя
      */
-    'username': string;
+    'senderId': string;
     /**
-     * E-mail пользователя
+     * ID получателя
      */
-    'email': string;
+    'receiverId': string;
     /**
-     * Ссылка на аватар пользователя
+     * Уведомление
      */
-    'avatarUrl': string;
+    'notificationPayload': { [key: string]: any; } | null;
     /**
-     * Дата регистрации
+     * Дата создания
      */
     'createdAt': string;
+    /**
+     * Просмотрено ли уведомление
+     */
+    'isRead': boolean;
 }
 

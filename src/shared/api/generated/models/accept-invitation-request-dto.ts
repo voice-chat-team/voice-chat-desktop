@@ -13,14 +13,11 @@
  */
 
 
-// May contain unused imports in some cases
-// @ts-ignore
-import type { InvitationDto } from './invitation-dto';
 
-export interface CreateInvitationResponseDto {
+export interface AcceptInvitationRequestDto {
     /**
-     * Информация об отправленном приглашении
+     * ID приглашения
      */
-    'invitation': InvitationDto;
+    'invitationId': string;
 }
 

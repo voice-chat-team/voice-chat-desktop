@@ -1,36 +1,16 @@
-import {
-  notificationApi,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  useCurrentUser,
-} from "@/shared";
+import { Popover, PopoverContent, PopoverTrigger } from "@/shared";
 import { Bell, CheckCheck } from "lucide-react";
 import { PropsWithChildren, useState } from "react";
 import { NotificationItem } from "./NotificationItem";
-import { useQuery } from "@tanstack/react-query";
+import { useUserNotifications } from "../hooks/useUserNotification";
 
 type NotificationsPopoverProps = PropsWithChildren & {};
 
 export default function NotificationsPopover({
   children,
 }: NotificationsPopoverProps) {
-  const { data: currentUser } = useCurrentUser();
   const [open, setOpen] = useState(false);
-
-  const { data: notifications, isLoading } = useQuery({
-    queryKey: ["user-notification"],
-    queryFn: () =>
-      notificationApi.notificationControllerGetNotifications(
-        null,
-        currentUser?.id,
-      ),
-    enabled: !!currentUser,
-  });
-
-  const isNewNotifications = !!(
-    !isLoading && notifications?.data.notifications.find((n) => !n.isRead)
-  );
+  const { isNewNotifications, notifications } = useUserNotifications();
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -61,7 +41,7 @@ export default function NotificationsPopover({
         </div>
 
         <div className="max-h-96 overflow-y-auto p-2 flex flex-col gap-1.5">
-          {notifications?.data.notifications.map((notification) => (
+          {notifications?.data.notifications?.map((notification) => (
             <NotificationItem
               notification={notification}
               key={notification.id}

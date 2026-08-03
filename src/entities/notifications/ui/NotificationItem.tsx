@@ -13,13 +13,14 @@ export function NotificationItem({
 }: {
   notification: NotificationDto;
 }) {
-  console.log(notification);
   const isInvitation =
     notification.notificationPayload?.type === "NEW_INVITATION";
 
   return (
     <div className={`relative group rounded-lg p-3 border transition-colors `}>
-      <span className="absolute top-3 right-3 w-2 h-2 rounded-full bg-violet-500" />
+      {!notification.isRead && (
+        <span className="absolute top-3 right-3 w-2 h-2 rounded-full bg-violet-500" />
+      )}
 
       <div className="flex gap-3 pr-4">
         <div className="flex flex-col gap-1">

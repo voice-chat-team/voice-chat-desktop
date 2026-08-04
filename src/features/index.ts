@@ -4,4 +4,5 @@ export * from "./server-aside-list";
 export * from "./create-new-server";
 export * from "./create-text-channel";
 export * from "./manage-guild-members";
-export * from './guild-text-channel-chat'
+export * from "./guild-text-channel-chat";
+export * from "./logout";

@@ -1,5 +1,6 @@
-import { Button, ROUTES, Separator } from "@/shared";
-import { ArrowLeft, LogOut } from "lucide-react";
+import { LogoutButton } from "@/features/logout";
+import { ROUTES, Separator } from "@/shared";
+import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router";
 
 export const SettingsAsideSection = () => {
@@ -14,14 +15,7 @@ export const SettingsAsideSection = () => {
       </Link>
       <div className="flex flex-col gap-2">
         <Separator />
-
-        <Button
-          variant="default"
-          className="bg-transparent border-red-800 text-red-400 hover:bg-red-700/50 hover:text-red-300 hover:border-red-700"
-        >
-          <LogOut className="w-4 h-4 mr-2" />
-          Выйти из аккаунта
-        </Button>
+        <LogoutButton />
       </div>
     </aside>
   );

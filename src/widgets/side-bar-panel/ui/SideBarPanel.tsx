@@ -50,7 +50,7 @@ export function SideBarPanel() {
 
         <SideBarActionButton tooltipContent={"Настройки приложения"}>
           <SideBarInnerButton
-            to={"#"}
+            to={ROUTES.SETTINGS}
             className="bg-accent/20 hover:bg-accent/60"
           >
             <Settings />

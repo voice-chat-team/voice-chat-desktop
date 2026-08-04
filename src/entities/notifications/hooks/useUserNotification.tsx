@@ -29,10 +29,12 @@ export const useUserNotifications = () => {
     if (!centrifuge || !currentUser?.id) return;
 
     const channel = `personal:#${currentUser.id}:notifications`;
-    const sub = centrifuge.newSubscription(channel);
+
+    const sub =
+      centrifuge.getSubscription(channel) ??
+      centrifuge.newSubscription(channel);
 
     sub.on("publication", (ctx) => {
-      console.log(ctx);
       const notification = ctx.data.payload;
       queryClient.setQueryData(
         ["user-notification"],

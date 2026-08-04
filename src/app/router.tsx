@@ -3,7 +3,7 @@ import { createBrowserRouter } from "react-router";
 import { ROUTES } from "@/shared";
 
 import { authMiddleware } from "./middlewares";
-import { SidebarLayout } from "./layouts";
+import { SettingsLayout, SidebarLayout } from "./layouts";
 
 const SuspenseFallback = () => (
   <div className="flex items-center justify-center h-screen">
@@ -16,6 +16,22 @@ export const router = createBrowserRouter([
     middleware: [authMiddleware],
     HydrateFallback: SuspenseFallback,
     children: [
+      {
+        Component: SettingsLayout,
+        children: [
+          {
+            path: ROUTES.SETTINGS,
+            lazy: async () => {
+              const { default: Component } =
+                await import("@/pages/settings-page/ui/SettingsPage");
+
+              return {
+                Component,
+              };
+            },
+          },
+        ],
+      },
       {
         Component: SidebarLayout,
         children: [

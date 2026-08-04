@@ -33,6 +33,7 @@ export function AuthorizationForm() {
               type="email"
               placeholder="m@example.com"
               autoComplete="off"
+              tabIndex={1}
               required
             />
           </div>
@@ -52,6 +53,7 @@ export function AuthorizationForm() {
               type="password"
               autoComplete="off"
               placeholder="••••••••"
+              tabIndex={2}
               required
             />
           </div>

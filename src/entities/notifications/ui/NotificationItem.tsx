@@ -1,5 +1,7 @@
-import { NotificationDto } from "@/shared";
+import { inviteApi, NotificationDto, userServersQueryKey } from "@/shared";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Check, X } from "lucide-react";
+import { toast } from "sonner";
 
 const timeFormat = new Intl.DateTimeFormat("ru", {
   day: "numeric",
@@ -13,8 +15,37 @@ export function NotificationItem({
 }: {
   notification: NotificationDto;
 }) {
+  const queryClient = useQueryClient();
+
   const isInvitation =
     notification.notificationPayload?.type === "NEW_INVITATION";
+
+  const { mutateAsync } = useMutation({
+    mutationKey: ["accept-invite"],
+    mutationFn: async (_: unknown) =>
+      await inviteApi.invitationControllerAcceptInvitation({
+        invitationId: notification.notificationPayload?.payload.id,
+      }),
+  });
+
+  const acceptInvite = () => {
+    toast.promise(
+      mutateAsync(null, {
+        onSuccess: (response) => {
+          if (response.data.success)
+            queryClient.invalidateQueries({
+              queryKey: userServersQueryKey,
+            });
+        },
+      }),
+      {
+        loading: "Загрузка...",
+        success: "Вы вступили на сервре!",
+        error: "Не удалось принять приглашение!",
+        id: notification.id,
+      },
+    );
+  };
 
   return (
     <div className={`relative group rounded-lg p-3 border transition-colors `}>
@@ -37,7 +68,10 @@ export function NotificationItem({
           <div className="flex gap-2 mt-2">
             {isInvitation && (
               <>
-                <button className="flex items-center gap-1 text-xs bg-violet-600 hover:bg-violet-500 text-white px-2.5 py-1 rounded-md transition-colors">
+                <button
+                  onClick={acceptInvite}
+                  className="flex items-center gap-1 text-xs bg-violet-600 hover:bg-violet-500 text-white px-2.5 py-1 rounded-md transition-colors"
+                >
                   <Check className="w-3 h-3" />
                   Принять
                 </button>

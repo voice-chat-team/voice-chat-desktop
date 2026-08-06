@@ -39,5 +39,9 @@ export interface NotificationDto {
      * Просмотрено ли уведомление
      */
     'isRead': boolean;
+    /**
+     * Тип уведомления
+     */
+    'notificationType': string;
 }
 

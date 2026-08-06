@@ -16,9 +16,7 @@ export function NotificationItem({
   notification: NotificationDto;
 }) {
   const queryClient = useQueryClient();
-
-  const isInvitation =
-    notification.notificationPayload?.type === "NEW_INVITATION";
+  const isInvitation = notification.notificationType === "NEW_INVITE_TO_GUILD";
 
   const { mutateAsync } = useMutation({
     mutationKey: ["accept-invite"],

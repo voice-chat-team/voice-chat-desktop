@@ -5,8 +5,7 @@ import {
 } from "../model/login-request-dto.model";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { authApi, ROUTES, tokenStore } from "@/shared";
-import { isAxiosError } from "axios";
+import { login, ROUTES } from "@/shared";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 
@@ -21,26 +20,21 @@ export const useAuthorization = () => {
   const { mutateAsync } = useMutation({
     mutationKey: ["authrization-request"],
     mutationFn: async (dto: LoginRequestDtoModel) =>
-      authApi.authControllerLogin(dto),
+      login(dto.email, dto.password),
   });
 
   const onSubmit: SubmitHandler<LoginRequestDtoModel> = async (payload) => {
     mutateAsync(payload, {
-      onSuccess: async (response) => {
-        const { accessToken, refreshToken } = response.data;
-
-        try {
-          await tokenStore.setTokens(accessToken, refreshToken);
-          navigate(ROUTES.WELCOME);
-        } catch (e) {
-          console.error("Failed to save tokens:", e);
-        }
+      onSuccess: async () => {
+        navigate(ROUTES.WELCOME);
       },
       onError: (error) => {
-        const message = isAxiosError(error)
-          ? ((error.response?.data as { message?: string })?.message ??
-            error.message)
-          : error.message;
+        const message =
+          typeof error === "string"
+            ? error
+            : error instanceof Error
+              ? error.message
+              : "Ошибка авторизации";
 
         toast.error(message, {
           id: "error-auth",

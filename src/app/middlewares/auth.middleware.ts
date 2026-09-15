@@ -1,5 +1,5 @@
 import { ROUTES } from "@/shared";
-import { tokenStore } from "@/shared/api/client";
+import { hasToken } from "@/shared/api/auth-commands";
 import { redirect, type MiddlewareFunction } from "react-router";
 
 const PUBLIC_ROUTES = [ROUTES.AUTHORIZATION] as string[];
@@ -9,8 +9,7 @@ const isPublicRoute = (pathname: string) =>
 
 export const authMiddleware: MiddlewareFunction = async ({ request }, next) => {
   const { pathname } = new URL(request.url);
-  const token = await tokenStore.getAccessToken();
-  const isAuthenticated = token !== null;
+  const isAuthenticated = await hasToken();
 
   if (isAuthenticated && isPublicRoute(pathname)) {
     throw redirect(ROUTES.WELCOME);

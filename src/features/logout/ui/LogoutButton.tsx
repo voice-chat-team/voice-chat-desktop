@@ -1,5 +1,5 @@
 import { Button, ROUTES } from "@/shared";
-import { tokenStore } from "@/shared/api/client";
+import { logout } from "@/shared/api/auth-commands";
 import { useQueryClient } from "@tanstack/react-query";
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router";
@@ -9,7 +9,7 @@ export const LogoutButton = () => {
   const queryClient = useQueryClient();
 
   const handleLogout = async () => {
-    await tokenStore.clear();
+    await logout();
     queryClient.clear();
     navigate(ROUTES.AUTHORIZATION);
   };

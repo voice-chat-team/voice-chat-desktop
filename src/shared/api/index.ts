@@ -1,5 +1,6 @@
 // Auto-generated API client — re-exported for convenience
 // Run `bun run codegen` after updating the OpenAPI spec
+export * from "./auth-commands";
 export * from "./client";
 export * from "./generated";
 export * from "./queries";

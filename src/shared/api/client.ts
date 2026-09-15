@@ -1,5 +1,4 @@
-import axios from "axios";
-import { Store } from "@tauri-apps/plugin-store";
+import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { Configuration } from "./generated/configuration";
 import {
   AuthApi,
@@ -8,62 +7,7 @@ import {
   InvitationApi,
   NotificationApi,
 } from "./generated";
-
-// ── Tauri Store ─────────────────────────────────────────────────────
-
-const STORE_PATH = "tokens.json";
-
-let storeInstance: Store | null = null;
-let cachedAccessToken: string | null | undefined;
-let cachedRefreshToken: string | null | undefined;
-
-async function getStore(): Promise<Store> {
-  if (!storeInstance) {
-    storeInstance = await Store.load(STORE_PATH);
-  }
-  return storeInstance;
-}
-
-export const tokenStore = {
-  /** Force re-read from disk. Call once on app startup. */
-  async init(): Promise<void> {
-    const store = await getStore();
-    cachedAccessToken = (await store.get<string>("accessToken")) ?? null;
-    cachedRefreshToken = (await store.get<string>("refreshToken")) ?? null;
-  },
-
-  async getAccessToken(): Promise<string | null> {
-    if (!!cachedAccessToken) return cachedAccessToken;
-    const store = await getStore();
-    cachedAccessToken = (await store.get<string>("accessToken")) ?? null;
-    return cachedAccessToken;
-  },
-
-  async getRefreshToken(): Promise<string | null> {
-    if (!!cachedRefreshToken) return cachedRefreshToken;
-    const store = await getStore();
-    cachedRefreshToken = (await store.get<string>("refreshToken")) ?? null;
-    return cachedRefreshToken;
-  },
-
-  async setTokens(accessToken: string, refreshToken: string): Promise<void> {
-    cachedAccessToken = accessToken;
-    cachedRefreshToken = refreshToken;
-    const store = await getStore();
-    await store.set("accessToken", accessToken);
-    await store.set("refreshToken", refreshToken);
-    await store.save();
-  },
-
-  async clear(): Promise<void> {
-    cachedAccessToken = null;
-    cachedRefreshToken = null;
-    const store = await getStore();
-    await store.delete("accessToken");
-    await store.delete("refreshToken");
-    await store.save();
-  },
-};
+import { getAccessToken, refreshAccessToken } from "./auth-commands";
 
 const BASE_URL = "https://api.voice-chat-app.ru";
 
@@ -73,50 +17,39 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(async (config) => {
-  const token = await tokenStore.getAccessToken();
+  const token = await getAccessToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
-let isRefreshing = false;
+let refreshPromise: Promise<string> | null = null;
+
+function refreshToken(): Promise<string> {
+  if (!refreshPromise) {
+    refreshPromise = refreshAccessToken().finally(() => {
+      refreshPromise = null;
+    });
+  }
+  return refreshPromise;
+}
+
+type RetriableConfig = InternalAxiosRequestConfig & { _retry?: boolean };
 
 axiosInstance.interceptors.response.use(
   (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
-    console.log(error.response?.status, originalRequest._retry, isRefreshing);
-    if (
-      error.response?.status === 401 &&
-      !originalRequest._retry &&
-      !isRefreshing
-    ) {
+  async (error: AxiosError) => {
+    const originalRequest = error.config as RetriableConfig | undefined;
+
+    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
       originalRequest._retry = true;
-      isRefreshing = true;
       try {
-        const refreshToken = await tokenStore.getRefreshToken();
-        if (!refreshToken) throw new Error("No refresh token");
-
-        const { data } = await authApi.authControllerRefreshToken({
-          refreshToken,
-        });
-        await tokenStore.setTokens(data.accessToken, data.refreshToken);
-
-        if (originalRequest.headers) {
-          originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
-        } else {
-          originalRequest.headers = {
-            Authorization: `Bearer ${data.accessToken}`,
-          };
-        }
-
+        const newToken = await refreshToken();
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        await tokenStore.clear();
         return Promise.reject(refreshError);
-      } finally {
-        isRefreshing = false;
       }
     }
 

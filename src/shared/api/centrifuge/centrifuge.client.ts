@@ -1,11 +1,11 @@
 import { Centrifuge } from "centrifuge";
-import { tokenStore } from "@/shared/api/client";
+import { getAccessToken } from "@/shared/api/auth-commands";
 
 export const centrifugeClient = new Centrifuge(
-  "ws://centrifugo.voice-chat-app.ru/connection/websocket",
+  "wss://centrifugo.voice-chat-app.ru/connection/websocket",
   {
     getToken: async () => {
-      const token = await tokenStore.getAccessToken();
+      const token = await getAccessToken();
       if (!token) throw new Error("No access token");
       return token;
     },

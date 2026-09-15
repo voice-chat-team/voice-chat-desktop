@@ -17,7 +17,6 @@
     "@tanstack/react-query": "^5.101.1",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-opener": "^2",
-    "@tauri-apps/plugin-store": "^2.4.3",
     "axios": "^1.18.1",
     "centrifuge": "^5.7.0",
     "class-variance-authority": "^0.7.1",

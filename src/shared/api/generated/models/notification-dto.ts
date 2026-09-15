@@ -13,6 +13,9 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import type { NotificationType } from './notification-type';
 
 export interface NotificationDto {
     /**
@@ -40,8 +43,10 @@ export interface NotificationDto {
      */
     'isRead': boolean;
     /**
-     * Тип уведомления
+     * Тип уведомления: GUILD_MEMBER_ADD — добавлен участник, GUILD_MEMBER_LEAVE — участник вышел, NEW_INVITE_TO_GUILD — приглашение на сервер
      */
-    'notificationType': string;
+    'notificationType': NotificationType;
 }
+
+
 

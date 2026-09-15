@@ -23,6 +23,10 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
 // @ts-ignore
 import type { GetNotificationsResponseDto } from '../models';
+// @ts-ignore
+import type { ReadNotificationRequestDto } from '../models';
+// @ts-ignore
+import type { ReadNotificationResponseDto } from '../models';
 /**
  * NotificationApi - axios parameter creator
  */
@@ -72,6 +76,45 @@ export const NotificationApiAxiosParamCreator = function (configuration?: Config
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @summary Прочитать уведомления
+         * @param {ReadNotificationRequestDto} readNotificationRequestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        notificationControllerReadNotification: async (readNotificationRequestDto: ReadNotificationRequestDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'readNotificationRequestDto' is not null or undefined
+            assertParamExists('notificationControllerReadNotification', 'readNotificationRequestDto', readNotificationRequestDto)
+            const localVarPath = `/notification`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(readNotificationRequestDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -95,6 +138,19 @@ export const NotificationApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['NotificationApi.notificationControllerGetNotifications']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * 
+         * @summary Прочитать уведомления
+         * @param {ReadNotificationRequestDto} readNotificationRequestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async notificationControllerReadNotification(readNotificationRequestDto: ReadNotificationRequestDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ReadNotificationResponseDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.notificationControllerReadNotification(readNotificationRequestDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['NotificationApi.notificationControllerReadNotification']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -115,6 +171,16 @@ export const NotificationApiFactory = function (configuration?: Configuration, b
         notificationControllerGetNotifications(senderId?: string | null, receiverId?: string | null, options?: RawAxiosRequestConfig): AxiosPromise<GetNotificationsResponseDto> {
             return localVarFp.notificationControllerGetNotifications(senderId, receiverId, options).then((request) => request(axios, basePath));
         },
+        /**
+         * 
+         * @summary Прочитать уведомления
+         * @param {ReadNotificationRequestDto} readNotificationRequestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        notificationControllerReadNotification(readNotificationRequestDto: ReadNotificationRequestDto, options?: RawAxiosRequestConfig): AxiosPromise<ReadNotificationResponseDto> {
+            return localVarFp.notificationControllerReadNotification(readNotificationRequestDto, options).then((request) => request(axios, basePath));
+        },
     };
 };
 
@@ -132,6 +198,17 @@ export class NotificationApi extends BaseAPI {
      */
     public notificationControllerGetNotifications(senderId?: string | null, receiverId?: string | null, options?: RawAxiosRequestConfig) {
         return NotificationApiFp(this.configuration).notificationControllerGetNotifications(senderId, receiverId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Прочитать уведомления
+     * @param {ReadNotificationRequestDto} readNotificationRequestDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public notificationControllerReadNotification(readNotificationRequestDto: ReadNotificationRequestDto, options?: RawAxiosRequestConfig) {
+        return NotificationApiFp(this.configuration).notificationControllerReadNotification(readNotificationRequestDto, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

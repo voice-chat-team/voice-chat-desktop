@@ -1,4 +1,9 @@
-import { inviteApi, NotificationDto, userServersQueryKey } from "@/shared";
+import {
+  inviteApi,
+  notificationApi,
+  NotificationDto,
+  userServersQueryKey,
+} from "@/shared";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Check, X } from "lucide-react";
 import { toast } from "sonner";
@@ -26,14 +31,24 @@ export function NotificationItem({
       }),
   });
 
+  const { mutateAsync: readNotificationMutate } = useMutation({
+    mutationKey: ["read-notification"],
+    mutationFn: async (notificationIds: string[]) =>
+      await notificationApi.notificationControllerReadNotification({
+        notificationIds,
+      }),
+  });
+
   const acceptInvite = () => {
     toast.promise(
       mutateAsync(null, {
-        onSuccess: (response) => {
+        onSuccess: async (response) => {
           if (response.data.success)
             queryClient.invalidateQueries({
               queryKey: userServersQueryKey,
             });
+
+          await readNotificationMutate([notification.id]);
         },
       }),
       {

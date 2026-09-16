@@ -60,7 +60,7 @@ export const CreateNewServerModal = ({
               name="isPublic"
               render={({ field: { value, onChange } }) => (
                 <FormSwitch
-                  switchTitle="Публичный сервер"
+                  switchTitle={value ? "Публичный сервер" : "Приватный сервер"}
                   checked={value}
                   onCheckedChange={onChange}
                 />

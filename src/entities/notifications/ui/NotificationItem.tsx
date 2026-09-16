@@ -1,9 +1,4 @@
-import {
-  inviteApi,
-  notificationApi,
-  NotificationDto,
-  userServersQueryKey,
-} from "@/shared";
+import { inviteApi, NotificationDto, userServersQueryKey } from "@/shared";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Check, X } from "lucide-react";
 import { toast } from "sonner";
@@ -31,25 +26,11 @@ export function NotificationItem({
       }),
   });
 
-  const { mutateAsync: readNotificationMutate } = useMutation({
-    mutationKey: ["read-notification"],
-    mutationFn: async (notificationIds: string[]) =>
-      await notificationApi.notificationControllerReadNotification({
-        notificationIds,
-      }),
-  });
-
   const acceptInvite = () => {
     toast.promise(
-      mutateAsync(null, {
-        onSuccess: async (response) => {
-          if (response.data.success)
-            queryClient.invalidateQueries({
-              queryKey: userServersQueryKey,
-            });
-
-          await readNotificationMutate([notification.id]);
-        },
+      mutateAsync(null).then(async (response) => {
+        if (!response.data.success) throw new Error();
+        queryClient.invalidateQueries({ queryKey: userServersQueryKey });
       }),
       {
         loading: "Загрузка...",
@@ -79,7 +60,7 @@ export function NotificationItem({
           </p>
 
           <div className="flex gap-2 mt-2">
-            {isInvitation && (
+            {isInvitation && !notification.isRead && (
               <>
                 <button
                   onClick={acceptInvite}

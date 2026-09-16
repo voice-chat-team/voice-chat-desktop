@@ -34,10 +34,10 @@ export default function NotificationsPopover({
               Уведомления
             </span>
           </div>
-          <button className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
+          {/*<button className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
             <CheckCheck className="w-3 h-3" />
             Прочитать все
-          </button>
+          </button>*/}
         </div>
 
         <div className="max-h-96 overflow-y-auto p-2 flex flex-col gap-1.5">

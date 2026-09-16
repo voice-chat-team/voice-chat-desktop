@@ -40,11 +40,15 @@ export const useUserNotifications = () => {
         ["user-notification"],
         (old: typeof notifications) => {
           const list = old?.data?.notifications ?? [];
+          const isUpdated = list.some((n) => n.id === notification.id);
+
           return {
             ...old,
             data: {
               ...old?.data,
-              notifications: [notification, ...list],
+              notifications: isUpdated
+                ? list.map((n) => (n.id === notification.id ? notification : n))
+                : [notification, ...list],
             },
           } as typeof notifications;
         },

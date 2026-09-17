@@ -7,12 +7,14 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
+const userNotificationQurtyKey = ["user-notification"];
+
 export const useUserNotifications = () => {
   const centrifuge = useCentrifuge();
   const { data: currentUser } = useCurrentUser();
 
   const { data: notifications, isLoading } = useQuery({
-    queryKey: ["user-notification"],
+    queryKey: userNotificationQurtyKey,
     queryFn: () =>
       notificationApi.notificationControllerGetNotifications(
         null,
@@ -37,7 +39,7 @@ export const useUserNotifications = () => {
     sub.on("publication", (ctx) => {
       const notification = ctx.data.payload;
       queryClient.setQueryData(
-        ["user-notification"],
+        userNotificationQurtyKey,
         (old: typeof notifications) => {
           const list = old?.data?.notifications ?? [];
           const isUpdated = list.some((n) => n.id === notification.id);

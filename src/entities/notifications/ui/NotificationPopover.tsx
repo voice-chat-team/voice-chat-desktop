@@ -1,5 +1,5 @@
 import { Popover, PopoverContent, PopoverTrigger } from "@/shared";
-import { Bell, CheckCheck } from "lucide-react";
+import { Bell } from "lucide-react";
 import { PropsWithChildren, useState } from "react";
 import { NotificationItem } from "./NotificationItem";
 import { useUserNotifications } from "../hooks/useUserNotification";

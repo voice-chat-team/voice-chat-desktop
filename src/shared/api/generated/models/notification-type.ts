@@ -22,6 +22,7 @@ export const NotificationType = {
     GuildMemberAdd: 'GUILD_MEMBER_ADD',
     GuildMemberLeave: 'GUILD_MEMBER_LEAVE',
     NewInviteToGuild: 'NEW_INVITE_TO_GUILD',
+    UpdateNotification: 'UPDATE_NOTIFICATION',
 } as const;
 
 export type NotificationType = typeof NotificationType[keyof typeof NotificationType];

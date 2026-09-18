@@ -6,6 +6,7 @@ import {
   UserApi,
   InvitationApi,
   NotificationApi,
+  MessageApi,
 } from "./generated";
 import { getAccessToken, refreshAccessToken } from "./auth-commands";
 
@@ -74,3 +75,4 @@ export const notificationApi = new NotificationApi(
   undefined,
   axiosInstance,
 );
+export const messageApi = new MessageApi(config, undefined, axiosInstance);

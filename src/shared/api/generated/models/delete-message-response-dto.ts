@@ -14,10 +14,10 @@
 
 
 
-export * from './api/auth-api';
-export * from './api/guild-api';
-export * from './api/invitation-api';
-export * from './api/message-api';
-export * from './api/notification-api';
-export * from './api/user-api';
+export interface DeleteMessageResponseDto {
+    /**
+     * Сообщение удалено
+     */
+    'success': boolean;
+}
 

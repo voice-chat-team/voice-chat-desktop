@@ -14,10 +14,18 @@
 
 
 
-export * from './api/auth-api';
-export * from './api/guild-api';
-export * from './api/invitation-api';
-export * from './api/message-api';
-export * from './api/notification-api';
-export * from './api/user-api';
+export interface SendMessageRequestDto {
+    /**
+     * ID текстового канала
+     */
+    'channelId': string;
+    /**
+     * ID сервера
+     */
+    'guildId': string;
+    /**
+     * Текст сообщения
+     */
+    'content': string;
+}
 

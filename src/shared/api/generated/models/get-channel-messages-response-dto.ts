@@ -13,11 +13,14 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import type { MessageDto } from './message-dto';
 
-export * from './api/auth-api';
-export * from './api/guild-api';
-export * from './api/invitation-api';
-export * from './api/message-api';
-export * from './api/notification-api';
-export * from './api/user-api';
+export interface GetChannelMessagesResponseDto {
+    /**
+     * Сообщения канала, от новых к старым
+     */
+    'messages': Array<MessageDto>;
+}
 

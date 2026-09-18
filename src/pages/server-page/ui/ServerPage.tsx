@@ -3,21 +3,28 @@ import { SplitPane, Pane } from "react-split-pane";
 
 import { GuildChat } from "@/features";
 import { useServerStore, useGuildChannelEvents } from "@/entities/server";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { GuildDto } from "@/shared";
 import { ServerAsideSection } from "@/widgets";
 
 function ServerPage() {
   const guild = useLoaderData() as GuildDto;
   const setGuild = useServerStore((s) => s.actions.setGuild);
+  const setActiveTextChannel = useServerStore(
+    (s) => s.actions.setActiveTextChannel,
+  );
   const activeTextChannel = useServerStore((s) => s.state.activeTextChannel);
 
   useGuildChannelEvents(guild.id);
 
   useEffect(() => {
     setGuild(guild);
-    return () => setGuild(null);
-  }, [guild, setGuild]);
+
+    return () => {
+      setGuild(null);
+      setActiveTextChannel(null);
+    };
+  }, [guild, setGuild, setActiveTextChannel]);
 
   return (
     <SplitPane
@@ -27,7 +34,13 @@ function ServerPage() {
       <Pane minSize={200} defaultSize={250} maxSize={500}>
         <ServerAsideSection />
       </Pane>
-      <Pane>{activeTextChannel && <GuildChat />}</Pane>
+      <Pane>
+        {activeTextChannel && (
+          <Suspense fallback={null}>
+            <GuildChat key={activeTextChannel.id} channel={activeTextChannel} />
+          </Suspense>
+        )}
+      </Pane>
     </SplitPane>
   );
 }

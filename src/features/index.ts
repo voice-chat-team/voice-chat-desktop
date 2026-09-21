@@ -6,3 +6,5 @@ export * from "./create-text-channel";
 export * from "./manage-guild-members";
 export * from "./guild-text-channel-chat";
 export * from "./logout";
+export * from "./create-board";
+export * from "./guild-board";

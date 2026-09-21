@@ -25,3 +25,6 @@ src/shared/api/generated/.openapi-generator
 *.njsproj
 *.sln
 *.sw?
+
+# Excalidraw fonts, copied from node_modules by scripts/copy-excalidraw-assets.mjs
+public/excalidraw-assets

@@ -4,13 +4,14 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
+    "dev": "node scripts/copy-excalidraw-assets.mjs && vite",
+    "build": "node scripts/copy-excalidraw-assets.mjs && tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
     "codegen": "openapi-generator-cli generate"
   },
   "dependencies": {
+    "@excalidraw/excalidraw": "^0.18.1",
     "@fontsource-variable/geist": "^5.2.8",
     "@hookform/resolvers": "^5.4.0",
     "@tailwindcss/vite": "^4.2.1",

@@ -20,7 +20,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self'; connect-src 'self' https://api.voice-chat-app.ru wss://centrifugo.voice-chat-app.ru; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self'"
+      "csp": "default-src 'self'; connect-src 'self' blob: https://api.voice-chat-app.ru wss://centrifugo.voice-chat-app.ru; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:"
     }
   },
   "bundle": {

@@ -32,24 +32,29 @@ const selectMessages = (data: ChannelMessagesCache) =>
 export const useChannelMessages = (channelId: string, guildId: string) =>
   useInfiniteQuery({
     queryKey: channelMessagesQueryKey(channelId),
-    queryFn: async ({ pageParam }) => {
+    queryFn: async ({ pageParam, signal }) => {
       const { data } = await messageApi.messageControllerGetChannelMessages(
         channelId,
         guildId,
         pageParam,
         MESSAGES_PAGE_SIZE,
+        { signal },
       );
 
+      // gRPC-клиент на гейтвее декодирует пустой repeated-филд как undefined
+      // (нет loader.defaults на стороне common/grpc), поэтому у пустого канала
+      // data.messages может отсутствовать вместо [].
+      const messages = data.messages ?? [];
+
       return {
-        messages: data.messages,
-        hasMore: data.messages.length === MESSAGES_PAGE_SIZE,
+        messages,
+        hasMore: messages.length === MESSAGES_PAGE_SIZE,
       };
     },
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage, allPages) => {
       if (!lastPage.hasMore) return undefined;
 
-      // realtime-удаления могут опустошить последнюю страницу
       for (let i = allPages.length - 1; i >= 0; i--) {
         const { messages } = allPages[i];
         if (messages.length > 0) return messages[messages.length - 1].id;
@@ -59,7 +64,6 @@ export const useChannelMessages = (channelId: string, guildId: string) =>
     },
     select: selectMessages,
     staleTime: Infinity,
-    // иначе фокус окна перезапрашивал бы все загруженные страницы и сбивал скролл
     refetchOnWindowFocus: false,
   });
 

@@ -122,12 +122,11 @@ export const GuildChat = ({ channel }: { channel: ChannelDto }) => {
               content={message.content}
               createdAt={message.createdAt}
               isEdited={message.isEdited}
+              isMyMessage={message.senderId === currentUser?.id}
             />
           );
         })}
       </GuildChatWrapper>
-
-      <Separator />
 
       <GuildChatFooter onSend={sendMessage} isSending={isSending} />
     </div>

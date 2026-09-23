@@ -50,15 +50,11 @@ export const useChannelMessageEvents = (channelId: string) => {
       }
     });
 
-    // Канал не recoverable, поэтому публикации в момент обрыва теряются. Догружаем
-    // историю при любой переподписке, а при первой — только если история успела
-    // прийти раньше, чем завершилась подписка.
     sub.on("subscribed", () => {
-      const queryKey = channelMessagesQueryKey(channelId);
-      const hadData = queryClient.getQueryData(queryKey) !== undefined;
-
-      if (!isFirstSubscribe || hadData) {
-        void queryClient.invalidateQueries({ queryKey });
+      if (!isFirstSubscribe) {
+        void queryClient.invalidateQueries({
+          queryKey: channelMessagesQueryKey(channelId),
+        });
       }
 
       isFirstSubscribe = false;

@@ -7,6 +7,7 @@ import { ServerAsideMembersListContainer } from "./ServerAsideMembersList";
 
 import { SkeletonAsideSectionItem } from "./SkeletonAsideSectionItem";
 import { ServerAsideTextChannelsContainer } from "./ServerAsideTextChannels";
+import { ServerAsideBoardsContainer } from "./ServerAsideBoards";
 
 export const ServerAsideSection = () => {
   return (
@@ -22,6 +23,12 @@ export const ServerAsideSection = () => {
 
         <Suspense fallback={<SkeletonAsideSectionItem />}>
           <ServerAsideTextChannelsContainer />
+        </Suspense>
+
+        <Separator />
+
+        <Suspense fallback={<SkeletonAsideSectionItem />}>
+          <ServerAsideBoardsContainer />
         </Suspense>
 
         <Separator />

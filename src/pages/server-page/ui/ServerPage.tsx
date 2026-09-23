@@ -1,7 +1,7 @@
 import { useLoaderData } from "react-router";
 import { SplitPane, Pane } from "react-split-pane";
 
-import { GuildChat } from "@/features";
+import { GuildBoard, GuildChat } from "@/features";
 import { useServerStore, useGuildChannelEvents } from "@/entities/server";
 import { Suspense, useEffect } from "react";
 import { GuildDto } from "@/shared";
@@ -10,10 +10,9 @@ import { ServerAsideSection } from "@/widgets";
 function ServerPage() {
   const guild = useLoaderData() as GuildDto;
   const setGuild = useServerStore((s) => s.actions.setGuild);
-  const setActiveTextChannel = useServerStore(
-    (s) => s.actions.setActiveTextChannel,
-  );
+  const resetActiveView = useServerStore((s) => s.actions.resetActiveView);
   const activeTextChannel = useServerStore((s) => s.state.activeTextChannel);
+  const activeBoard = useServerStore((s) => s.state.activeBoard);
 
   useGuildChannelEvents(guild.id);
 
@@ -22,9 +21,9 @@ function ServerPage() {
 
     return () => {
       setGuild(null);
-      setActiveTextChannel(null);
+      resetActiveView();
     };
-  }, [guild, setGuild, setActiveTextChannel]);
+  }, [guild, setGuild, resetActiveView]);
 
   return (
     <SplitPane
@@ -35,6 +34,12 @@ function ServerPage() {
         <ServerAsideSection />
       </Pane>
       <Pane>
+        {activeBoard && (
+          <Suspense fallback={null}>
+            <GuildBoard key={activeBoard.id} board={activeBoard} />
+          </Suspense>
+        )}
+
         {activeTextChannel && (
           <Suspense fallback={null}>
             <GuildChat key={activeTextChannel.id} channel={activeTextChannel} />

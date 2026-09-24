@@ -2,7 +2,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { guildApi } from "@/shared";
+import { CHANNEL_TYPE, guildApi, type ChannelTypeValue } from "@/shared";
 import {
   CreateChannelDtoSchema,
   CreateChannelSchemaModel,
@@ -10,6 +10,7 @@ import {
 
 export const useCreateChannel = (
   guildId: string,
+  channelType: ChannelTypeValue = CHANNEL_TYPE.TEXT,
   onSuccesCreateCb?: () => void,
 ) => {
   const queryClient = useQueryClient();
@@ -20,7 +21,7 @@ export const useCreateChannel = (
     defaultValues: {
       guildId,
       isPrivate: false,
-      type: 0,
+      type: channelType,
     },
   });
 
@@ -28,9 +29,9 @@ export const useCreateChannel = (
     form.reset({
       guildId,
       isPrivate: false,
-      type: 0,
+      type: channelType,
     });
-  }, [guildId, form]);
+  }, [guildId, channelType, form]);
 
   const { mutateAsync } = useMutation({
     mutationKey: ["create-new-channel"],
@@ -41,9 +42,16 @@ export const useCreateChannel = (
   const onSubmit: SubmitHandler<CreateChannelSchemaModel> = async (data) => {
     mutateAsync(data, {
       onSuccess: async () => {
-        await queryClient.invalidateQueries({
-          queryKey: ["get-guild-text-channels", guildId],
-        });
+        // Эндпоинт один на все типы каналов, а списки в сайдбаре разные,
+        // поэтому инвалидируем оба.
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: ["get-guild-text-channels", guildId],
+          }),
+          queryClient.invalidateQueries({
+            queryKey: ["get-guild-voice-channels", guildId],
+          }),
+        ]);
 
         form.reset();
 

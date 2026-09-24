@@ -14,11 +14,14 @@
 
 
 
-export * from './api/auth-api';
-export * from './api/guild-api';
-export * from './api/invitation-api';
-export * from './api/message-api';
-export * from './api/notification-api';
-export * from './api/user-api';
-export * from './api/voice-api';
+export interface JoinVoiceChannelRequestDto {
+    /**
+     * ID сервера
+     */
+    'guildId': string;
+    /**
+     * ID голосового канала
+     */
+    'channelId': string;
+}
 

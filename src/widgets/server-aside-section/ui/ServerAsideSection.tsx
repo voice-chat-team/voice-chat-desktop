@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { Separator } from "@/shared";
+import { VoiceControlPanel } from "@/features";
 
 import { ServerAsideHeader } from "./ServerAsideHeader";
 import { ServerAsideFooter } from "./ServerAsideFooter";
@@ -8,6 +9,7 @@ import { ServerAsideMembersListContainer } from "./ServerAsideMembersList";
 import { SkeletonAsideSectionItem } from "./SkeletonAsideSectionItem";
 import { ServerAsideTextChannelsContainer } from "./ServerAsideTextChannels";
 import { ServerAsideBoardsContainer } from "./ServerAsideBoards";
+import { ServerAsideVoiceChannelsContainer } from "./ServerAsideVoiceChannels";
 
 export const ServerAsideSection = () => {
   return (
@@ -15,9 +17,11 @@ export const ServerAsideSection = () => {
       <div className="flex flex-col gap-3 overflow-auto scrollbar-none pt-4">
         <ServerAsideHeader />
 
-        {/*<Separator />
+        <Separator />
 
-        <ServerAsideVoiceChannels />*/}
+        <Suspense fallback={<SkeletonAsideSectionItem />}>
+          <ServerAsideVoiceChannelsContainer />
+        </Suspense>
 
         <Separator />
 
@@ -40,6 +44,8 @@ export const ServerAsideSection = () => {
 
       <div>
         <Separator />
+
+        <VoiceControlPanel />
 
         <ServerAsideFooter />
       </div>

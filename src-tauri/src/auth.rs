@@ -126,7 +126,11 @@ impl AuthState {
 }
 
 #[tauri::command]
-pub async fn login(state: State<'_, AuthState>, email: String, password: String) -> Result<(), String> {
+pub async fn login(
+    state: State<'_, AuthState>,
+    email: String,
+    password: String,
+) -> Result<(), String> {
     state.login(&email, &password).await
 }
 

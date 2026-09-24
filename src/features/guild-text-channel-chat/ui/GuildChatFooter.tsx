@@ -1,24 +1,14 @@
 import { useState, type KeyboardEvent } from "react";
-import {
-  ArrowUpIcon,
-  PaperclipIcon,
-  PlusIcon,
-  SendHorizonal,
-} from "lucide-react";
+import { ArrowUpIcon, PaperclipIcon, PlusIcon, SmileIcon } from "lucide-react";
 
-import { Button } from "@/shared";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupTextarea,
 } from "@/shared/ui/input-group";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/shared/ui/dropdown-menu";
+import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover";
+import EmojiPicker, { EmojiStyle, Theme } from "emoji-picker-react";
 
 interface GuildChatFooterProps {
   onSend: (content: string) => Promise<boolean>;
@@ -51,25 +41,6 @@ export const GuildChatFooter = ({
     <div className="w-full">
       <InputGroup className="has-[[data-slot=input-group-control]:focus-visible]:border-input! has-[[data-slot=input-group-control]:focus-visible]:ring-0! bg-input/10! opacity-100!">
         <InputGroupAddon align="block-end">
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <InputGroupButton
-                aria-label="Add files"
-                type="button"
-                size="icon-sm"
-                variant="outline"
-              >
-                <PlusIcon />
-              </InputGroupButton>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" side="top" className="w-44">
-              <DropdownMenuItem>
-                <PaperclipIcon />
-                Add Photos & Files
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
           <InputGroupTextarea
             placeholder="Написать сообщение..."
             value={value}
@@ -78,6 +49,29 @@ export const GuildChatFooter = ({
             className="min-h-8 py-1.5"
           />
 
+          <Popover>
+            <PopoverTrigger asChild>
+              <InputGroupButton type="button" variant="ghost" size="icon-sm">
+                <SmileIcon />
+                <span className="sr-only">Выбрать эмодзи</span>
+              </InputGroupButton>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto border-none bg-transparent p-0 shadow-none ring-0">
+              <EmojiPicker
+                emojiStyle={EmojiStyle.GOOGLE}
+                width={350}
+                height={450}
+                theme={Theme.DARK}
+                lazyLoadEmojis
+                previewConfig={{
+                  showPreview: false,
+                }}
+                onEmojiClick={(emojiData) =>
+                  setValue((prev) => prev + emojiData.emoji)
+                }
+              />
+            </PopoverContent>
+          </Popover>
           <InputGroupButton
             type="submit"
             variant="default"

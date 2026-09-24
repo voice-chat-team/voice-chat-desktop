@@ -1,5 +1,5 @@
 import { useState, type KeyboardEvent } from "react";
-import { ArrowUpIcon, PaperclipIcon, PlusIcon, SmileIcon } from "lucide-react";
+import { ArrowUpIcon, SmileIcon } from "lucide-react";
 
 import {
   InputGroup,

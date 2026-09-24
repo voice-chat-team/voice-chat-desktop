@@ -38,6 +38,9 @@ export const ServerAsideVoiceChannels = ({
   members,
 }: ServerAsideVoiceChannelsProps) => {
   const guildId = useServerStore((store) => store.state.guild?.id);
+  const setActiveVoiceChannel = useServerStore(
+    (store) => store.actions.setActiveVoiceChannel,
+  );
   const activeVoiceChannelId = useVoiceStore((store) => store.state.channelId);
   const speakingUserIds = useVoiceStore((store) => store.state.speakingUserIds);
 
@@ -79,9 +82,13 @@ export const ServerAsideVoiceChannels = ({
               return (
                 <ServerAsideListItem
                   key={channel.id}
-                  onClick={() =>
-                    void join(channel.guildId, channel.id, channel.name)
-                  }
+                  onClick={() => {
+                    // Сцену показываем сразу; join сам ничего не делает, если мы
+                    // уже подключены к этому каналу, поэтому повторный клик
+                    // просто возвращает к плиткам участников.
+                    setActiveVoiceChannel(channel);
+                    void join(channel.guildId, channel.id, channel.name);
+                  }}
                 >
                   <ServerAsideListItemHeader>
                     <ServerAsideListTitle>

@@ -16,6 +16,8 @@ type VoiceState = {
     isDeafened: boolean;
     /** id говорящих прямо сейчас, приходит из LiveKit */
     speakingUserIds: string[];
+    /** id тех, у кого микрофон выключен — своих и чужих */
+    mutedUserIds: string[];
   };
   actions: {
     setConnecting: (
@@ -29,6 +31,7 @@ type VoiceState = {
     setMicMuted: (isMicMuted: boolean) => void;
     setDeafened: (isDeafened: boolean) => void;
     setSpeakingUserIds: (speakingUserIds: string[]) => void;
+    setMutedUserIds: (mutedUserIds: string[]) => void;
   };
 };
 
@@ -40,6 +43,7 @@ const initialState: VoiceState["state"] = {
   isMicMuted: false,
   isDeafened: false,
   speakingUserIds: [],
+  mutedUserIds: [],
 };
 
 /**
@@ -83,6 +87,10 @@ export const useVoiceStore = create<VoiceState>((set) => ({
     setSpeakingUserIds: (speakingUserIds) =>
       set((prev) => ({
         state: { ...prev.state, speakingUserIds },
+      })),
+    setMutedUserIds: (mutedUserIds) =>
+      set((prev) => ({
+        state: { ...prev.state, mutedUserIds },
       })),
   },
 }));

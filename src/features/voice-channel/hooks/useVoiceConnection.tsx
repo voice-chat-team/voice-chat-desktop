@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { toast } from "sonner";
 
+import { useServerStore } from "@/entities/server";
 import { useVoiceStore } from "@/entities/voice";
 import {
   connectToVoiceChannel,
@@ -29,6 +30,13 @@ export const useVoiceConnection = () => {
 
   const leave = useCallback(async () => {
     await disconnectFromVoiceChannel();
+
+    // Выход из разговора — явное действие пользователя, поэтому закрываем и
+    // сцену. При неожиданном обрыве она остаётся открытой с кнопкой
+    // «Подключиться»: так понятнее, что произошло.
+    if (useServerStore.getState().state.activeVoiceChannel) {
+      useServerStore.getState().actions.setActiveVoiceChannel(null);
+    }
   }, []);
 
   const toggleMic = useCallback(async () => {

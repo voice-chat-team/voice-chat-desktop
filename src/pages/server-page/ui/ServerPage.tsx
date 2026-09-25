@@ -1,7 +1,7 @@
 import { useLoaderData } from "react-router";
 import { SplitPane, Pane } from "react-split-pane";
 
-import { GuildBoard, GuildChat } from "@/features";
+import { GuildBoard, GuildChat, VoiceChannelStage } from "@/features";
 import { useServerStore, useGuildChannelEvents } from "@/entities/server";
 import { Suspense, useEffect } from "react";
 import { GuildDto } from "@/shared";
@@ -13,6 +13,7 @@ function ServerPage() {
   const resetActiveView = useServerStore((s) => s.actions.resetActiveView);
   const activeTextChannel = useServerStore((s) => s.state.activeTextChannel);
   const activeBoard = useServerStore((s) => s.state.activeBoard);
+  const activeVoiceChannel = useServerStore((s) => s.state.activeVoiceChannel);
 
   useGuildChannelEvents(guild.id);
 
@@ -43,6 +44,15 @@ function ServerPage() {
         {activeTextChannel && (
           <Suspense fallback={null}>
             <GuildChat key={activeTextChannel.id} channel={activeTextChannel} />
+          </Suspense>
+        )}
+
+        {activeVoiceChannel && (
+          <Suspense fallback={null}>
+            <VoiceChannelStage
+              key={activeVoiceChannel.id}
+              channel={activeVoiceChannel}
+            />
           </Suspense>
         )}
       </Pane>

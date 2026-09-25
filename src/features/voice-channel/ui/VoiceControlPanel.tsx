@@ -8,10 +8,18 @@ import {
 } from "lucide-react";
 
 import { useVoiceStore } from "@/entities/voice";
-import { Button, cn } from "@/shared";
+import {
+  Avatar,
+  AvatarFallback,
+  Button,
+  createAbbr,
+  useCurrentUser,
+} from "@/shared";
 import { useVoiceConnection } from "../hooks/useVoiceConnection";
 
 export const VoiceControlPanel = () => {
+  const { data: user } = useCurrentUser();
+
   const status = useVoiceStore((store) => store.state.status);
   const channelName = useVoiceStore((store) => store.state.channelName);
   const { isMicMuted, isDeafened, leave, toggleMic, toggleDeafen } =
@@ -27,59 +35,67 @@ export const VoiceControlPanel = () => {
         : "Подключение…";
 
   return (
-    <div className="pt-3 flex flex-col gap-2">
-      <div className="flex items-center gap-1.5 text-xs text-secondary/70 truncate">
-        <Volume2
-          size={14}
-          className={cn(status === "connected" && "text-green-500")}
-        />
+    <div className="pt-3 flex flex-col gap-2.5">
+      <div className="flex items-center gap-1.5 text-sm text-secondary/70 truncate">
+        <Volume2 size={15} />
         <span className="truncate">{statusTitle}</span>
       </div>
 
-      <div className="flex gap-1">
-        <Button
-          variant="ghost"
-          size="sm"
-          type="button"
-          title={isMicMuted ? "Включить микрофон" : "Выключить микрофон"}
-          aria-label={isMicMuted ? "Включить микрофон" : "Выключить микрофон"}
-          onClick={() => void toggleMic()}
-          className="cursor-pointer h-8 w-8"
-        >
-          {isMicMuted ? (
-            <MicOff size={16} className="text-red-500" />
-          ) : (
-            <Mic size={16} />
-          )}
-        </Button>
+      <div className="flex justify-between">
+        <div className="flex items-center gap-2 truncate">
+          <Avatar>
+            <AvatarFallback className="font-medium">
+              {createAbbr(user?.username ?? "", 1)}
+            </AvatarFallback>
+          </Avatar>
+          <p className="truncate">{user?.username}</p>
+        </div>
 
-        <Button
-          variant="ghost"
-          size="sm"
-          type="button"
-          title={isDeafened ? "Включить звук" : "Выключить звук"}
-          aria-label={isDeafened ? "Включить звук" : "Выключить звук"}
-          onClick={() => void toggleDeafen()}
-          className="cursor-pointer h-8 w-8"
-        >
-          {isDeafened ? (
-            <HeadphoneOff size={16} className="text-red-500" />
-          ) : (
-            <Headphones size={16} />
-          )}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            type="button"
+            title={isDeafened ? "Включить звук" : "Выключить звук"}
+            aria-label={isDeafened ? "Включить звук" : "Выключить звук"}
+            onClick={() => void toggleDeafen()}
+            className="cursor-pointer h-8 w-8"
+          >
+            {isDeafened ? (
+              <HeadphoneOff size={18} className="text-red-500" />
+            ) : (
+              <Headphones size={18} />
+            )}
+          </Button>
 
-        <Button
-          variant="ghost"
-          size="sm"
-          type="button"
-          title="Отключиться"
-          aria-label="Отключиться"
-          onClick={() => void leave()}
-          className="cursor-pointer h-8 w-8 ml-auto"
-        >
-          <PhoneOff size={16} className="text-red-500" />
-        </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            type="button"
+            title={isMicMuted ? "Включить микрофон" : "Выключить микрофон"}
+            aria-label={isMicMuted ? "Включить микрофон" : "Выключить микрофон"}
+            onClick={() => void toggleMic()}
+            className="cursor-pointer h-8 w-8"
+          >
+            {isMicMuted ? (
+              <MicOff size={18} className="text-red-500" />
+            ) : (
+              <Mic size={18} />
+            )}
+          </Button>
+
+          <Button
+            variant="destructive"
+            size="sm"
+            type="button"
+            title="Отключиться"
+            aria-label="Отключиться"
+            onClick={() => void leave()}
+            className="cursor-pointer h-8 w-8 "
+          >
+            <PhoneOff size={18} className="text-red-500" />
+          </Button>
+        </div>
       </div>
     </div>
   );

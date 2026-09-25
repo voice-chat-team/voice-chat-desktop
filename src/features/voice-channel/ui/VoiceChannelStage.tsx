@@ -30,7 +30,8 @@ export const VoiceChannelStage = ({ channel }: { channel: ChannelDto }) => {
   const { data: participants } = useGuildVoiceParticipants(channel.guildId);
   const { data: currentUser } = useCurrentUser();
 
-  const isConnectedHere = connectedChannelId === channel.id && status !== "idle";
+  const isConnectedHere =
+    connectedChannelId === channel.id && status !== "idle";
 
   const stageParticipants = useMemo<StageParticipant[]>(() => {
     const usernameById = new Map(
@@ -65,7 +66,7 @@ export const VoiceChannelStage = ({ channel }: { channel: ChannelDto }) => {
           <Volume2 size={16} />
           {channel.name}
           {channel.isPrivate && <Lock size={15} />}
-          <span className="text-xs text-secondary/60">
+          <span className="text-white bg-secondary/20 px-1.5 py-0.5 rounded-sm">
             {stageParticipants.length}
           </span>
         </h2>
@@ -78,7 +79,9 @@ export const VoiceChannelStage = ({ channel }: { channel: ChannelDto }) => {
             <Button
               variant="default"
               type="button"
-              onClick={() => void join(channel.guildId, channel.id, channel.name)}
+              onClick={() =>
+                void join(channel.guildId, channel.id, channel.name)
+              }
             >
               Подключиться
             </Button>

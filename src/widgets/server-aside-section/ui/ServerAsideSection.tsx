@@ -1,6 +1,5 @@
 import { Suspense } from "react";
 import { Separator } from "@/shared";
-import { VoiceControlPanel } from "@/features";
 
 import { ServerAsideHeader } from "./ServerAsideHeader";
 import { ServerAsideFooter } from "./ServerAsideFooter";
@@ -42,13 +41,7 @@ export const ServerAsideSection = () => {
         </Suspense>
       </div>
 
-      <div>
-        <Separator />
-
-        <VoiceControlPanel />
-
-        <ServerAsideFooter />
-      </div>
+      <ServerAsideFooter />
     </aside>
   );
 };

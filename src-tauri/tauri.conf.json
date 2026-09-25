@@ -20,7 +20,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self'; connect-src 'self' blob: https://api.voice-chat-app.ru wss://centrifugo.voice-chat-app.ru https://livekit.voice-chat-app.ru wss://livekit.voice-chat-app.ru; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:"
+      "csp": "default-src 'self'; connect-src 'self' blob: https://api.voice-chat-app.ru wss://centrifugo.voice-chat-app.ru https://livekit.voice-chat-app.ru wss://livekit.voice-chat-app.ru; img-src 'self' data: blob: https://cdn.jsdelivr.net; media-src 'self' blob: mediastream:; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self' blob:"
     }
   },
   "bundle": {

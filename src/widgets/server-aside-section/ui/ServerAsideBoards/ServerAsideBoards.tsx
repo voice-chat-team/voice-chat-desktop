@@ -11,14 +11,16 @@ import {
   DEFAILT_ICONS_TITLE_SIZE,
   DEFAILT_ICONS_TOP_TITLE_SIZE,
 } from "../../models";
-import { Button, cn, type BoardDto } from "@/shared";
+import { Button, type BoardDto } from "@/shared";
 import { useState } from "react";
 import { useServerStore } from "@/entities/server";
 
 export const ServerAsideBoards = ({ boards }: { boards: BoardDto[] }) => {
   const guildId = useServerStore((store) => store.state.guild?.id);
-  const activeBoard = useServerStore((store) => store.state.activeBoard);
-  const setActiveBoard = useServerStore((store) => store.actions.setActiveBoard);
+  const activeBoardId = useServerStore((store) => store.state.activeBoard?.id);
+  const setActiveBoard = useServerStore(
+    (store) => store.actions.setActiveBoard,
+  );
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
@@ -48,7 +50,7 @@ export const ServerAsideBoards = ({ boards }: { boards: BoardDto[] }) => {
               <ServerAsideListItem
                 key={board.id}
                 onClick={() => setActiveBoard(board)}
-                className={cn(activeBoard?.id === board.id && "bg-accent/20")}
+                isActive={activeBoardId === board.id}
               >
                 <ServerAsideListItemHeader>
                   <ServerAsideListTitle>

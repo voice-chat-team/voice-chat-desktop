@@ -5,7 +5,7 @@ import { Link } from "react-router";
 
 export const SettingsAsideSection = () => {
   return (
-    <aside className="h-svh p-2 flex flex-col justify-between overflow-y-hidden">
+    <aside className="bg-zinc-900 h-svh p-2 flex flex-col justify-between overflow-y-hidden">
       <Link
         to={ROUTES.WELCOME}
         className="flex items-center gap-2 text-zinc-400 hover:text-white text-sm px-3 py-2 rounded-lg hover:bg-zinc-800 transition-colors cursor-pointer"

@@ -18,7 +18,7 @@ export const VoiceParticipantTile = ({
   return (
     <div
       className={cn(
-        "relative aspect-video min-h-35 rounded-xl bg-zinc-800/60",
+        "relative size-full rounded-xl bg-zinc-800/60",
         "flex flex-col items-center justify-center gap-3",
         "border-2 border-transparent transition-colors duration-150",
         isSpeaking && "border-violet-500 bg-violet-500/10",

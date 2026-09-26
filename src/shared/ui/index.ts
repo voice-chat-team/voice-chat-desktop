@@ -13,3 +13,8 @@ export * from "./form-controls";
 export * from "./scroll-area";
 export * from "./select";
 export * from "./popover";
+export * from "./slider";
+export * from "./radio-group";
+export * from "./progress";
+export * from "./tabs";
+export * from "./badge";

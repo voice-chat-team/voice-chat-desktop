@@ -2,12 +2,15 @@ use std::path::PathBuf;
 
 use aes_gcm::aead::{Aead, AeadCore, KeyInit};
 use aes_gcm::{Aes256Gcm, Nonce};
+#[cfg(desktop)]
 use keyring::Entry;
 use rand::rngs::OsRng;
 use rand::RngCore;
 use serde::{Deserialize, Serialize};
 
+#[cfg(desktop)]
 const SERVICE: &str = "voice-chat-app";
+#[cfg(desktop)]
 const ACCOUNT: &str = "auth-tokens";
 const NONCE_LEN: usize = 12;
 const KEY_LEN: usize = 32;
@@ -27,15 +30,18 @@ pub trait TokenStorage: Send + Sync {
     fn save(&self, tokens: &Tokens) -> Result<(), String>;
     fn clear(&self) -> Result<(), String>;
 
+    #[cfg(desktop)]
     fn available(&self) -> bool {
         self.load().is_ok()
     }
 }
 
 /// OS keychain storage (Windows Credential Manager / macOS Keychain /
-/// Linux Secret Service).
+/// Linux Secret Service). Desktop only — `keyring` has no mobile backend.
+#[cfg(desktop)]
 pub struct KeyringStorage;
 
+#[cfg(desktop)]
 impl TokenStorage for KeyringStorage {
     fn load(&self) -> Result<Option<Tokens>, String> {
         let entry = Entry::new(SERVICE, ACCOUNT).map_err(|e| e.to_string())?;
@@ -66,7 +72,8 @@ impl TokenStorage for KeyringStorage {
 }
 
 /// Fallback storage: AES-256-GCM encrypted file. Used when no OS keychain
-/// backend is available (e.g. Linux without a Secret Service).
+/// backend is available (e.g. Linux without a Secret Service), and always on
+/// mobile, where the app config dir is inside the app's private sandbox.
 pub struct EncryptedFileStorage {
     dir: PathBuf,
 }

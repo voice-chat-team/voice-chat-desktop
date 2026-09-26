@@ -3,14 +3,12 @@ import { Lock, Volume2 } from "lucide-react";
 
 import { useVoiceStore } from "@/entities/voice";
 import {
-  Button,
   useCurrentUser,
   useGuildMembers,
   useGuildVoiceParticipants,
   type ChannelDto,
 } from "@/shared";
 
-import { useVoiceConnection } from "../hooks/useVoiceConnection";
 import { VoiceParticipantTile } from "./VoiceParticipantTile";
 import { Skeleton } from "@/shared/ui/skeleton";
 

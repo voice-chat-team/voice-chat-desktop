@@ -3,7 +3,9 @@ use std::sync::Mutex;
 
 use tauri::State;
 
-use crate::storage::{EncryptedFileStorage, KeyringStorage, TokenStorage, Tokens};
+#[cfg(desktop)]
+use crate::storage::KeyringStorage;
+use crate::storage::{EncryptedFileStorage, TokenStorage, Tokens};
 
 const BASE_URL: &str = "https://api.voice-chat-app.ru";
 
@@ -16,12 +18,17 @@ pub struct AuthState {
 
 impl AuthState {
     pub fn new(dir: PathBuf) -> Self {
-        let keyring = KeyringStorage;
-        let storage: Box<dyn TokenStorage> = if keyring.available() {
-            Box::new(keyring)
-        } else {
-            Box::new(EncryptedFileStorage::new(dir))
+        #[cfg(desktop)]
+        let storage: Box<dyn TokenStorage> = {
+            let keyring = KeyringStorage;
+            if keyring.available() {
+                Box::new(keyring)
+            } else {
+                Box::new(EncryptedFileStorage::new(dir))
+            }
         };
+        #[cfg(mobile)]
+        let storage: Box<dyn TokenStorage> = Box::new(EncryptedFileStorage::new(dir));
 
         Self {
             storage,

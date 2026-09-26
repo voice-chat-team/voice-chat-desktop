@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, type CSSProperties } from "react";
 import { Lock, Volume2 } from "lucide-react";
 
 import { useVoiceStore } from "@/entities/voice";
@@ -12,6 +12,7 @@ import {
 
 import { useVoiceConnection } from "../hooks/useVoiceConnection";
 import { VoiceParticipantTile } from "./VoiceParticipantTile";
+import { Skeleton } from "@/shared/ui/skeleton";
 
 type StageParticipant = {
   userId: string;
@@ -24,14 +25,16 @@ export const VoiceChannelStage = ({ channel }: { channel: ChannelDto }) => {
   const connectedChannelId = useVoiceStore((store) => store.state.channelId);
   const status = useVoiceStore((store) => store.state.status);
 
-  const { join } = useVoiceConnection();
-
   const { data: members } = useGuildMembers(channel.guildId);
   const { data: participants } = useGuildVoiceParticipants(channel.guildId);
   const { data: currentUser } = useCurrentUser();
 
   const isConnectedHere =
     connectedChannelId === channel.id && status !== "idle";
+
+  const isConnecting =
+    connectedChannelId === channel.id &&
+    (status === "connecting" || status === "reconnecting");
 
   const stageParticipants = useMemo<StageParticipant[]>(() => {
     const usernameById = new Map(
@@ -46,8 +49,6 @@ export const VoiceChannelStage = ({ channel }: { channel: ChannelDto }) => {
       }))
       .filter((entry): entry is StageParticipant => Boolean(entry.username));
 
-    // Своя плитка появляется сразу, не дожидаясь вебхука LiveKit и ответа
-    // сервера, — иначе сцена секунду выглядит пустой после подключения.
     if (
       isConnectedHere &&
       currentUser &&
@@ -59,9 +60,15 @@ export const VoiceChannelStage = ({ channel }: { channel: ChannelDto }) => {
     return list;
   }, [members, participants, channel.id, isConnectedHere, currentUser]);
 
+  const gridSize = useMemo(() => {
+    const count = Math.max(stageParticipants.length, 1);
+    const cols = Math.ceil(Math.sqrt(count));
+    return { cols, rows: Math.ceil(count / cols) };
+  }, [stageParticipants.length]);
+
   return (
-    <div className="flex h-full flex-col">
-      <div className="px-4 py-4">
+    <div className="flex h-full flex-col px-4 py-4 gap-3">
+      <div>
         <h2 className="flex items-center gap-2">
           <Volume2 size={16} />
           {channel.name}
@@ -72,48 +79,37 @@ export const VoiceChannelStage = ({ channel }: { channel: ChannelDto }) => {
         </h2>
       </div>
 
-      {stageParticipants.length === 0 ? (
-        <div className="flex flex-1 flex-col items-center justify-center gap-4 text-secondary/70">
-          <p className="text-sm">В канале пока никого нет</p>
-          {!isConnectedHere && (
-            <Button
-              variant="default"
-              type="button"
-              onClick={() =>
-                void join(channel.guildId, channel.id, channel.name)
-              }
-            >
-              Подключиться
-            </Button>
-          )}
-        </div>
+      {isConnecting ? (
+        <Skeleton className="flex flex-1 flex-col items-center justify-center gap-4 bg-gray-400/10">
+          Подключение к комнате...
+        </Skeleton>
       ) : (
-        <div className="flex-1 overflow-auto scrollbar-none px-4 pb-4">
-          <div className="grid gap-3 grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
+        <div className="flex-1 min-h-0 overflow-auto scrollbar-none">
+          <div
+            className="flex h-full flex-wrap content-stretch justify-center gap-3"
+            style={
+              {
+                "--cols": gridSize.cols,
+                "--rows": gridSize.rows,
+              } as CSSProperties
+            }
+          >
             {stageParticipants.map(({ userId, username }) => (
-              <VoiceParticipantTile
+              <div
                 key={userId}
-                username={username}
-                isSpeaking={isConnectedHere && speakingUserIds.includes(userId)}
-                isMuted={isConnectedHere && mutedUserIds.includes(userId)}
-                isCurrentUser={userId === currentUser?.id}
-              />
+                className="w-[calc((100%-(var(--cols)-1)*0.75rem)/var(--cols))] h-[calc((100%-(var(--rows)-1)*0.75rem)/var(--rows))] min-h-35"
+              >
+                <VoiceParticipantTile
+                  username={username}
+                  isSpeaking={
+                    isConnectedHere && speakingUserIds.includes(userId)
+                  }
+                  isMuted={isConnectedHere && mutedUserIds.includes(userId)}
+                  isCurrentUser={userId === currentUser?.id}
+                />
+              </div>
             ))}
           </div>
-
-          {!isConnectedHere && (
-            <div className="flex justify-center pt-6">
-              <Button
-                variant="default"
-                type="button"
-                onClick={() =>
-                  void join(channel.guildId, channel.id, channel.name)
-                }
-              >
-                Подключиться
-              </Button>
-            </div>
-          )}
         </div>
       )}
     </div>

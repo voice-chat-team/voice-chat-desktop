@@ -1,7 +1,7 @@
 import { useState, type KeyboardEvent } from "react";
 import { SendHorizontal, SmileIcon } from "lucide-react";
 
-import { cn } from "@/shared";
+import { cn, useIsMobile } from "@/shared";
 import {
   InputGroup,
   InputGroupAddon,
@@ -21,6 +21,7 @@ export const GuildChatFooter = ({
   isSending,
 }: GuildChatFooterProps) => {
   const [value, setValue] = useState("");
+  const isMobile = useIsMobile();
 
   const canSend = value.trim().length > 0 && !isSending;
 
@@ -32,7 +33,9 @@ export const GuildChatFooter = ({
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key !== "Enter" || event.shiftKey) return;
+    // На телефоне у клавиатуры нет Shift+Enter, поэтому Enter там переносит
+    // строку, а отправка идёт кнопкой.
+    if (isMobile || event.key !== "Enter" || event.shiftKey) return;
 
     event.preventDefault();
     void handleSend();
@@ -65,7 +68,7 @@ export const GuildChatFooter = ({
             <PopoverContent className="w-auto border-none bg-transparent p-0 shadow-none ring-0">
               <EmojiPicker
                 emojiStyle={EmojiStyle.GOOGLE}
-                width={350}
+                width="min(350px, calc(100vw - 2rem))"
                 height={450}
                 theme={Theme.DARK}
                 lazyLoadEmojis

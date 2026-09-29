@@ -78,7 +78,7 @@ export const AccountSettingsTab = () => {
                     {createAbbr(user?.username ?? "", 1)}
                   </AvatarFallback>
                 </Avatar>
-                <span className="absolute inset-0 flex items-center justify-center rounded-full bg-black/60 opacity-0 transition-opacity group-hover/avatar-upload:opacity-100">
+                <span className="absolute inset-0 flex items-center justify-center rounded-full bg-black/60 opacity-0 transition-opacity group-hover/avatar-upload:opacity-100 [@media(hover:none)]:opacity-100">
                   <Camera className="size-6 text-white" />
                 </span>
               </button>

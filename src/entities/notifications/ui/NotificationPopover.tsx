@@ -25,7 +25,7 @@ export default function NotificationsPopover({
         side="right"
         align="end"
         sideOffset={15}
-        className="w-80 gap-0 overflow-hidden p-0"
+        className="w-80 max-w-[calc(100vw-2rem)] gap-0 overflow-hidden p-0"
       >
         <div className="flex items-center justify-between border-b border-border-subtle px-4 py-3">
           <div className="flex items-center gap-2">

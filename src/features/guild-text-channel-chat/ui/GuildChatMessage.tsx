@@ -45,7 +45,7 @@ export const GuildChatMessage = ({
         <div className="flex w-9 shrink-0 items-center justify-center">
           <time
             dateTime={createdAt}
-            className="hidden text-[10px] leading-4 font-medium text-text-muted group-hover:block"
+            className="hidden text-[10px] leading-4 font-medium text-text-muted group-hover:block [@media(hover:none)]:block"
           >
             {time}
           </time>

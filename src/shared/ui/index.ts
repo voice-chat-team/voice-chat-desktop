@@ -18,3 +18,4 @@ export * from "./radio-group";
 export * from "./progress";
 export * from "./tabs";
 export * from "./badge";
+export * from "./sheet";

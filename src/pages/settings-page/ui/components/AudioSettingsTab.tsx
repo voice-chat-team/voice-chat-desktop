@@ -20,7 +20,6 @@ import { SettingsSection } from "./SettingsSection";
 
 const DEFAULT_DEVICE = "default";
 
-// Подписи полей — как в FormInput: стиль label (капс, text-label).
 const fieldLabelClass =
   "flex items-center gap-2 text-xs leading-4 font-bold tracking-[0.04em] text-text-label uppercase";
 

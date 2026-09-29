@@ -1,4 +1,9 @@
-import { createAbbr, ROUTES, useUserServers } from "@/shared";
+import {
+  createAbbr,
+  getAvatarColorClass,
+  ROUTES,
+  useUserServers,
+} from "@/shared";
 import { SideBarActionButton, SideBarInnerButton } from "./SideBarButton";
 
 export const SideBarGuildList = () => {
@@ -9,8 +14,11 @@ export const SideBarGuildList = () => {
       {!isError &&
         guilds?.map((guild) => (
           <SideBarActionButton key={guild.id} tooltipContent={guild.name}>
-            <SideBarInnerButton to={ROUTES.SERVER(guild.id)}>
-              <p className="font-medium">{createAbbr(guild.name, 2)}</p>
+            <SideBarInnerButton
+              to={ROUTES.SERVER(guild.id)}
+              colorClassName={getAvatarColorClass(guild.id)}
+            >
+              {createAbbr(guild.name, 2)}
             </SideBarInnerButton>
           </SideBarActionButton>
         ))}

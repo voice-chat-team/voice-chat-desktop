@@ -43,14 +43,14 @@ export const CreateChannelModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-zinc-900 border-zinc-800 text-white">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>
             {isVoiceChannel
               ? "Создание голосового канала"
               : "Создание текстового канала"}
           </DialogTitle>
-          <DialogDescription className="text-zinc-400">
+          <DialogDescription>
             Введите название канала
           </DialogDescription>
         </DialogHeader>
@@ -75,13 +75,13 @@ export const CreateChannelModal = ({
           </div>
           <DialogFooter>
             <Button
-              variant="outline"
+              variant="subtle"
               type="button"
               onClick={() => onOpenChange(false)}
             >
               Отмена
             </Button>
-            <Button variant="default" type="submit" disabled={!isValid}>
+            <Button variant="brand" type="submit" disabled={!isValid}>
               Создать канал
             </Button>
           </DialogFooter>

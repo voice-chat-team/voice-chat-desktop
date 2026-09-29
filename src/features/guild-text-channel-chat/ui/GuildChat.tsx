@@ -1,7 +1,6 @@
-import { useLayoutEffect, useMemo, useRef } from "react";
+import { Fragment, useLayoutEffect, useMemo, useRef } from "react";
 
 import {
-  Separator,
   useChannelMessages,
   useCurrentUser,
   useGuildMembers,
@@ -9,10 +8,11 @@ import {
 } from "@/shared";
 
 import { useChannelMessageEvents, useSendMessage } from "../hooks";
+import { formatDayLabel, isGroupStart, isNewDay } from "../lib";
 import { GuildChatHeader } from "./GuildChatHeader";
 import { GuildChatFooter } from "./GuildChatFooter";
 import { GuildChatWrapper } from "./GuildChatWrapper";
-import { GuildChatMessage } from "./GuildChatMessage";
+import { GuildChatDayDivider, GuildChatMessage } from "./GuildChatMessage";
 
 const NEAR_BOTTOM_PX = 120;
 const TOP_TRIGGER_PX = 80;
@@ -94,36 +94,42 @@ export const GuildChat = ({ channel }: { channel: ChannelDto }) => {
     <div className="flex flex-col h-full">
       <GuildChatHeader />
 
-      <Separator />
-
       <GuildChatWrapper ref={scrollRef} onScroll={handleScroll}>
         {isPending && (
-          <p className="m-auto text-sm text-accent">Загрузка сообщений...</p>
+          <p className="m-auto text-sm text-text-faint">Загрузка сообщений...</p>
         )}
 
         {!isPending && messages?.length === 0 && (
-          <p className="m-auto text-sm text-accent">
+          <p className="m-auto text-sm text-text-faint">
             Здесь пока нет сообщений. Напишите первое!
           </p>
         )}
 
         {isFetchingNextPage && (
-          <p className="text-center text-xs text-accent">Загрузка истории...</p>
+          <p className="text-center text-xs text-text-muted">
+            Загрузка истории...
+          </p>
         )}
 
-        {messages?.map((message) => {
+        {messages?.map((message, index) => {
           const author = authors.get(message.senderId);
+          const previous = index > 0 ? messages[index - 1] : undefined;
 
           return (
-            <GuildChatMessage
-              key={message.id}
-              username={author?.username ?? "Неизвестный пользователь"}
-              avatarUrl={author?.avatarUrl}
-              content={message.content}
-              createdAt={message.createdAt}
-              isEdited={message.isEdited}
-              isMyMessage={message.senderId === currentUser?.id}
-            />
+            <Fragment key={message.id}>
+              {isNewDay(previous, message) && (
+                <GuildChatDayDivider label={formatDayLabel(message.createdAt)} />
+              )}
+              <GuildChatMessage
+                authorId={message.senderId}
+                username={author?.username ?? "Неизвестный пользователь"}
+                avatarUrl={author?.avatarUrl}
+                content={message.content}
+                createdAt={message.createdAt}
+                isEdited={message.isEdited}
+                isGroupStart={isGroupStart(previous, message)}
+              />
+            </Fragment>
           );
         })}
       </GuildChatWrapper>

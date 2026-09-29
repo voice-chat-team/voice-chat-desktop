@@ -17,8 +17,8 @@ export const LogoutButton = () => {
   return (
     <Button
       onClick={handleLogout}
-      variant="default"
-      className="bg-transparent border-red-800 text-red-400 hover:bg-red-700/50 hover:text-red-300 hover:border-red-700"
+      variant="subtle"
+      className="border-status-dnd/60 text-status-dnd hover:border-status-dnd hover:bg-status-dnd hover:text-text-on-brand"
     >
       <LogOut className="w-4 h-4 mr-2" />
       Выйти из аккаунта

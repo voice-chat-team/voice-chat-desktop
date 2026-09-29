@@ -4,7 +4,9 @@ import {
   AvatarFallback,
   AvatarImage,
   Button,
+  cn,
   createAbbr,
+  getAvatarColorClass,
   FormInput,
   useCurrentUser,
 } from "@/shared";
@@ -54,19 +56,25 @@ export const AccountSettingsTab = () => {
   return (
     <div className="flex flex-col gap-6">
       <SettingsSection title="Профиль">
-        <div className="overflow-hidden rounded-lg border border-white/5">
-          <div className="h-24 bg-linear-to-r from-indigo-500/60 via-violet-500/50 to-fuchsia-500/40" />
-          <div className="flex flex-wrap items-end justify-between gap-4 bg-zinc-900 px-4 pb-4">
+        <div className="overflow-hidden rounded-md border border-border-subtle">
+          {/* Баннер в цвет аватара пользователя — тот же, что в чате и списках. */}
+          <div className={cn("h-24", user && getAvatarColorClass(user.id))} />
+          <div className="flex flex-wrap items-end justify-between gap-4 bg-surface-200 px-4 pb-4">
             <div className="flex items-end gap-4">
               <button
                 type="button"
                 onClick={openFilePicker}
                 aria-label="Изменить аватар"
-                className="group/avatar-upload relative -mt-10 rounded-full ring-6 ring-zinc-900 cursor-pointer"
+                className="group/avatar-upload relative -mt-10 rounded-full ring-6 ring-surface-200 cursor-pointer"
               >
                 <Avatar size="extra">
                   {avatarSrc && <AvatarImage src={avatarSrc} />}
-                  <AvatarFallback className="text-2xl font-semibold">
+                  <AvatarFallback
+                    className={cn(
+                      "text-2xl font-semibold text-text-on-brand",
+                      user && getAvatarColorClass(user.id),
+                    )}
+                  >
                     {createAbbr(user?.username ?? "", 1)}
                   </AvatarFallback>
                 </Avatar>
@@ -75,22 +83,27 @@ export const AccountSettingsTab = () => {
                 </span>
               </button>
               <div className="flex flex-col pb-1">
-                <p className="text-lg font-semibold text-white">
+                <p className="text-lg leading-6 font-bold text-text-primary">
                   {user?.username}
                 </p>
-                <p className="text-sm text-zinc-400">{user?.email}</p>
+                <p className="text-sm text-text-muted">{user?.email}</p>
               </div>
             </div>
 
             <div className="flex gap-2">
-              <Button type="button" size="sm" onClick={openFilePicker}>
+              <Button
+                type="button"
+                size="sm"
+                variant="subtle"
+                onClick={openFilePicker}
+              >
                 <Upload />
                 Загрузить аватар
               </Button>
               <Button
                 type="button"
                 size="sm"
-                variant="ghost"
+                variant="subtle"
                 disabled={!avatarPreview}
                 onClick={() => setAvatarPreview(null)}
               >
@@ -100,7 +113,7 @@ export const AccountSettingsTab = () => {
             </div>
           </div>
         </div>
-        <p className="text-xs text-zinc-500">
+        <p className="text-xs text-text-muted">
           Рекомендуемый размер — не менее 256×256 пикселей. PNG или JPG, до 5
           МБ.
         </p>
@@ -135,13 +148,13 @@ export const AccountSettingsTab = () => {
         <div className="flex justify-end gap-2">
           <Button
             type="button"
-            variant="ghost"
+            variant="subtle"
             disabled={!isProfileDirty}
             onClick={resetProfile}
           >
             Отменить
           </Button>
-          <Button type="button" disabled={!isProfileDirty}>
+          <Button type="button" variant="brand" disabled={!isProfileDirty}>
             Сохранить изменения
           </Button>
         </div>
@@ -171,7 +184,7 @@ export const AccountSettingsTab = () => {
           </div>
         </div>
         <div className="flex justify-end">
-          <Button type="button" variant="secondary">
+          <Button type="button" variant="brand">
             Изменить пароль
           </Button>
         </div>
@@ -180,7 +193,7 @@ export const AccountSettingsTab = () => {
       <SettingsSection
         title="Выход из аккаунта"
         description="Завершить сеанс на этом устройстве. Для входа потребуется снова ввести логин и пароль."
-        className="border-red-900/40 bg-red-950/10"
+        className="border-status-dnd/40 bg-status-dnd/5"
         action={<LogoutButton />}
       />
     </div>

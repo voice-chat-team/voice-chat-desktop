@@ -17,7 +17,7 @@ export default function NotificationsPopover({
       <div className="relative">
         <PopoverTrigger asChild>{children}</PopoverTrigger>
         {isNewNotifications && (
-          <span className="absolute w-2.5 h-2.5 right-0 bottom-0 rounded-full bg-violet-600" />
+          <span className="pointer-events-none absolute top-1 right-1 size-3 rounded-full border-2 border-surface-000 bg-status-dnd" />
         )}
       </div>
 
@@ -25,28 +25,34 @@ export default function NotificationsPopover({
         side="right"
         align="end"
         sideOffset={15}
-        className="w-80 p-0 bg-zinc-950 border-zinc-800 shadow-2xl rounded-xl overflow-hidden"
+        className="w-80 gap-0 overflow-hidden p-0"
       >
-        <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800">
+        <div className="flex items-center justify-between border-b border-border-subtle px-4 py-3">
           <div className="flex items-center gap-2">
-            <Bell className="w-4 h-4 text-zinc-400" />
-            <span className="text-sm font-semibold text-white">
+            <Bell className="size-4 text-text-faint" />
+            <span className="text-base leading-[22px] font-semibold text-text-primary">
               Уведомления
             </span>
           </div>
-          {/*<button className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
+          {/*<button className="flex items-center gap-1 text-xs text-text-muted hover:text-text-secondary transition-colors">
             <CheckCheck className="w-3 h-3" />
             Прочитать все
           </button>*/}
         </div>
 
-        <div className="max-h-96 overflow-y-auto p-2 flex flex-col gap-1.5">
-          {notifications?.data.notifications?.map((notification) => (
-            <NotificationItem
-              notification={notification}
-              key={notification.id}
-            />
-          ))}
+        <div className="flex max-h-96 flex-col gap-1.5 overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-surface-raised scrollbar-track-transparent">
+          {notifications?.data.notifications?.length ? (
+            notifications.data.notifications.map((notification) => (
+              <NotificationItem
+                notification={notification}
+                key={notification.id}
+              />
+            ))
+          ) : (
+            <p className="px-2 py-6 text-center text-sm text-text-faint">
+              Уведомлений пока нет
+            </p>
+          )}
         </div>
       </PopoverContent>
     </Popover>

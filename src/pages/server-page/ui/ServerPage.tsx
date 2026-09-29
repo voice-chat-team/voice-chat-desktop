@@ -29,12 +29,12 @@ function ServerPage() {
   return (
     <SplitPane
       direction="horizontal"
-      dividerStyle={{ backgroundColor: "oklch(1 0 0 / 5%)" }}
+      dividerStyle={{ backgroundColor: "var(--border-subtle)" }}
     >
       <Pane minSize={200} defaultSize={250} maxSize={500}>
         <ServerAsideSection />
       </Pane>
-      <Pane>
+      <Pane className="bg-surface-200">
         {activeBoard && (
           <Suspense fallback={null}>
             <GuildBoard key={activeBoard.id} board={activeBoard} />

@@ -7,13 +7,13 @@ export const SettingsLayout = () => {
     <div className="flex">
       <SplitPane
         direction="horizontal"
-        dividerStyle={{ backgroundColor: "oklch(1 0 0 / 5%)" }}
+        dividerStyle={{ backgroundColor: "var(--border-subtle)" }}
       >
         <Pane minSize={200} defaultSize={250} maxSize={500}>
           <SettingsAsideSection />
         </Pane>
         <Pane>
-          <main className="h-svh w-full bg-card p-4">
+          <main className="h-svh w-full bg-surface-200 p-4">
             <Outlet />
           </main>
         </Pane>

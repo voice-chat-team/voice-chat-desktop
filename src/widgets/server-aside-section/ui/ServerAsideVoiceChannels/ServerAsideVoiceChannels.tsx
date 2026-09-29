@@ -8,23 +8,20 @@ import {
   ServerAsideListItemHeader,
   ServerAsideListItemUser,
   ServerAsideListTitle,
+  ServerAsideListTitleButton,
   ServerAsideUnorderList,
   useVoiceConnection,
 } from "@/features";
 import { useVoiceStore } from "@/entities/voice";
 import { useServerStore } from "@/entities/server";
 import {
-  Button,
   CHANNEL_TYPE,
   cn,
   type ChannelDto,
   type GuildMemberDto,
   type VoiceParticipantDto,
 } from "@/shared";
-import {
-  DEFAILT_ICONS_TITLE_SIZE,
-  DEFAILT_ICONS_TOP_TITLE_SIZE,
-} from "../../models";
+import { DEFAILT_ICONS_TITLE_SIZE } from "../../models";
 
 type ServerAsideVoiceChannelsProps = {
   channels: ChannelDto[];
@@ -56,21 +53,15 @@ export const ServerAsideVoiceChannels = ({
     <>
       <ServerAsideList
         renderTitle={() => (
-          <ServerAsideListTitle className="uppercase">
-            <Volume2 size={DEFAILT_ICONS_TOP_TITLE_SIZE} />
-            Голосовые каналы
-          </ServerAsideListTitle>
+          <ServerAsideListTitle>Голосовые каналы</ServerAsideListTitle>
         )}
         renderTitleButton={() => (
-          <Button
-            variant="ghost"
-            size="sm"
-            type="button"
+          <ServerAsideListTitleButton
             onClick={() => setIsCreateModalOpen(!isCreateModalOpen)}
-            className="cursor-pointer h-7 w-7"
+            aria-label="Создать голосовой канал"
           >
-            <Plus size={20} absoluteStrokeWidth />
-          </Button>
+            <Plus />
+          </ServerAsideListTitleButton>
         )}
         renderList={() => (
           <ServerAsideUnorderList>
@@ -93,18 +84,18 @@ export const ServerAsideVoiceChannels = ({
                         size={DEFAILT_ICONS_TITLE_SIZE}
                         className={cn(
                           activeVoiceChannelId === channel.id &&
-                            "text-green-500",
+                            "text-status-online!",
                         )}
                       />
                       {channel.name}
                     </ServerAsideListTitle>
                     {channel.isPrivate && (
-                      <Lock size={DEFAILT_ICONS_TITLE_SIZE} />
+                      <Lock size={14} />
                     )}
                   </ServerAsideListItemHeader>
 
                   {channelParticipants.length > 0 && (
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-1.5 pl-6">
                       {channelParticipants.map((participant) => {
                         const member = memberByUserId.get(participant.userId);
 
@@ -114,9 +105,10 @@ export const ServerAsideVoiceChannels = ({
                           <ServerAsideListItemUser
                             key={participant.userId}
                             user={member.user}
+                            size="sm"
                             className={cn(
                               speakingUserIds.includes(participant.userId) &&
-                                "text-green-500",
+                                "text-status-online",
                             )}
                           />
                         );

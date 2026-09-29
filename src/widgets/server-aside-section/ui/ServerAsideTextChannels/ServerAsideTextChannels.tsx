@@ -4,14 +4,12 @@ import {
   ServerAsideListItem,
   ServerAsideListItemHeader,
   ServerAsideListTitle,
+  ServerAsideListTitleButton,
   ServerAsideUnorderList,
 } from "@/features";
 import { Hash, Lock, Plus } from "lucide-react";
-import {
-  DEFAILT_ICONS_TITLE_SIZE,
-  DEFAILT_ICONS_TOP_TITLE_SIZE,
-} from "../../models";
-import { Button, ChannelDto } from "@/shared";
+import { DEFAILT_ICONS_TITLE_SIZE } from "../../models";
+import { ChannelDto } from "@/shared";
 import { useState } from "react";
 import { useServerStore } from "@/entities/server";
 
@@ -34,21 +32,15 @@ export const ServerAsideTextChannels = ({
     <>
       <ServerAsideList
         renderTitle={() => (
-          <ServerAsideListTitle className="uppercase">
-            <Hash size={DEFAILT_ICONS_TOP_TITLE_SIZE} />
-            Текстовые каналы
-          </ServerAsideListTitle>
+          <ServerAsideListTitle>Текстовые каналы</ServerAsideListTitle>
         )}
         renderTitleButton={() => (
-          <Button
-            variant="ghost"
-            size="sm"
-            type="button"
+          <ServerAsideListTitleButton
             onClick={() => setIsCreateModalOpen(!isCreateModalOpen)}
-            className="cursor-pointer h-7 w-7"
+            aria-label="Создать текстовый канал"
           >
-            <Plus size={20} absoluteStrokeWidth />
-          </Button>
+            <Plus />
+          </ServerAsideListTitleButton>
         )}
         renderList={() => (
           <ServerAsideUnorderList>
@@ -62,7 +54,7 @@ export const ServerAsideTextChannels = ({
                   <ServerAsideListTitle>
                     <Hash size={DEFAILT_ICONS_TITLE_SIZE} /> {ch.name}
                   </ServerAsideListTitle>
-                  {ch.isPrivate && <Lock size={DEFAILT_ICONS_TITLE_SIZE} />}
+                  {ch.isPrivate && <Lock size={14} />}
                 </ServerAsideListItemHeader>
               </ServerAsideListItem>
             ))}

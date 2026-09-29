@@ -3,10 +3,11 @@ import {
   ServerAsideListItem,
   ServerAsideListItemUser,
   ServerAsideListTitle,
+  ServerAsideListTitleButton,
   ServerAsideUnorderList,
   ManageMembersDialog,
 } from "@/features";
-import { Button, GuildMemberDto } from "@/shared";
+import { GuildMemberDto, useCurrentUser } from "@/shared";
 import { UserRoundPlus } from "lucide-react";
 import { useState } from "react";
 
@@ -16,38 +17,38 @@ export const ServerAsideMembersList = ({
   members?: GuildMemberDto[];
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { data: currentUser } = useCurrentUser();
 
   return (
     <>
       <ServerAsideList
         renderTitle={() => (
-          <ServerAsideListTitle className="uppercase">
-            Участники - {members?.length}
+          <ServerAsideListTitle>
+            Участники — {members?.length ?? 0}
           </ServerAsideListTitle>
         )}
         renderTitleButton={() => (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="cursor-pointer h-7 w-7"
+          <ServerAsideListTitleButton
             onClick={() => setIsModalOpen(!isModalOpen)}
+            aria-label="Пригласить участников"
           >
-            <UserRoundPlus size={20} absoluteStrokeWidth />
-          </Button>
+            <UserRoundPlus />
+          </ServerAsideListTitleButton>
         )}
         renderList={() => (
           <ServerAsideUnorderList>
-            <ServerAsideListItem className="hover:bg-transparent">
-              {members &&
-                members?.length > 0 &&
-                members.map((m) => (
-                  <ServerAsideListItemUser
-                    key={m.id}
-                    user={m.user}
-                    isOwner={m.isGuildOwner}
-                  />
-                ))}
-            </ServerAsideListItem>
+            {members?.map((m) => (
+              <ServerAsideListItem
+                key={m.id}
+                className="py-1.5 hover:bg-surface-raised"
+              >
+                <ServerAsideListItemUser
+                  user={m.user}
+                  isOwner={m.isGuildOwner}
+                  isSelf={m.userId === currentUser?.id}
+                />
+              </ServerAsideListItem>
+            ))}
           </ServerAsideUnorderList>
         )}
       />

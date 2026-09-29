@@ -19,10 +19,10 @@ export function ManageMembersDialog({
 }: ManageMembersDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-zinc-900 border-zinc-800 text-white min-w-xl">
+      <DialogContent className="min-w-xl">
         <DialogHeader>
           <DialogTitle>Управление участниками сервера</DialogTitle>
-          <DialogDescription className="text-zinc-400">
+          <DialogDescription>
             Приглашайте участников и управляйте их правами
           </DialogDescription>
         </DialogHeader>

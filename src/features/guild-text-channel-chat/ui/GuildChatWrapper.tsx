@@ -14,7 +14,7 @@ export const GuildChatWrapper = ({
     <div
       ref={ref}
       onScroll={onScroll}
-      className="flex flex-col gap-8 flex-1 min-h-0 px-4 py-4 overflow-x-hidden overflow-y-auto scrollbar-thin scrollbar-thumb-accent scrollbar-track-transparent"
+      className="flex flex-col flex-1 min-h-0 px-4 pt-8 pb-4 overflow-x-hidden overflow-y-auto scrollbar-thin scrollbar-thumb-surface-raised scrollbar-track-transparent"
     >
       {children}
     </div>

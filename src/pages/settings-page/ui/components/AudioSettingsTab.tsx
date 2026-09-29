@@ -20,6 +20,10 @@ import { SettingsSection } from "./SettingsSection";
 
 const DEFAULT_DEVICE = "default";
 
+// Подписи полей — как в FormInput: стиль label (капс, text-label).
+const fieldLabelClass =
+  "flex items-center gap-2 text-xs leading-4 font-bold tracking-[0.04em] text-text-label uppercase";
+
 type InputMode = "voice-activity" | "push-to-talk";
 
 export const AudioSettingsTab = () => {
@@ -72,11 +76,13 @@ export const AudioSettingsTab = () => {
       <SettingsSection
         title="Проверка микрофона"
         description="Скажите что-нибудь — индикатор покажет уровень сигнала."
-        action={<Badge variant="secondary">Скоро</Badge>}
+        action={
+          <Badge className="bg-surface-raised text-text-secondary">Скоро</Badge>
+        }
         className="opacity-50 select-none"
       >
         <div className="flex items-center gap-4">
-          <Button type="button" variant="secondary" disabled>
+          <Button type="button" variant="subtle" disabled>
             Проверить
           </Button>
           <Progress value={0} className="h-2" />
@@ -147,7 +153,10 @@ const DeviceSelect = ({
 
   return (
     <div className="flex flex-col gap-2">
-      <Label htmlFor={id} className="flex items-center gap-2">
+      <Label
+        htmlFor={id}
+        className={cn(fieldLabelClass, "[&_svg]:text-text-faint")}
+      >
         {icon}
         {label}
       </Label>
@@ -175,8 +184,10 @@ const VolumeSlider = ({ label, value, onValueChange }: VolumeSliderProps) => {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <Label htmlFor={id}>{label}</Label>
-        <span className="text-sm tabular-nums text-zinc-400">{value}%</span>
+        <Label htmlFor={id} className={fieldLabelClass}>
+          {label}
+        </Label>
+        <span className="text-sm text-text-muted tabular-nums">{value}%</span>
       </div>
       <Slider
         id={id}
@@ -209,19 +220,19 @@ const InputModeOption = ({
     <Label
       htmlFor={id}
       className={cn(
-        "flex cursor-pointer items-start gap-3 rounded-lg border p-4 transition-colors",
+        "flex cursor-pointer items-start gap-3 rounded-md border p-4 transition-colors",
         checked
-          ? "border-primary/60 bg-primary/5"
-          : "border-white/5 hover:bg-zinc-800/50",
+          ? "border-brand/60 bg-brand/10"
+          : "border-border-subtle hover:bg-surface-raised",
       )}
     >
       <RadioGroupItem id={id} value={value} className="mt-0.5" />
       <div className="flex flex-col gap-1">
-        <span className="flex items-center gap-2 font-medium text-white">
+        <span className="flex items-center gap-2 font-semibold text-text-primary">
           {value === "push-to-talk" && <Radio className="size-4" />}
           {title}
         </span>
-        <span className="text-sm font-normal text-zinc-400">
+        <span className="text-sm font-normal text-text-muted">
           {description}
         </span>
       </div>

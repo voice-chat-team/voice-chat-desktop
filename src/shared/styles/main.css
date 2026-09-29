@@ -137,8 +137,82 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/*
+ * Токены дизайн-системы Voice Chat (https://claude.ai/artifact/LTpQ9uggfPXotxjojkhNVr).
+ * Приложение только тёмное, поэтому значения заданы один раз на :root.
+ * В Tailwind доступны как bg-surface-000, text-text-primary, bg-brand и т.д.
+ */
+:root {
+  --surface-000: #0d0d0f; /* рейл серверов */
+  --surface-100: #18181b; /* списки каналов и участников */
+  --surface-200: #171717; /* канвас чата */
+  --surface-300: #212121; /* поле ввода */
+  --surface-raised: #2a2a2e; /* hover/focus/active строк */
+  --surface-avatar-fallback: #404040;
+  --border-subtle: #2c2c31;
+
+  --text-primary: #d1d1d1;
+  --text-secondary: #99a1af;
+  --text-muted: #9a9ca3;
+  --text-label: #8b8f98;
+  --text-faint: #a1a1a1;
+  --text-on-brand: #ffffff;
+
+  --brand: #7f22fe;
+  --brand-hover: #9c4bff;
+  --indicator-active: #ffffff;
+
+  --status-online: #0dac4d;
+  --status-idle: #f0b232;
+  --status-dnd: #da3438;
+  --status-offline: #80848e;
+  --badge-unread: var(--status-dnd);
+
+  --avatar-violet: var(--brand);
+  --avatar-blue: #2563eb;
+  --avatar-teal: #0f766e;
+  --avatar-green: #15803d;
+  --avatar-amber: #b45309;
+  --avatar-pink: #c0267a;
+  --avatar-indigo: #4f46e5;
+}
+
 @theme inline {
   --font-sans: "Geist Variable", sans-serif;
+
+  --color-surface-000: var(--surface-000);
+  --color-surface-100: var(--surface-100);
+  --color-surface-200: var(--surface-200);
+  --color-surface-300: var(--surface-300);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-avatar-fallback: var(--surface-avatar-fallback);
+  --color-border-subtle: var(--border-subtle);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-label: var(--text-label);
+  --color-text-faint: var(--text-faint);
+  --color-text-on-brand: var(--text-on-brand);
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-indicator-active: var(--indicator-active);
+  --color-status-online: var(--status-online);
+  --color-status-idle: var(--status-idle);
+  --color-status-dnd: var(--status-dnd);
+  --color-status-offline: var(--status-offline);
+  --color-badge-unread: var(--badge-unread);
+  --color-avatar-violet: var(--avatar-violet);
+  --color-avatar-blue: var(--avatar-blue);
+  --color-avatar-teal: var(--avatar-teal);
+  --color-avatar-green: var(--avatar-green);
+  --color-avatar-amber: var(--avatar-amber);
+  --color-avatar-pink: var(--avatar-pink);
+  --color-avatar-indigo: var(--avatar-indigo);
+
+  /* Сквиркл активной/наведённой иконки сервера — единственный переход формы. */
+  --radius-squircle: 16px;
+
+  --shadow-elevated: 0 8px 24px rgba(0, 0, 0, 0.45);
 
   --color-sidebar-ring: var(--sidebar-ring);
 

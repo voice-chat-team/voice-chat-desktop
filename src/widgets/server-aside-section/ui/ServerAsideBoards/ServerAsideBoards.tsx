@@ -4,14 +4,12 @@ import {
   ServerAsideListItem,
   ServerAsideListItemHeader,
   ServerAsideListTitle,
+  ServerAsideListTitleButton,
   ServerAsideUnorderList,
 } from "@/features";
-import { Frame, PencilRuler, Plus } from "lucide-react";
-import {
-  DEFAILT_ICONS_TITLE_SIZE,
-  DEFAILT_ICONS_TOP_TITLE_SIZE,
-} from "../../models";
-import { Button, type BoardDto } from "@/shared";
+import { Frame, Plus } from "lucide-react";
+import { DEFAILT_ICONS_TITLE_SIZE } from "../../models";
+import { type BoardDto } from "@/shared";
 import { useState } from "react";
 import { useServerStore } from "@/entities/server";
 
@@ -27,22 +25,14 @@ export const ServerAsideBoards = ({ boards }: { boards: BoardDto[] }) => {
   return (
     <>
       <ServerAsideList
-        renderTitle={() => (
-          <ServerAsideListTitle className="uppercase">
-            <PencilRuler size={DEFAILT_ICONS_TOP_TITLE_SIZE} />
-            Доски
-          </ServerAsideListTitle>
-        )}
+        renderTitle={() => <ServerAsideListTitle>Доски</ServerAsideListTitle>}
         renderTitleButton={() => (
-          <Button
-            variant="ghost"
-            size="sm"
-            type="button"
+          <ServerAsideListTitleButton
             onClick={() => setIsCreateModalOpen(!isCreateModalOpen)}
-            className="cursor-pointer h-7 w-7"
+            aria-label="Создать доску"
           >
-            <Plus size={20} absoluteStrokeWidth />
-          </Button>
+            <Plus />
+          </ServerAsideListTitleButton>
         )}
         renderList={() => (
           <ServerAsideUnorderList>

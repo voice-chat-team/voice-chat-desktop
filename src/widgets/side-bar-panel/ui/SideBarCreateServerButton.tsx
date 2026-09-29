@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SideBarActionButton, SideBarInnerButton } from "./SideBarButton";
+import { SideBarActionButton, SideBarCreateButton } from "./SideBarButton";
 import { Plus } from "lucide-react";
 import { CreateNewServerModal } from "@/features";
 
@@ -11,13 +11,9 @@ function SideBarCreateServerButton() {
       <SideBarActionButton
         tooltipContent={"Создать / Присоединиться к серверу / комнате"}
       >
-        <SideBarInnerButton
-          to={"#"}
-          onClick={() => setIsOpenCreateServerModal(true)}
-          className="group hover:bg-green-600 bg-accent"
-        >
-          <Plus className="text-green-500 group-hover:text-white" size={25} />
-        </SideBarInnerButton>
+        <SideBarCreateButton onClick={() => setIsOpenCreateServerModal(true)}>
+          <Plus size={20} strokeWidth={1.8} />
+        </SideBarCreateButton>
       </SideBarActionButton>
 
       <CreateNewServerModal

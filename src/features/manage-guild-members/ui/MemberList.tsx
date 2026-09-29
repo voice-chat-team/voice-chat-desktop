@@ -3,7 +3,9 @@ import {
   Avatar,
   AvatarFallback,
   Button,
+  cn,
   createAbbr,
+  getAvatarColorClass,
   Label,
   ScrollArea,
   Select,
@@ -24,29 +26,36 @@ export const MemberList = () => {
 
   return (
     <div className="flex flex-col gap-2">
-      <Label>Участники - {members.length}</Label>
-      <ScrollArea className="h-75 rounded-md border border-zinc-800 ">
-        <div>
+      <Label className="text-xs leading-4 font-bold tracking-[0.04em] text-text-label uppercase">
+        Участники — {members.length}
+      </Label>
+      <ScrollArea className="h-75 rounded-md border border-border-subtle bg-surface-200">
+        <div className="p-1">
           {members.map((member) => (
             <div
               key={member.userId}
-              className="flex items-center gap-3 p-2 rounded "
+              className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-surface-raised"
             >
               <Avatar size="lg">
-                <AvatarFallback className="bg-violet-600 text-white">
+                <AvatarFallback
+                  className={cn(
+                    "font-semibold text-text-on-brand",
+                    getAvatarColorClass(member.userId),
+                  )}
+                >
                   {createAbbr(member.user.username, 1)}
                 </AvatarFallback>
               </Avatar>
-              <div className="w-full">
+              <div className="min-w-0 w-full">
                 <div className="flex items-center gap-2">
-                  <p className="text-sm text-white font-medium truncate">
+                  <p className="truncate text-[15px] leading-5 font-semibold text-text-primary">
                     {member.user.username}
                   </p>
                   {member.isGuildOwner && (
-                    <Crown className=" text-yellow-500" size={16} />
+                    <Crown className="size-3.5 shrink-0 fill-current text-status-idle" />
                   )}
                 </div>
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs leading-4 font-medium text-text-muted">
                   Присоединился{" "}
                   {new Date(member.joinedAt).toLocaleDateString("ru-RU")}
                 </p>
@@ -54,18 +63,19 @@ export const MemberList = () => {
               {!member.isGuildOwner && (
                 <div className="flex items-center gap-2">
                   <Select value="member">
-                    <SelectTrigger className="w-32 bg-zinc-800 border-zinc-700">
+                    <SelectTrigger className="w-32">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-zinc-800 border-zinc-700">
+                    <SelectContent>
                       <SelectItem value="member">Участник</SelectItem>
                       <SelectItem value="moderator">Модератор</SelectItem>
                     </SelectContent>
                   </Select>
                   <Button
-                    variant="destructive"
+                    variant="ghost"
                     size="icon"
-                    className="text-red-500 "
+                    className="text-status-dnd hover:bg-status-dnd/15! hover:text-status-dnd"
+                    aria-label="Исключить участника"
                   >
                     <UserMinus className="w-4 h-4" />
                   </Button>

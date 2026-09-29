@@ -35,10 +35,10 @@ export const CreateBoardModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-zinc-900 border-zinc-800 text-white">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Создание доски</DialogTitle>
-          <DialogDescription className="text-zinc-400">
+          <DialogDescription>
             Введите название доски — она появится в разделе «Доски» этой гильдии
           </DialogDescription>
         </DialogHeader>
@@ -50,13 +50,13 @@ export const CreateBoardModal = ({
           />
           <DialogFooter>
             <Button
-              variant="outline"
+              variant="subtle"
               type="button"
               onClick={() => onOpenChange(false)}
             >
               Отмена
             </Button>
-            <Button variant="default" type="submit" disabled={!isValid}>
+            <Button variant="brand" type="submit" disabled={!isValid}>
               Создать доску
             </Button>
           </DialogFooter>

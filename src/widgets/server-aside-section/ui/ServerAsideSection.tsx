@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import { Separator } from "@/shared";
 
 import { ServerAsideHeader } from "./ServerAsideHeader";
 import { ServerAsideFooter } from "./ServerAsideFooter";
@@ -9,23 +8,22 @@ import { SkeletonAsideSectionItem } from "./SkeletonAsideSectionItem";
 import { ServerAsideTextChannelsContainer } from "./ServerAsideTextChannels";
 import { ServerAsideBoardsContainer } from "./ServerAsideBoards";
 import { ServerAsideVoiceChannelsContainer } from "./ServerAsideVoiceChannels";
+import { Separator } from "@/shared";
 
 export const ServerAsideSection = () => {
   return (
-    <aside className="bg-zinc-900 h-full px-2 pb-4 flex flex-col justify-between overflow-y-hidden">
-      <div className="flex flex-col gap-3 overflow-auto scrollbar-none pt-4">
-        <ServerAsideHeader />
+    <aside className="flex h-full flex-col justify-between overflow-y-hidden bg-surface-100">
+      <ServerAsideHeader />
 
-        <Separator />
-
+      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-auto px-2 py-3 scrollbar-none">
         <Suspense fallback={<SkeletonAsideSectionItem />}>
-          <ServerAsideVoiceChannelsContainer />
+          <ServerAsideTextChannelsContainer />
         </Suspense>
 
         <Separator />
 
         <Suspense fallback={<SkeletonAsideSectionItem />}>
-          <ServerAsideTextChannelsContainer />
+          <ServerAsideVoiceChannelsContainer />
         </Suspense>
 
         <Separator />

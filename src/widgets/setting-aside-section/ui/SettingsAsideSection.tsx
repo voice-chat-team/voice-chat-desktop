@@ -19,17 +19,17 @@ export const SettingsAsideSection = () => {
   const activeTab = parseSettingsTab(searchParams.get(SETTINGS_TAB_PARAM));
 
   return (
-    <aside className="bg-zinc-900 h-svh p-2 flex flex-col gap-4 overflow-y-hidden">
+    <aside className="flex h-svh flex-col gap-4 overflow-y-hidden bg-surface-100 px-2 py-3">
       <Link
         to={ROUTES.WELCOME}
-        className="flex items-center gap-2 text-zinc-400 hover:text-white text-sm px-3 py-2 rounded-lg hover:bg-zinc-800 transition-colors cursor-pointer"
+        className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-[7px] text-[15px] leading-5 font-medium text-text-secondary transition-colors outline-none hover:bg-surface-raised hover:text-text-primary focus-visible:bg-surface-raised"
       >
-        <ArrowLeft className="w-4 h-4" />
+        <ArrowLeft className="size-4 text-text-faint" />
         Назад
       </Link>
 
-      <nav className="flex flex-col gap-1">
-        <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-zinc-500">
+      <nav className="flex flex-col gap-px">
+        <p className="px-2 py-1 text-xs leading-4 font-bold tracking-[0.04em] text-text-label uppercase">
           Настройки пользователя
         </p>
         {NAV_ITEMS.map(({ tab, title, icon: Icon }) => (
@@ -39,13 +39,13 @@ export const SettingsAsideSection = () => {
             replace
             aria-current={activeTab === tab ? "page" : undefined}
             className={cn(
-              "flex items-center gap-2 text-sm px-3 py-2 rounded-lg transition-colors cursor-pointer",
-              activeTab === tab
-                ? "bg-zinc-800 text-white"
-                : "text-zinc-400 hover:text-white hover:bg-zinc-800/60",
+              "relative flex cursor-pointer items-center gap-2 rounded-md px-2 py-[7px] text-[15px] leading-5 font-medium text-text-secondary transition-colors outline-none hover:bg-surface-raised hover:text-text-primary focus-visible:bg-surface-raised [&_svg]:text-text-faint",
+              // Активный пункт — как активный канал: заливка, рулька brand, text-primary.
+              activeTab === tab &&
+                "bg-surface-raised font-bold text-text-primary before:absolute before:top-1.5 before:bottom-1.5 before:-left-2 before:w-[3px] before:rounded-full before:bg-brand [&_svg]:text-text-primary",
             )}
           >
-            <Icon className="w-4 h-4" />
+            <Icon className="size-4" />
             {title}
           </Link>
         ))}

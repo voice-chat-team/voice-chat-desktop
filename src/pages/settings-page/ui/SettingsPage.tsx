@@ -32,8 +32,10 @@ const SettingsPage = () => {
     <ScrollArea className="h-full">
       <div className="flex w-full flex-col gap-6 px-6 py-8">
         <header className="flex flex-col gap-1">
-          <h1 className="text-2xl font-semibold text-white">{header.title}</h1>
-          <p className="text-sm text-zinc-400">{header.description}</p>
+          <h1 className="text-2xl font-bold text-text-primary">
+            {header.title}
+          </h1>
+          <p className="text-sm text-text-muted">{header.description}</p>
         </header>
 
         <Tabs value={activeTab}>

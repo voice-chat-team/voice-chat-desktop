@@ -36,10 +36,10 @@ export const CreateNewServerModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-zinc-900 border-zinc-800 text-white">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Создание нового сервера</DialogTitle>
-          <DialogDescription className="text-zinc-400">
+          <DialogDescription>
             Введите название и описание для вашего сервера
           </DialogDescription>
         </DialogHeader>
@@ -69,13 +69,13 @@ export const CreateNewServerModal = ({
           </div>
           <DialogFooter>
             <Button
-              variant="outline"
+              variant="subtle"
               type="button"
               onClick={() => onOpenChange(false)}
             >
               Отмена
             </Button>
-            <Button variant="default" type="submit" disabled={!isValid}>
+            <Button variant="brand" type="submit" disabled={!isValid}>
               Создать сервер
             </Button>
           </DialogFooter>

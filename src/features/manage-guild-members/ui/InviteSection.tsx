@@ -22,7 +22,8 @@ export const InviteSection = () => {
           {...form.register("receiverId", { required: true })}
         />
         <Button
-          className="bg-violet-600 hover:bg-violet-700 h-8"
+          variant="brand"
+          className="h-9"
           type="submit"
           disabled={!form.formState.isValid}
         >

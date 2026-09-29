@@ -1,4 +1,9 @@
-import { inviteApi, NotificationDto, userServersQueryKey } from "@/shared";
+import {
+  Button,
+  inviteApi,
+  NotificationDto,
+  userServersQueryKey,
+} from "@/shared";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Check, X } from "lucide-react";
 import { toast } from "sonner";
@@ -42,37 +47,34 @@ export function NotificationItem({
   };
 
   return (
-    <div className={`relative group rounded-lg p-3 border transition-colors `}>
+    <div className="group relative rounded-md border border-border-subtle bg-surface-200 p-3 transition-colors hover:bg-surface-raised">
       {!notification.isRead && (
-        <span className="absolute top-3 right-3 w-2 h-2 rounded-full bg-violet-500" />
+        <span className="absolute top-3 right-3 size-2 rounded-full bg-indicator-active" />
       )}
 
       <div className="flex gap-3 pr-4">
         <div className="flex flex-col gap-1">
-          <p className="text-xs font-semibold text-white leading-tight">
+          <p className="text-xs leading-4 font-bold tracking-[0.04em] text-text-label">
             {isInvitation ? "ПРИГЛАШЕНИЕ" : "УВЕДОМЛЕНИЕ"}
           </p>
-          <p className="text-xs text-zinc-400 mt-0.5 leading-snug">
+          <p className="mt-0.5 text-sm leading-5 text-text-secondary">
             {isInvitation ? notification.notificationPayload?.message : "-"}
           </p>
-          <p className="text-[10px] text-zinc-600 mt-1">
+          <p className="mt-1 text-xs leading-4 font-medium text-text-muted">
             {timeFormat.format(new Date(notification.createdAt))}
           </p>
 
           <div className="flex gap-2 mt-2">
             {isInvitation && !notification.isRead && (
               <>
-                <button
-                  onClick={acceptInvite}
-                  className="flex items-center gap-1 text-xs bg-violet-600 hover:bg-violet-500 text-white px-2.5 py-1 rounded-md transition-colors"
-                >
-                  <Check className="w-3 h-3" />
+                <Button variant="brand" size="xs" onClick={acceptInvite}>
+                  <Check />
                   Принять
-                </button>
-                <button className="flex items-center gap-1 text-xs bg-zinc-700 hover:bg-zinc-600 text-zinc-300 px-2.5 py-1 rounded-md transition-colors">
-                  <X className="w-3 h-3" />
+                </Button>
+                <Button variant="subtle" size="xs">
+                  <X />
                   Отклонить
-                </button>
+                </Button>
               </>
             )}
           </div>

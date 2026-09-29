@@ -8,7 +8,8 @@
     "build": "node scripts/copy-excalidraw-assets.mjs && tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "codegen": "openapi-generator-cli generate"
+    "codegen": "openapi-generator-cli generate",
+    "build:android": "bun run tauri android build --debug --apk --target aarch64"
   },
   "dependencies": {
     "@excalidraw/excalidraw": "^0.18.1",

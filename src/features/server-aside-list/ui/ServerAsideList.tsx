@@ -67,13 +67,15 @@ export const ServerAsideUnorderList = ({
 
 export const ServerAsideListItem = ({
   children,
+  isActive,
   ...props
-}: PropsWithChildren<ComponentProps<"li">>) => {
+}: PropsWithChildren<ComponentProps<"li"> & { isActive?: boolean }>) => {
   return (
     <li
       {...props}
       className={cn(
         "cursor-pointer flex flex-col gap-2 group hover:bg-accent/20 rounded p-1.5 transition-colors",
+        isActive && "bg-accent/20",
         props.className,
       )}
     >

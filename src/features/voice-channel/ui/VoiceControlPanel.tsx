@@ -58,7 +58,7 @@ export const VoiceControlPanel = () => {
             type="button"
             title={isDeafened ? "Включить звук" : "Выключить звук"}
             aria-label={isDeafened ? "Включить звук" : "Выключить звук"}
-            onClick={() => void toggleDeafen()}
+            onClick={toggleDeafen}
             className="cursor-pointer h-8 w-8"
           >
             {isDeafened ? (
@@ -74,7 +74,7 @@ export const VoiceControlPanel = () => {
             type="button"
             title={isMicMuted ? "Включить микрофон" : "Выключить микрофон"}
             aria-label={isMicMuted ? "Включить микрофон" : "Выключить микрофон"}
-            onClick={() => void toggleMic()}
+            onClick={toggleMic}
             className="cursor-pointer h-8 w-8"
           >
             {isMicMuted ? (
@@ -90,7 +90,7 @@ export const VoiceControlPanel = () => {
             type="button"
             title="Отключиться"
             aria-label="Отключиться"
-            onClick={() => void leave()}
+            onClick={leave}
             className="cursor-pointer h-8 w-8 "
           >
             <PhoneOff size={18} className="text-red-500" />

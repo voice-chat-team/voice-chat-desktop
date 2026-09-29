@@ -52,6 +52,8 @@ Access/refresh tokens are **never** stored in JS-accessible storage. They're hel
 - OS keychain (Windows Credential Manager / macOS Keychain / Linux Secret Service) when available, else
 - an AES-256-GCM encrypted file fallback in the app config dir.
 
+On Android/iOS (`#[cfg(mobile)]`) `keyring` isn't compiled in at all (it's a desktop-only target dependency in `Cargo.toml`), so the encrypted file is always used — the config dir sits in the app's private sandbox there. Keep `KeyringStorage` and anything touching it behind `#[cfg(desktop)]`.
+
 The frontend only talks to this through Tauri commands wrapped in `src/shared/api/auth-commands.ts` (`login`, `logout`, `getAccessToken`, `hasToken`, `refreshAccessToken`), which does small in-memory caching of the current token/flag. `src/shared/api/client.ts` wires an axios instance (used by the generated `AuthApi`/`GuildApi`/`UserApi`/`InvitationApi`/`NotificationApi`) with:
 - a request interceptor that attaches `Authorization: Bearer <token>` via `getAccessToken()`,
 - a response interceptor that, on a single 401, calls `refreshAccessToken()` (de-duped via a shared in-flight promise) and retries the original request once.

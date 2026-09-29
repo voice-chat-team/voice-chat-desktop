@@ -48,9 +48,9 @@ export const ServerAsideVoiceChannels = ({
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  // Имя участника берём из уже закэшированного списка участников сервера,
-  // поэтому сервису голоса не нужно ходить в user-service за профилями.
-  const memberByUserId = new Map(members.map((member) => [member.userId, member]));
+  const memberByUserId = new Map(
+    members.map((member) => [member.userId, member]),
+  );
 
   return (
     <>
@@ -83,11 +83,8 @@ export const ServerAsideVoiceChannels = ({
                 <ServerAsideListItem
                   key={channel.id}
                   onClick={() => {
-                    // Сцену показываем сразу; join сам ничего не делает, если мы
-                    // уже подключены к этому каналу, поэтому повторный клик
-                    // просто возвращает к плиткам участников.
+                    join(channel.guildId, channel.id, channel.name);
                     setActiveVoiceChannel(channel);
-                    void join(channel.guildId, channel.id, channel.name);
                   }}
                 >
                   <ServerAsideListItemHeader>
@@ -95,12 +92,15 @@ export const ServerAsideVoiceChannels = ({
                       <Volume2
                         size={DEFAILT_ICONS_TITLE_SIZE}
                         className={cn(
-                          activeVoiceChannelId === channel.id && "text-green-500",
+                          activeVoiceChannelId === channel.id &&
+                            "text-green-500",
                         )}
-                      />{" "}
+                      />
                       {channel.name}
                     </ServerAsideListTitle>
-                    {channel.isPrivate && <Lock size={DEFAILT_ICONS_TITLE_SIZE} />}
+                    {channel.isPrivate && (
+                      <Lock size={DEFAILT_ICONS_TITLE_SIZE} />
+                    )}
                   </ServerAsideListItemHeader>
 
                   {channelParticipants.length > 0 && (

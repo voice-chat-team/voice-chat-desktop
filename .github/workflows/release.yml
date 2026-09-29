@@ -2,8 +2,8 @@ name: Release desktop installer
 
 on:
   push:
-    branches:
-      - master
+    tags:
+      - "v*.*.*"
 
 permissions:
   contents: write
@@ -35,9 +35,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: installer-${{ github.run_number }}
-          releaseName: "Voice Chat App installer (build ${{ github.run_number }})"
-          releaseBody: |
-            Automatic Windows installer build from commit ${{ github.sha }} on `master`.
+          tagName: ${{ github.ref_name }}
+          releaseName: "Voice Chat ${{ github.ref_name }}"
+          generateReleaseNotes: true
           releaseDraft: false
-          prerelease: true
+          prerelease: false

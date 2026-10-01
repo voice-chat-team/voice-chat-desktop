@@ -1,4 +1,4 @@
-name: Release desktop installer
+name: Release desktop installer and Android APK
 
 on:
   push:
@@ -9,6 +9,7 @@ permissions:
   contents: write
 
 jobs:
+  # Windows installer; tauri-action also creates the GitHub release for the tag.
   build:
     runs-on: windows-latest
 
@@ -40,3 +41,109 @@ jobs:
           generateReleaseNotes: true
           releaseDraft: false
           prerelease: false
+
+  # Signed universal APK (arm64 + armv7), built in parallel with Windows.
+  android:
+    runs-on: ubuntu-latest
+    env:
+      NDK_VERSION: "27.0.12077973"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check signing secrets
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          for name in ANDROID_KEYSTORE_BASE64 ANDROID_KEYSTORE_PASSWORD ANDROID_KEY_ALIAS ANDROID_KEY_PASSWORD; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Secret $name is not set — an unsigned APK cannot be installed"
+              exit 1
+            fi
+          done
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android NDK
+        run: sdkmanager --install "ndk;${NDK_VERSION}"
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,armv7-linux-androideabi
+
+      - name: Cache Rust build
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: Install frontend dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Configure APK signing
+        working-directory: src-tauri/gen/android
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+          {
+            echo "storeFile=$RUNNER_TEMP/release.jks"
+            echo "storePassword=$ANDROID_KEYSTORE_PASSWORD"
+            echo "keyAlias=$ANDROID_KEY_ALIAS"
+            echo "keyPassword=$ANDROID_KEY_PASSWORD"
+          } > key.properties
+
+      - name: Build APK
+        env:
+          NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/${{ env.NDK_VERSION }}
+        run: bun tauri android build --apk --target aarch64 --target armv7
+
+      - name: Rename APK
+        run: |
+          apk=$(find src-tauri/gen/android/app/build/outputs/apk -name "*-release.apk" | head -n 1)
+          if [ -z "$apk" ]; then
+            echo "::error::Release APK not found"
+            exit 1
+          fi
+          cp "$apk" voice-chat-android.apk
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: voice-chat-android.apk
+          if-no-files-found: error
+
+  # Attach the APK to the release created by the Windows job.
+  # The landing page links to releases/latest/download/voice-chat-android.apk, so keep the file name stable.
+  publish-android:
+    needs: [build, android]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download APK artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: android-apk
+
+      - name: Upload APK to release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "${{ github.ref_name }}" voice-chat-android.apk --clobber --repo "${{ github.repository }}"

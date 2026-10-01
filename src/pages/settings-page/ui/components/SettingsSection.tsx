@@ -22,7 +22,7 @@ export const SettingsSection = ({
         className,
       )}
     >
-      <header className="flex items-start justify-between gap-4">
+      <header className="flex items-start justify-between gap-4 flex-col">
         <div className="flex flex-col gap-1">
           <h2 className="text-base leading-[22px] font-semibold text-text-primary">
             {title}

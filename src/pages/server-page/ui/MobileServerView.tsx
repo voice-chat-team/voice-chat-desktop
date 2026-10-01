@@ -10,10 +10,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/shared";
-import {
-  ServerAsideMembersListContainer,
-  ServerAsideSection,
-} from "@/widgets";
+import { ServerAsideMembersListContainer, ServerAsideSection } from "@/widgets";
 
 import { ServerActiveView } from "./ServerActiveView";
 
@@ -73,7 +70,7 @@ export const MobileServerView = () => {
 
   return (
     <>
-      <ServerAsideSection />
+      {!hasActiveView && <ServerAsideSection />}
 
       {hasActiveView && (
         <div className="fixed inset-0 z-40 flex flex-col bg-surface-200 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
@@ -98,10 +95,11 @@ export const MobileServerView = () => {
                 </Button>
               </SheetTrigger>
               <SheetContent
+                showCloseButton={false}
                 side="right"
                 className="bg-surface-100 px-2 pt-[max(1rem,env(safe-area-inset-top))] pb-[env(safe-area-inset-bottom)]"
               >
-                <SheetTitle className="px-2">Участники</SheetTitle>
+                <SheetTitle className="sr-only">Участники</SheetTitle>
                 <div className="min-h-0 flex-1 overflow-auto scrollbar-none">
                   <Suspense fallback={null}>
                     <ServerAsideMembersListContainer />

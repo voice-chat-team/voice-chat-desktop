@@ -2,6 +2,7 @@ import { useLoaderData } from "react-router";
 import { SplitPane, Pane } from "react-split-pane";
 
 import { useServerStore, useGuildChannelEvents } from "@/entities/server";
+import { useGuildVoiceEvents } from "@/entities/voice";
 import { useEffect } from "react";
 import { GuildDto, useIsMobile } from "@/shared";
 import { ServerAsideSection } from "@/widgets";
@@ -17,6 +18,7 @@ function ServerPage() {
   const isMobile = useIsMobile();
 
   useGuildChannelEvents(guild.id);
+  useGuildVoiceEvents(guild.id);
 
   useEffect(() => {
     setGuild(guild);

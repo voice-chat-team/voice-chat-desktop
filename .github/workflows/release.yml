@@ -105,8 +105,14 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          # Strip whitespace: secrets set from PowerShell end with "\r\n", which base64 -d rejects
-          printf '%s' "$ANDROID_KEYSTORE_BASE64" | tr -d ' \t\r\n' | base64 -d > "$RUNNER_TEMP/release.jks"
+          # Keep only base64 alphabet: a secret piped from Windows PowerShell 5.1 into
+          # `gh secret set` gets a UTF-8 BOM in front and "\r\n" at the end, which base64 -d rejects
+          keystore_b64=$(printf '%s' "$ANDROID_KEYSTORE_BASE64" | tr -cd 'A-Za-z0-9+/=')
+          if [ ${#keystore_b64} -lt 1000 ]; then
+            echo "::error::ANDROID_KEYSTORE_BASE64 has only ${#keystore_b64} base64 chars — it is not a base64-encoded keystore"
+            exit 1
+          fi
+          printf '%s' "$keystore_b64" | base64 -d > "$RUNNER_TEMP/release.jks"
           # Fail early with a clear message if the secret doesn't decode to a usable keystore
           keytool -list -keystore "$RUNNER_TEMP/release.jks" -storepass "$ANDROID_KEYSTORE_PASSWORD" -alias "$ANDROID_KEY_ALIAS" > /dev/null
           {

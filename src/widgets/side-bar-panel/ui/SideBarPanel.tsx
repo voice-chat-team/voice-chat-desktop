@@ -21,7 +21,7 @@ const RailDivider = () => (
 
 export function SideBarPanel() {
   return (
-    <aside className="flex h-svh w-19 shrink-0 flex-col items-center justify-between bg-surface-000 py-3">
+    <aside className="flex h-full w-19 shrink-0 flex-col items-center justify-between bg-surface-000 py-3">
       <div className="flex min-h-0 w-full flex-col items-center gap-2 overflow-y-auto px-3.5 scrollbar-none">
         <SideBarActionButton tooltipContent={"Главная"}>
           <SideBarInnerButton to={ROUTES.WELCOME}>

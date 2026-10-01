@@ -86,10 +86,21 @@ export const useBoardAutosave = ({
   );
 
   useEffect(() => {
+    // На Android beforeunload не приходит, когда приложение сворачивают или
+    // система его убивает, — там надёжно срабатывают только visibilitychange
+    // и pagehide.
+    const flushIfHidden = () => {
+      if (document.visibilityState === "hidden") flush();
+    };
+
     window.addEventListener("beforeunload", flush);
+    window.addEventListener("pagehide", flush);
+    document.addEventListener("visibilitychange", flushIfHidden);
 
     return () => {
       window.removeEventListener("beforeunload", flush);
+      window.removeEventListener("pagehide", flush);
+      document.removeEventListener("visibilitychange", flushIfHidden);
       flush();
     };
   }, [flush]);

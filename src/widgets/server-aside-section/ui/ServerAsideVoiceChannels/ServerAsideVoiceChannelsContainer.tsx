@@ -1,6 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 
-import { useGuildVoiceEvents } from "@/entities/voice";
 import { useServerStore } from "@/entities/server";
 import { CHANNEL_TYPE, guildApi, useGuildMembers, useGuildVoiceParticipants } from "@/shared";
 import { ServerAsideVoiceChannels } from "./ServerAsideVoiceChannels";
@@ -19,8 +18,6 @@ export const ServerAsideVoiceChannelsContainer = () => {
 
   const { data: members } = useGuildMembers(guild!.id);
   const { data: participants } = useGuildVoiceParticipants(guild!.id);
-
-  useGuildVoiceEvents(guild!.id);
 
   return (
     <ServerAsideVoiceChannels

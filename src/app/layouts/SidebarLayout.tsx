@@ -4,11 +4,11 @@ import { Outlet } from "react-router";
 
 export function SidebarLayout() {
   return (
-    <div className="flex">
+    <div className="flex h-svh bg-surface-000 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
       <TooltipProvider>
         <SideBarPanel />
       </TooltipProvider>
-      <main className="h-svh w-full bg-card ">
+      <main className="h-full min-w-0 w-full bg-card">
         <Outlet />
       </main>
     </div>

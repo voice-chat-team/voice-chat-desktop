@@ -19,7 +19,7 @@ export const SettingsAsideSection = () => {
   const activeTab = parseSettingsTab(searchParams.get(SETTINGS_TAB_PARAM));
 
   return (
-    <aside className="flex h-svh flex-col gap-4 overflow-y-hidden bg-surface-100 px-2 py-3">
+    <aside className="flex h-full flex-col gap-4 overflow-y-hidden bg-surface-100 px-2 py-3">
       <Link
         to={ROUTES.WELCOME}
         className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-[7px] text-[15px] leading-5 font-medium text-text-secondary transition-colors outline-none hover:bg-surface-raised hover:text-text-primary focus-visible:bg-surface-raised"

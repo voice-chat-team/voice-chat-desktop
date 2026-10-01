@@ -1,21 +1,24 @@
 import { useLoaderData } from "react-router";
 import { SplitPane, Pane } from "react-split-pane";
 
-import { GuildBoard, GuildChat, VoiceChannelStage } from "@/features";
 import { useServerStore, useGuildChannelEvents } from "@/entities/server";
-import { Suspense, useEffect } from "react";
-import { GuildDto } from "@/shared";
+import { useGuildVoiceEvents } from "@/entities/voice";
+import { useEffect } from "react";
+import { GuildDto, useIsMobile } from "@/shared";
 import { ServerAsideSection } from "@/widgets";
+
+import { ServerActiveView } from "./ServerActiveView";
+import { MobileServerView } from "./MobileServerView";
 
 function ServerPage() {
   const guild = useLoaderData() as GuildDto;
   const setGuild = useServerStore((s) => s.actions.setGuild);
   const resetActiveView = useServerStore((s) => s.actions.resetActiveView);
-  const activeTextChannel = useServerStore((s) => s.state.activeTextChannel);
-  const activeBoard = useServerStore((s) => s.state.activeBoard);
-  const activeVoiceChannel = useServerStore((s) => s.state.activeVoiceChannel);
+  const storeGuildId = useServerStore((s) => s.state.guild?.id);
+  const isMobile = useIsMobile();
 
   useGuildChannelEvents(guild.id);
+  useGuildVoiceEvents(guild.id);
 
   useEffect(() => {
     setGuild(guild);
@@ -26,6 +29,10 @@ function ServerPage() {
     };
   }, [guild, setGuild, resetActiveView]);
 
+  if (storeGuildId !== guild.id) return null;
+
+  if (isMobile) return <MobileServerView />;
+
   return (
     <SplitPane
       direction="horizontal"
@@ -35,26 +42,7 @@ function ServerPage() {
         <ServerAsideSection />
       </Pane>
       <Pane className="bg-surface-200">
-        {activeBoard && (
-          <Suspense fallback={null}>
-            <GuildBoard key={activeBoard.id} board={activeBoard} />
-          </Suspense>
-        )}
-
-        {activeTextChannel && (
-          <Suspense fallback={null}>
-            <GuildChat key={activeTextChannel.id} channel={activeTextChannel} />
-          </Suspense>
-        )}
-
-        {activeVoiceChannel && (
-          <Suspense fallback={null}>
-            <VoiceChannelStage
-              key={activeVoiceChannel.id}
-              channel={activeVoiceChannel}
-            />
-          </Suspense>
-        )}
+        <ServerActiveView />
       </Pane>
     </SplitPane>
   );

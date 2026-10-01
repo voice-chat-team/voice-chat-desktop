@@ -105,7 +105,10 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+          # Strip whitespace: secrets set from PowerShell end with "\r\n", which base64 -d rejects
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | tr -d ' \t\r\n' | base64 -d > "$RUNNER_TEMP/release.jks"
+          # Fail early with a clear message if the secret doesn't decode to a usable keystore
+          keytool -list -keystore "$RUNNER_TEMP/release.jks" -storepass "$ANDROID_KEYSTORE_PASSWORD" -alias "$ANDROID_KEY_ALIAS" > /dev/null
           {
             echo "storeFile=$RUNNER_TEMP/release.jks"
             echo "storePassword=$ANDROID_KEYSTORE_PASSWORD"

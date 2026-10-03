@@ -1,4 +1,4 @@
-import { useVoiceStore } from "@/entities/voice";
+import { useVoiceStore, useAudioSettingsStore } from "@/entities/voice";
 import { voiceApi } from "@/shared";
 import type {
   Participant,
@@ -44,11 +44,18 @@ const createRoom = async (): Promise<Room> => {
     Track,
   } = await import("livekit-client");
 
+  const { inputDeviceId, outputDeviceId } =
+    useAudioSettingsStore.getState().state;
+
   const instance = new LiveKitRoom({
     audioCaptureDefaults: {
+      deviceId: inputDeviceId,
       echoCancellation: true,
       noiseSuppression: true,
       autoGainControl: true,
+    },
+    audioOutput: {
+      deviceId: outputDeviceId,
     },
   });
 
@@ -187,5 +194,33 @@ export const setDeafened = async (isDeafened: boolean) => {
 
   if (isDeafened) {
     await setMicrophoneMuted(true);
+  }
+};
+
+export type AudioDeviceKind = "audioinput" | "audiooutput";
+
+/**
+ * Выбор устройства из настроек. Вне звонка просто запоминаем его — createRoom
+ * подхватит при следующем подключении. В звонке переключаем на лету: LiveKit
+ * перезахватит микрофон
+ */
+export const selectAudioDevice = async (
+  kind: AudioDeviceKind,
+  deviceId: string,
+) => {
+  if (room) {
+    const switched = await room.switchActiveDevice(kind, deviceId);
+
+    if (!switched) {
+      throw new Error(`Не удалось переключиться на устройство ${deviceId}`);
+    }
+  }
+
+  const { actions } = useAudioSettingsStore.getState();
+
+  if (kind === "audioinput") {
+    actions.setInputDeviceId(deviceId);
+  } else {
+    actions.setOutputDeviceId(deviceId);
   }
 };

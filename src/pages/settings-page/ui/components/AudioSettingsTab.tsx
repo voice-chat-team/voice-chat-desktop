@@ -13,10 +13,17 @@ import {
   SelectTrigger,
   SelectValue,
   Slider,
+  useMediaDevices,
 } from "@/shared";
 import { Mic, Radio, Speaker } from "lucide-react";
 import { useId, useState, type ReactNode } from "react";
 import { SettingsSection } from "./SettingsSection";
+import { useAudioSettingsStore } from "@/entities/voice";
+import { toast } from "sonner";
+import {
+  type AudioDeviceKind,
+  selectAudioDevice,
+} from "@/features/voice-channel/model";
 
 const DEFAULT_DEVICE = "default";
 
@@ -26,8 +33,6 @@ const fieldLabelClass =
 type InputMode = "voice-activity" | "push-to-talk";
 
 export const AudioSettingsTab = () => {
-  const [inputDevice, setInputDevice] = useState(DEFAULT_DEVICE);
-  const [outputDevice, setOutputDevice] = useState(DEFAULT_DEVICE);
   const [inputVolume, setInputVolume] = useState(100);
   const [outputVolume, setOutputVolume] = useState(100);
   const [inputMode, setInputMode] = useState<InputMode>("voice-activity");
@@ -35,24 +40,43 @@ export const AudioSettingsTab = () => {
   const [echoCancellation, setEchoCancellation] = useState(true);
   const [autoGainControl, setAutoGainControl] = useState(true);
 
+  const { inputDevices, outputDevices, hasPermission, requestPermission } =
+    useMediaDevices();
+  const inputDeviceId = useAudioSettingsStore((s) => s.state.inputDeviceId);
+  const outputDeviceId = useAudioSettingsStore((s) => s.state.outputDeviceId);
+
+  const handleSelect = (kind: AudioDeviceKind) => (deviceId: string) =>
+    selectAudioDevice(kind, deviceId).catch(() =>
+      toast.error("Не удалось переключить устройство"),
+    );
+
   return (
     <div className="flex flex-col gap-6">
       <SettingsSection
         title="Устройства"
         description="Выберите микрофон и динамики, которые будут использоваться в голосовых каналах."
+        action={
+          !hasPermission && (
+            <Button type="button" variant="subtle" onClick={requestPermission}>
+              Разрешить доступ к микрофону
+            </Button>
+          )
+        }
       >
         <div className="grid gap-4 sm:grid-cols-2">
           <DeviceSelect
             label="Устройство ввода"
             icon={<Mic className="size-4" />}
-            value={inputDevice}
-            onValueChange={setInputDevice}
+            devices={inputDevices}
+            value={inputDeviceId}
+            onValueChange={handleSelect("audioinput")}
           />
           <DeviceSelect
             label="Устройство вывода"
             icon={<Speaker className="size-4" />}
-            value={outputDevice}
-            onValueChange={setOutputDevice}
+            devices={outputDevices}
+            value={outputDeviceId}
+            onValueChange={handleSelect("audiooutput")}
           />
         </div>
       </SettingsSection>
@@ -138,6 +162,7 @@ export const AudioSettingsTab = () => {
 type DeviceSelectProps = {
   label: string;
   icon: ReactNode;
+  devices: MediaDeviceInfo[];
   value: string;
   onValueChange: (value: string) => void;
 };
@@ -145,10 +170,18 @@ type DeviceSelectProps = {
 const DeviceSelect = ({
   label,
   icon,
+  devices,
   value,
   onValueChange,
 }: DeviceSelectProps) => {
   const id = useId();
+
+  const available = devices.filter((d) => d.deviceId !== "");
+  const hasDefault = available.some((d) => d.deviceId === DEFAULT_DEVICE);
+  // Сохранённое устройство могли отключить — тогда показываем системное.
+  const resolvedValue = available.some((d) => d.deviceId === value)
+    ? value
+    : DEFAULT_DEVICE;
 
   return (
     <div className="flex flex-col gap-2">
@@ -159,12 +192,23 @@ const DeviceSelect = ({
         {icon}
         {label}
       </Label>
-      <Select value={value} onValueChange={onValueChange}>
+      <Select
+        value={resolvedValue}
+        onValueChange={onValueChange}
+        disabled={available.length === 0}
+      >
         <SelectTrigger id={id} className="w-full">
-          <SelectValue />
+          <SelectValue placeholder="Устройства недоступны" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value={DEFAULT_DEVICE}>По умолчанию</SelectItem>
+          {!hasDefault && (
+            <SelectItem value={DEFAULT_DEVICE}>По умолчанию</SelectItem>
+          )}
+          {available.map((d) => (
+            <SelectItem key={d.deviceId} value={d.deviceId}>
+              {d.label || "Неизвестное устройство"}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
     </div>

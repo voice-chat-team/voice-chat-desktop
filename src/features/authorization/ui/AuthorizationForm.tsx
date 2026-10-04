@@ -11,11 +11,15 @@ import {
 } from "@/shared";
 import { useAuthorization } from "../hooks";
 
-export function AuthorizationForm() {
+interface AuthorizationFormProps {
+  defaultEmail?: string;
+}
+
+export function AuthorizationForm({ defaultEmail }: AuthorizationFormProps) {
   const {
     form: { register, handleSubmit, formState },
     onSubmit,
-  } = useAuthorization();
+  } = useAuthorization(defaultEmail);
 
   return (
     <Card className="w-full">
@@ -54,6 +58,7 @@ export function AuthorizationForm() {
               autoComplete="off"
               placeholder="••••••••"
               tabIndex={2}
+              autoFocus={!!defaultEmail}
               required
             />
           </div>

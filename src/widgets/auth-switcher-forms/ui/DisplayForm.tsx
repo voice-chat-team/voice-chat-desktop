@@ -3,11 +3,19 @@ import { FormTypeModel } from "../model/form-type.model";
 import { AuthorizationForm, RegistrationForm } from "@/features";
 
 export const DisplayForm = () => {
-  const { activeForm } = useFormSwitcher();
+  const { activeForm, onFormSwitch, prefilledEmail, setPrefilledEmail } =
+    useFormSwitcher();
 
   if (activeForm === FormTypeModel.REGISTRATION) {
-    return <RegistrationForm />;
+    return (
+      <RegistrationForm
+        onSuccess={(email) => {
+          setPrefilledEmail(email);
+          onFormSwitch(FormTypeModel.AUTHORIZATION);
+        }}
+      />
+    );
   }
 
-  return <AuthorizationForm />;
+  return <AuthorizationForm defaultEmail={prefilledEmail} />;
 };

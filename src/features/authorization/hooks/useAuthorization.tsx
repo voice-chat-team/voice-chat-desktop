@@ -9,11 +9,12 @@ import { login, ROUTES } from "@/shared";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 
-export const useAuthorization = () => {
+export const useAuthorization = (defaultEmail?: string) => {
   const navigate = useNavigate();
 
   const form = useForm<LoginRequestDtoModel>({
     mode: "onChange",
+    defaultValues: { email: defaultEmail ?? "" },
     resolver: zodResolver(LoginRequestDtoSchema),
   });
 

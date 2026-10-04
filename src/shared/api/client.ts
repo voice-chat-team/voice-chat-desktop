@@ -8,6 +8,7 @@ import {
   NotificationApi,
   MessageApi,
   VoiceApi,
+  BoardApi,
 } from "./generated";
 import { getAccessToken, refreshAccessToken } from "./auth-commands";
 
@@ -78,3 +79,4 @@ export const notificationApi = new NotificationApi(
 );
 export const messageApi = new MessageApi(config, undefined, axiosInstance);
 export const voiceApi = new VoiceApi(config, undefined, axiosInstance);
+export const boardApi = new BoardApi(config, undefined, axiosInstance);

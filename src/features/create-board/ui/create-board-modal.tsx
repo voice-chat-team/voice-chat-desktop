@@ -31,6 +31,7 @@ export const CreateBoardModal = ({
       formState: { isValid },
     },
     onSubmit,
+    isPending,
   } = useCreateBoard(guildId, onSuccesCreateCallBack);
 
   return (
@@ -56,7 +57,7 @@ export const CreateBoardModal = ({
             >
               Отмена
             </Button>
-            <Button variant="brand" type="submit" disabled={!isValid}>
+            <Button variant="brand" type="submit" disabled={!isValid || isPending}>
               Создать доску
             </Button>
           </DialogFooter>

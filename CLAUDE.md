@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+Все коммити делай в формате Conventional Commits
+
 ## Project overview
 
 A Discord-like voice/text chat desktop app built with **Tauri 2** (Rust backend shell) + **React 19 / TypeScript** (frontend, via Vite). The frontend talks to a remote REST API (`https://api.voice-chat-app.ru`) and a Centrifugo realtime server (`wss://centrifugo.voice-chat-app.ru`) for live updates (notifications, channel events, etc.).
@@ -9,6 +11,7 @@ A Discord-like voice/text chat desktop app built with **Tauri 2** (Rust backend 
 ## Commands
 
 Frontend (run from repo root):
+
 - `npm run dev` — copy the Excalidraw fonts into `public/`, then start the Vite dev server (used standalone, without the Tauri shell).
 - `npm run build` — copy the Excalidraw fonts, type-check (`tsc`), then build the frontend (`vite build`).
 - `npm run preview` — preview the built frontend.
@@ -19,6 +22,7 @@ Frontend (run from repo root):
 There is no configured lint or test command in this repo — do not assume `npm test` / `npm run lint` exist.
 
 Rust backend (`src-tauri/`):
+
 - `cargo build` / `cargo check` (run inside `src-tauri/`) for a Rust-only compile check.
 - Normally you don't invoke Cargo directly; `npm run tauri dev`/`build` drives it.
 
@@ -49,12 +53,14 @@ UI copy is in Russian; keep new user-facing strings consistent with that.
 ### Auth: tokens live in Rust, not the browser
 
 Access/refresh tokens are **never** stored in JS-accessible storage. They're held by Tauri backend state (`src-tauri/src/auth.rs`) and persisted via `src-tauri/src/storage.rs`, which picks a backend at startup:
+
 - OS keychain (Windows Credential Manager / macOS Keychain / Linux Secret Service) when available, else
 - an AES-256-GCM encrypted file fallback in the app config dir.
 
 On Android/iOS (`#[cfg(mobile)]`) `keyring` isn't compiled in at all (it's a desktop-only target dependency in `Cargo.toml`), so the encrypted file is always used — the config dir sits in the app's private sandbox there. Keep `KeyringStorage` and anything touching it behind `#[cfg(desktop)]`.
 
 The frontend only talks to this through Tauri commands wrapped in `src/shared/api/auth-commands.ts` (`login`, `logout`, `getAccessToken`, `hasToken`, `refreshAccessToken`), which does small in-memory caching of the current token/flag. `src/shared/api/client.ts` wires an axios instance (used by the generated `AuthApi`/`GuildApi`/`UserApi`/`InvitationApi`/`NotificationApi`) with:
+
 - a request interceptor that attaches `Authorization: Bearer <token>` via `getAccessToken()`,
 - a response interceptor that, on a single 401, calls `refreshAccessToken()` (de-duped via a shared in-flight promise) and retries the original request once.
 
@@ -70,12 +76,24 @@ Guilds have a **«Доски»** section in the channel aside (`src/widgets/serv
 
 Rules when touching this area:
 
-- **Runtime imports of `@excalidraw/excalidraw` are confined to `src/features/guild-board/ui/BoardCanvas.tsx` and `hooks/useBoardAutosave.ts`** (the latter is imported only by the former). The package is a ~1.1 MB JS + 145 KB CSS chunk, reached exclusively through the `React.lazy` loader in `GuildBoard.tsx`. Everywhere else — including `src/shared/api/boards/board.types.ts` — use `import type`; the `@excalidraw/excalidraw/types` and `/element/types` subpaths are types-only and have no runtime entry at all.
+Boards are **collaborative**: they live in the `services.boards` backend (gateway `/board` routes, generated `boardApi`), and every participant edits the same scene in real time and sees the others' cursors.
+
+- **Scene sync** (`hooks/useBoardSync.ts`): own edits are diffed in `onChange` against `syncedVersions` (element id → version the server already knows), queued, and sent to `POST /board/scene` throttled at 150 ms, one request at a time, in batches of ≤ 200 elements. Remote edits arrive on the Centrifugo channel `board:{boardId}` (`BOARD_ELEMENTS_UPDATED`, own echo skipped via `BOARD_CLIENT_ID`) and are merged with `reconcileElements` + `updateScene({ captureUpdate: CaptureUpdateAction.NEVER })`, so others' edits never land in your undo stack. The server applies the **same rule** as `reconcileElements` (higher `version` wins, ties go to the lower `versionNonce`) — keep the two in step. On `subscribed` with `recovered === false` or a gap in `seq`, the scene is refetched and merged again (merging is idempotent).
+- **`restoreElements(remote, null)` — the `null` matters.** Given local elements, it bumps the incoming element's version above the local one, so remote edits would always win instead of following the rule.
+- `onChange` receives deleted elements too (`isDeleted`), which is how deletions propagate; the server keeps them as tombstones and returns them from `GET /board/scene`.
+- **Cursors** (`hooks/useBoardPresence.ts`): clients publish `POINTER` straight to `board-presence:{boardId}` (client-side publish, throttled to 50 ms, no backend hop). The author comes from the publication's `info.user` (set by Centrifugo from the connection token), never from the payload. Collaborators are keyed by Centrifugo connection id and handed to Excalidraw as `appState.collaborators` — Excalidraw draws the cursors and the top-right participant list itself. Presence/join/leave keep the list current.
+- Both channels require **subscription tokens** from `GET /board/subscription-token` (`getToken` on `newSubscription`); the Centrifugo namespaces `board` (server-publish only, history + recovery) and `board-presence` (`allow_publish_for_subscriber`, `presence` + `allow_presence_for_subscriber` — without the latter `sub.presence()` fails with code 103 — join/leave) are configured on the server, not in this repo.
+- **Images are not synced yet**: the image tool is off (`UIOptions.tools.image = false`), file pastes are rejected in `onPaste`, and `useBoardSync` skips `type === "image"` elements.
+- Board list changes (`BOARD_CREATED` / `BOARD_UPDATED` / `BOARD_DELETED`) arrive on `guild:{guildId}` and are handled by `useGuildBoardEvents` (`src/entities/board/hooks/`), wired in `ServerPage` to keep or close the open board.
+
+Rules when touching this area:
+
+- **Runtime imports of `@excalidraw/excalidraw` are confined to `src/features/guild-board/ui/BoardCanvas.tsx` and `hooks/useBoardSync.ts`** (imported only by the former). The package is a ~1.1 MB JS + 145 KB CSS chunk, reached exclusively through the `React.lazy` loader in `GuildBoard.tsx`. Everywhere else — including `src/shared/api/boards/board.types.ts` — use `import type`; the `@excalidraw/excalidraw/types` and `/element/types` subpaths are types-only and have no runtime entry at all.
 - **Scene fonts are self-hosted.** `scripts/copy-excalidraw-assets.mjs` copies them from `node_modules` into `public/excalidraw-assets/fonts` (gitignored, regenerated by `npm run dev` / `npm run build`; the CJK Xiaolai family is skipped, it is 13 MB of the 14), and `setExcalidrawAssetPath()` from `@/shared` points the package at them. That call must stay **inside the lazy loader, before `await import(...)`** — ESM imports hoist, so setting it in the canvas module body would run too late. This is not optional polish: the Tauri CSP is `font-src 'self'`, so the package's CDN fallback is blocked and text would silently render in a fallback font.
-- **Never persist the whole `appState`.** `toBoardScene` (`src/features/guild-board/models/`) keeps only the keys in `SHARED_APP_STATE_KEYS`. The rest is either unserialisable (`collaborators` is a `Map`), per-viewer (viewport size, scroll, zoom, selection), or changes on every pointer move — which would defeat the autosave's change detection.
-- **The grid is always on and deliberately not user-toggleable**, via the `gridModeEnabled` *prop* on `<Excalidraw>`. The package resolves it as `props.gridModeEnabled ?? state.gridModeEnabled`, and the built-in `gridMode` action carries `predicate: (…, appProps) => appProps.gridModeEnabled === undefined`, so passing the prop is what removes the context-menu entry and the `Ctrl + '` shortcut — nothing is hidden by hand. For the same reason `gridModeEnabled` is **not** in `SHARED_APP_STATE_KEYS`: the prop overrides state, so a persisted value would be inert today and would turn the grid off on every existing board the day the prop is dropped.
-- Autosave uses `hashElementsVersion` (not the deprecated `getSceneVersion`) to ignore no-op `onChange` calls, debounces 1 s with a 5 s ceiling, and flushes on unmount and `beforeunload`.
-- Board data currently lives in a `persist`-backed zustand store (`src/entities/board/store/`). **The seam for the future backend is `useGuildBoards` / `useBoardScene`** in `src/entities/board/hooks/` — replacing their bodies with TanStack Query hooks over the generated client (and deleting the store) is meant to require no changes in any component.
+- **Never sync the whole `appState`.** `pickSharedAppState` (`src/features/guild-board/models/`) keeps only the keys in `SHARED_APP_STATE_KEYS`, and `services.boards` filters by the same list. The rest is either unserialisable (`collaborators` is a `Map`), per-viewer (viewport size, scroll, zoom, selection), or changes on every pointer move — which would defeat the change detection.
+- **The grid is always on and deliberately not user-toggleable**, via the `gridModeEnabled` _prop_ on `<Excalidraw>`. The package resolves it as `props.gridModeEnabled ?? state.gridModeEnabled`, and the built-in `gridMode` action carries `predicate: (…, appProps) => appProps.gridModeEnabled === undefined`, so passing the prop is what removes the context-menu entry and the `Ctrl + '` shortcut — nothing is hidden by hand. For the same reason `gridModeEnabled` is **not** in `SHARED_APP_STATE_KEYS`: the prop overrides state, so a persisted value would be inert today and would turn the grid off on every existing board the day the prop is dropped.
+- `useBoardSync` uses `hashElementsVersion` (not the deprecated `getSceneVersion`) to ignore no-op `onChange` calls, and flushes the queue on unmount, `beforeunload`, `pagehide` and `visibilitychange` (Android).
+- Data access goes through `useGuildBoards` / `useBoardScene` in `src/entities/board/hooks/` (TanStack Query over `boardApi`). The scene query is only the **initial snapshot** — after mount the scene lives in Excalidraw, so `GuildBoard` pins it in a ref and never feeds a refetch back as `initialData` (that would remount the canvas).
 
 ### Realtime (Centrifugo)
 

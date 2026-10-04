@@ -14,12 +14,18 @@
 
 
 
-export * from './api/auth-api';
-export * from './api/board-api';
-export * from './api/guild-api';
-export * from './api/invitation-api';
-export * from './api/message-api';
-export * from './api/notification-api';
-export * from './api/user-api';
-export * from './api/voice-api';
+export interface RenameBoardRequestDto {
+    /**
+     * ID доски
+     */
+    'boardId': string;
+    /**
+     * ID сервера
+     */
+    'guildId': string;
+    /**
+     * Новое название доски
+     */
+    'name': string;
+}
 

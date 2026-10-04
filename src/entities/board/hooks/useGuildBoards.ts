@@ -1,22 +1,11 @@
-import type { BoardDto } from "@/shared";
-import { useBoardStore } from "../store";
+import { useGuildBoardsQuery, type BoardDto } from "@/shared";
 
-/**
- * Стабильная ссылка: zustand v5 сравнивает результат селектора через Object.is,
- * поэтому новый пустой массив на каждый рендер уводил бы компонент в цикл.
- */
+/** Стабильная ссылка, чтобы потребители не перерисовывались, пока нет данных. */
 const EMPTY_BOARDS: BoardDto[] = [];
 
-/**
- * Список досок гильдии.
- *
- * Стык под бэкенд: когда появится сервис досок, тело заменяется на
- * `useSuspenseQuery` над сгенерированным клиентом, сигнатура остаётся прежней.
- */
+/** Список досок гильдии. */
 export const useGuildBoards = (guildId: string) => {
-  const boards = useBoardStore(
-    (store) => store.state.boardsByGuild[guildId] ?? EMPTY_BOARDS,
-  );
+  const { data, isLoading } = useGuildBoardsQuery(guildId);
 
-  return { boards, isLoading: false };
+  return { boards: data ?? EMPTY_BOARDS, isLoading };
 };

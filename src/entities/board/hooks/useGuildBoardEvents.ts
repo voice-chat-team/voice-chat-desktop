@@ -13,16 +13,10 @@ type GuildBoardEvent =
   | { type: "BOARD_DELETED"; payload?: { boardId?: string; guildId?: string } };
 
 type GuildBoardEventHandlers = {
-  /** Доску переименовали — открытая копия BoardDto должна обновиться. */
   onBoardUpdated?: (board: BoardDto) => void;
-  /** Доску удалили — если она открыта, её нужно закрыть. */
   onBoardDeleted?: (boardId: string) => void;
 };
 
-/**
- * События списка досок в общем канале guild:{guildId}. Там же ходят события
- * участников и голоса с другой формой payload, поэтому сначала смотрим на type.
- */
 export const useGuildBoardEvents = (
   guildId: string,
   handlers: GuildBoardEventHandlers = {},
@@ -83,8 +77,6 @@ export const useGuildBoardEvents = (
 
     sub.subscribe();
 
-    // Снимаем только свои обработчики: на этот же канал подписаны
-    // useGuildChannelEvents и useGuildVoiceEvents.
     return () => {
       sub.off("publication", handlePublication);
       sub.off("subscribed", handleSubscribed);

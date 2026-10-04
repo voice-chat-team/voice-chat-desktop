@@ -15,7 +15,9 @@ export const useCreateBoard = (
   onSuccesCreateCb?: () => void,
 ) => {
   const queryClient = useQueryClient();
-  const setActiveBoard = useServerStore((store) => store.actions.setActiveBoard);
+  const setActiveBoard = useServerStore(
+    (store) => store.actions.setActiveBoard,
+  );
 
   const form = useForm<CreateBoardSchemaModel>({
     mode: "onChange",
@@ -35,14 +37,10 @@ export const useCreateBoard = (
       return data.board;
     },
     onSuccess: (board) => {
-      // Событие BOARD_CREATED тоже добавит доску, но своё создание
-      // показываем сразу, не дожидаясь Centrifugo; upsert не даст дубля.
       upsertGuildBoard(queryClient, board);
 
       form.reset();
-      // Только что созданную доску сразу открываем в центральной панели.
       setActiveBoard(board);
-
       onSuccesCreateCb && onSuccesCreateCb();
     },
     onError: () => {

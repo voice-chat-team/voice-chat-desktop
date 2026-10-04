@@ -57,15 +57,15 @@ type GuildBoardContentProps = {
   onStatusChange: (status: BoardSaveStatus) => void;
 };
 
-/** Отдельный компонент, чтобы загрузка сцены показывала скелетон под заголовком. */
-const GuildBoardContent = ({ board, onStatusChange }: GuildBoardContentProps) => {
+const GuildBoardContent = ({
+  board,
+  onStatusChange,
+}: GuildBoardContentProps) => {
   const { scene, fetchScene, applyOps, fetchSubscriptionTokens } =
     useBoardScene(board);
   const { data: currentUser } = useCurrentUser();
   const { data: members } = useGuildMembers(board.guildId);
 
-  // Снимок нужен только для первой отрисовки: дальше сцена живёт в Excalidraw,
-  // и подмена initialData перемонтировала бы холст.
   const initialSceneRef = useRef(scene);
 
   const profiles = useMemo(
@@ -87,14 +87,26 @@ const GuildBoardContent = ({ board, onStatusChange }: GuildBoardContentProps) =>
     [profiles],
   );
 
+  const tokensRequestRef = useRef<ReturnType<
+    typeof fetchSubscriptionTokens
+  > | null>(null);
+
+  const getTokens = useCallback(() => {
+    tokensRequestRef.current ??= fetchSubscriptionTokens().finally(() => {
+      tokensRequestRef.current = null;
+    });
+
+    return tokensRequestRef.current;
+  }, [fetchSubscriptionTokens]);
+
   const getBoardToken = useCallback(
-    async () => (await fetchSubscriptionTokens()).boardToken,
-    [fetchSubscriptionTokens],
+    async () => (await getTokens()).boardToken,
+    [getTokens],
   );
 
   const getPresenceToken = useCallback(
-    async () => (await fetchSubscriptionTokens()).presenceToken,
-    [fetchSubscriptionTokens],
+    async () => (await getTokens()).presenceToken,
+    [getTokens],
   );
 
   return (

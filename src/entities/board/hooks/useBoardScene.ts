@@ -35,10 +35,6 @@ const fetchBoardScene = async (
 
 /**
  * Сцена доски и операции над ней.
- *
- * Снимок из query нужен только для первой отрисовки: дальше сцена живёт
- * в Excalidraw, а правки ходят через applyOps и канал board:{boardId}.
- * Поэтому кэш не переиспользуется между открытиями — каждый раз свежая сцена.
  */
 export const useBoardScene = (board: Pick<BoardDto, "id" | "guildId">) => {
   const { id: boardId, guildId } = board;

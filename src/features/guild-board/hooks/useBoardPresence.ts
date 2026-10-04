@@ -23,7 +23,9 @@ const POINTER_THROTTLE_MS = 50;
 const IDLE_AFTER_MS = 30_000;
 const IDLE_SWEEP_MS = 5_000;
 
-type PointerUpdate = Parameters<NonNullable<ExcalidrawProps["onPointerUpdate"]>>[0];
+type PointerUpdate = Parameters<
+  NonNullable<ExcalidrawProps["onPointerUpdate"]>
+>[0];
 
 export type BoardMemberProfile = {
   username: string;
@@ -48,12 +50,6 @@ type UseBoardPresenceParams = {
 
 /**
  * Курсоры и состав участников доски через канал board-presence:{boardId}.
- *
- * Курсор публикует сам клиент (client-side publish), бэкенд в этом не
- * участвует. Автора берём из info.user, который Centrifugo проставляет по
- * токену подключения, — подделать чужое имя из payload нельзя.
- * Отрисовку курсоров и списка участников целиком делает Excalidraw по
- * appState.collaborators.
  */
 export const useBoardPresence = ({
   boardId,
@@ -65,7 +61,6 @@ export const useBoardPresence = ({
   const centrifuge = useCentrifuge();
 
   const subRef = useRef<Subscription | null>(null);
-  /** Ключ — id подключения Centrifugo: у одного пользователя их может быть несколько. */
   const collaboratorsRef = useRef(new Map<string, RemoteCollaborator>());
   const frameRef = useRef<number | null>(null);
 
@@ -225,9 +220,7 @@ export const useBoardPresence = ({
         {}) as BoardPointerEvent["selectedElementIds"],
     };
 
-    sub.publish(event).catch(() => {
-      // Потерянный кадр курсора не страшен — следующий придёт через 50 мс.
-    });
+    sub.publish(event).catch(() => {});
   }, [apiRef]);
 
   const handlePointerUpdate = useCallback(
@@ -235,7 +228,10 @@ export const useBoardPresence = ({
       pendingPointerRef.current = update;
 
       if (!pointerTimerRef.current) {
-        pointerTimerRef.current = setTimeout(publishPointer, POINTER_THROTTLE_MS);
+        pointerTimerRef.current = setTimeout(
+          publishPointer,
+          POINTER_THROTTLE_MS,
+        );
       }
     },
     [publishPointer],

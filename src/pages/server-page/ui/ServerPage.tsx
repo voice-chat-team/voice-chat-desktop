@@ -3,6 +3,7 @@ import { SplitPane, Pane } from "react-split-pane";
 
 import { useServerStore, useGuildChannelEvents } from "@/entities/server";
 import { useGuildVoiceEvents } from "@/entities/voice";
+import { useGuildBoardEvents } from "@/entities/board";
 import { useEffect } from "react";
 import { GuildDto, useIsMobile } from "@/shared";
 import { ServerAsideSection } from "@/widgets";
@@ -14,11 +15,26 @@ function ServerPage() {
   const guild = useLoaderData() as GuildDto;
   const setGuild = useServerStore((s) => s.actions.setGuild);
   const resetActiveView = useServerStore((s) => s.actions.resetActiveView);
+  const setActiveBoard = useServerStore((s) => s.actions.setActiveBoard);
   const storeGuildId = useServerStore((s) => s.state.guild?.id);
   const isMobile = useIsMobile();
 
   useGuildChannelEvents(guild.id);
   useGuildVoiceEvents(guild.id);
+  useGuildBoardEvents(guild.id, {
+    // Открытая доска держит свою копию BoardDto в сторе — без этого
+    // заголовок остался бы со старым названием.
+    onBoardUpdated: (board) => {
+      if (useServerStore.getState().state.activeBoard?.id === board.id) {
+        setActiveBoard(board);
+      }
+    },
+    onBoardDeleted: (boardId) => {
+      if (useServerStore.getState().state.activeBoard?.id === boardId) {
+        setActiveBoard(null);
+      }
+    },
+  });
 
   useEffect(() => {
     setGuild(guild);

@@ -5,6 +5,7 @@ const SAVE_STATUS_LABEL: Record<BoardSaveStatus, string> = {
   idle: "",
   pending: "Сохранение…",
   saved: "Сохранено",
+  error: "Нет связи с сервером, повторяем…",
 };
 
 type GuildBoardHeaderProps = {

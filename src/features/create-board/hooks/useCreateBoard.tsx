@@ -1,6 +1,8 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useBoardStore } from "@/entities/board";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { boardApi, upsertGuildBoard } from "@/shared";
 import { useServerStore } from "@/entities/server";
 
 import {
@@ -12,8 +14,10 @@ export const useCreateBoard = (
   guildId: string,
   onSuccesCreateCb?: () => void,
 ) => {
-  const createBoard = useBoardStore((store) => store.actions.createBoard);
-  const setActiveBoard = useServerStore((store) => store.actions.setActiveBoard);
+  const queryClient = useQueryClient();
+  const setActiveBoard = useServerStore(
+    (store) => store.actions.setActiveBoard,
+  );
 
   const form = useForm<CreateBoardSchemaModel>({
     mode: "onChange",
@@ -23,18 +27,34 @@ export const useCreateBoard = (
     },
   });
 
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (name: string) => {
+      const { data } = await boardApi.boardControllerCreateBoard({
+        guildId,
+        name,
+      });
+
+      return data.board;
+    },
+    onSuccess: (board) => {
+      upsertGuildBoard(queryClient, board);
+
+      form.reset();
+      setActiveBoard(board);
+      onSuccesCreateCb && onSuccesCreateCb();
+    },
+    onError: () => {
+      toast.error("Не удалось создать доску");
+    },
+  });
+
   const onSubmit: SubmitHandler<CreateBoardSchemaModel> = (data) => {
-    const board = createBoard(guildId, data.name);
-
-    form.reset();
-    // Только что созданную доску сразу открываем в центральной панели.
-    setActiveBoard(board);
-
-    onSuccesCreateCb && onSuccesCreateCb();
+    mutate(data.name);
   };
 
   return {
     form,
     onSubmit,
+    isPending,
   };
 };

@@ -1,13 +1,16 @@
-import { lazy, Suspense, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useMemo, useRef, useState } from "react";
 import {
   ErrorBoundary,
   Separator,
   setExcalidrawAssetPath,
+  useCurrentUser,
+  useGuildMembers,
   type BoardDto,
   type BoardSaveStatus,
 } from "@/shared";
 import { useBoardScene } from "@/entities/board";
 
+import type { BoardMemberProfile } from "../hooks";
 import { GuildBoardHeader } from "./GuildBoardHeader";
 import { BoardCanvasSkeleton } from "./BoardCanvasSkeleton";
 
@@ -25,9 +28,6 @@ type GuildBoardProps = {
 
 export const GuildBoard = ({ board }: GuildBoardProps) => {
   const [status, setStatus] = useState<BoardSaveStatus>("idle");
-  const { scene, saveScene } = useBoardScene(board.id);
-
-  const initialSceneRef = useRef(scene);
 
   return (
     <div className="flex flex-col h-full">
@@ -44,15 +44,83 @@ export const GuildBoard = ({ board }: GuildBoardProps) => {
           }
         >
           <Suspense fallback={<BoardCanvasSkeleton />}>
-            <BoardCanvas
-              boardName={board.name}
-              initialScene={initialSceneRef.current}
-              saveScene={saveScene}
-              onStatusChange={setStatus}
-            />
+            <GuildBoardContent board={board} onStatusChange={setStatus} />
           </Suspense>
         </ErrorBoundary>
       </div>
     </div>
+  );
+};
+
+type GuildBoardContentProps = {
+  board: BoardDto;
+  onStatusChange: (status: BoardSaveStatus) => void;
+};
+
+const GuildBoardContent = ({
+  board,
+  onStatusChange,
+}: GuildBoardContentProps) => {
+  const { scene, fetchScene, applyOps, fetchSubscriptionTokens } =
+    useBoardScene(board);
+  const { data: currentUser } = useCurrentUser();
+  const { data: members } = useGuildMembers(board.guildId);
+
+  const initialSceneRef = useRef(scene);
+
+  const profiles = useMemo(
+    () =>
+      new Map<string, BoardMemberProfile>(
+        members.map((member) => [
+          member.userId,
+          {
+            username: member.user?.username ?? "Участник",
+            avatarUrl: member.user?.avatarUrl || undefined,
+          },
+        ]),
+      ),
+    [members],
+  );
+
+  const resolveMember = useCallback(
+    (userId: string) => profiles.get(userId),
+    [profiles],
+  );
+
+  const tokensRequestRef = useRef<ReturnType<
+    typeof fetchSubscriptionTokens
+  > | null>(null);
+
+  const getTokens = useCallback(() => {
+    tokensRequestRef.current ??= fetchSubscriptionTokens().finally(() => {
+      tokensRequestRef.current = null;
+    });
+
+    return tokensRequestRef.current;
+  }, [fetchSubscriptionTokens]);
+
+  const getBoardToken = useCallback(
+    async () => (await getTokens()).boardToken,
+    [getTokens],
+  );
+
+  const getPresenceToken = useCallback(
+    async () => (await getTokens()).presenceToken,
+    [getTokens],
+  );
+
+  return (
+    <BoardCanvas
+      boardId={board.id}
+      boardName={board.name}
+      initialScene={initialSceneRef.current}
+      applyOps={applyOps}
+      fetchScene={fetchScene}
+      getBoardToken={getBoardToken}
+      getPresenceToken={getPresenceToken}
+      currentUserId={currentUser?.id}
+      resolveMember={resolveMember}
+      onStatusChange={onStatusChange}
+    />
   );
 };

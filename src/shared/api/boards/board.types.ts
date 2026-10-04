@@ -1,20 +1,11 @@
-import type { AppState, BinaryFiles } from "@excalidraw/excalidraw/types";
+import type { AppState } from "@excalidraw/excalidraw/types";
 import type { ExcalidrawElement } from "@excalidraw/excalidraw/element/types";
 
-/**
- * Форма повторяет сгенерированные модели (ChannelDto, GuildDto), чтобы при
- * появлении сервиса досок этот файл просто заменился реэкспортом из
- * `./generated`, а вышележащий код не поменялся.
- */
-export interface BoardDto {
-  id: string;
-  guildId: string;
-  name: string;
-  createdAt: string;
-}
+// BoardDto приходит из ./generated вместе с остальным клиентом BoardApi.
 
 /**
  * Свойства appState, относящиеся к самой доске, а не к конкретному зрителю.
+ * Тот же список держит у себя сервис досок — остальное он отбрасывает.
  *
  * gridModeEnabled здесь сознательно нет: режим сетки задаётся пропом
  * в BoardCanvas и полностью перекрывает appState, так что сохранённое
@@ -31,11 +22,36 @@ export type BoardAppState = Partial<
   Pick<AppState, (typeof SHARED_APP_STATE_KEYS)[number]>
 >;
 
-/** Снимок сцены доски — то, что уедет на бэкенд одним JSON-документом. */
+/**
+ * Снимок сцены доски с сервера. В elements лежат и удалённые элементы
+ * (isDeleted) — без них слияние не узнало бы об удалениях.
+ */
 export interface BoardSceneDto {
   elements: readonly ExcalidrawElement[];
   appState: BoardAppState;
-  files: BinaryFiles;
+  /** Номер последней применённой сервером пачки правок. */
+  seq: number;
 }
 
-export type BoardSaveStatus = "idle" | "pending" | "saved";
+/** Событие канала board:{boardId}. */
+export type BoardElementsUpdatedEvent = {
+  type: "BOARD_ELEMENTS_UPDATED";
+  payload: {
+    boardId: string;
+    clientId: string;
+    seq: number;
+    elements: ExcalidrawElement[];
+    appState?: BoardAppState;
+  };
+};
+
+/** Сообщение, которое клиенты сами публикуют в board-presence:{boardId}. */
+export type BoardPointerEvent = {
+  type: "POINTER";
+  clientId: string;
+  pointer: { x: number; y: number; tool: "pointer" | "laser" };
+  button: "up" | "down";
+  selectedElementIds: Record<string, true>;
+};
+
+export type BoardSaveStatus = "idle" | "pending" | "saved" | "error";

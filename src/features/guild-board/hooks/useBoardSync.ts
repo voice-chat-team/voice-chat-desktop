@@ -88,7 +88,12 @@ export const useBoardSync = ({
 
   // Колбэки читаем через ref: подписка и таймеры не должны пересоздаваться
   // из-за новых функций на каждый рендер.
-  const latestRef = useRef({ applyOps, fetchScene, getBoardToken, onStatusChange });
+  const latestRef = useRef({
+    applyOps,
+    fetchScene,
+    getBoardToken,
+    onStatusChange,
+  });
   latestRef.current = { applyOps, fetchScene, getBoardToken, onStatusChange };
 
   const sendRef = useRef<() => Promise<void>>(async () => {});
@@ -115,7 +120,8 @@ export const useBoardSync = ({
 
       if (
         batch.length > 0 &&
-        (batch.length >= MAX_ELEMENTS_PER_BATCH || chars + size > MAX_BATCH_CHARS)
+        (batch.length >= MAX_ELEMENTS_PER_BATCH ||
+          chars + size > MAX_BATCH_CHARS)
       ) {
         break;
       }
@@ -245,7 +251,10 @@ export const useBoardSync = ({
   );
 
   const applyRemote = useCallback(
-    (remoteElements: readonly ExcalidrawElement[], remoteAppState?: BoardAppState) => {
+    (
+      remoteElements: readonly ExcalidrawElement[],
+      remoteAppState?: BoardAppState,
+    ) => {
       const api = apiRef.current;
       if (!api) return;
 

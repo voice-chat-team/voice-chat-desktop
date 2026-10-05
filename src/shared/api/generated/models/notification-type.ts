@@ -15,7 +15,7 @@
 
 
 /**
- * Тип уведомления: GUILD_MEMBER_ADD — добавлен участник, GUILD_MEMBER_LEAVE — участник вышел, NEW_INVITE_TO_GUILD — приглашение на сервер
+ * Тип уведомления: GUILD_MEMBER_ADD — добавлен участник, GUILD_MEMBER_LEAVE — участник вышел, NEW_INVITE_TO_GUILD — приглашение на сервер, UPDATE_NOTIFICATION — уведомление обновлено, NEW_GUILD_MESSAGE — новое сообщение в канале (только realtime в personal:#{userId}:messages, в списке уведомлений не встречается)
  */
 
 export const NotificationType = {
@@ -23,6 +23,7 @@ export const NotificationType = {
     GuildMemberLeave: 'GUILD_MEMBER_LEAVE',
     NewInviteToGuild: 'NEW_INVITE_TO_GUILD',
     UpdateNotification: 'UPDATE_NOTIFICATION',
+    NewGuildMessage: 'NEW_GUILD_MESSAGE',
 } as const;
 
 export type NotificationType = typeof NotificationType[keyof typeof NotificationType];

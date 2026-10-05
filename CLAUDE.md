@@ -99,6 +99,10 @@ Rules when touching this area:
 
 `src/app/providers/CentrifugeProvider.tsx` creates a single `Centrifuge` client (`src/shared/api/centrifuge/centrifuge.client.ts`, token supplied via `getAccessToken()`) at app root and exposes it through `CentrifugeContext`; `useCentrifuge()` (`src/shared/lib/hooks/useCentrifuge.tsx`) reads it. Feature/entity hooks subscribe to per-resource channels (e.g. `personal:#{userId}:notifications`) inside a `useEffect`, and on `publication` events update TanStack Query's cache directly with `queryClient.setQueryData(...)` rather than refetching — follow this pattern (see `src/entities/notifications/hooks/useUserNotification.tsx` and `src/entities/server/hooks/useGuildChannelEvents.tsx`) for new realtime-driven data.
 
+### System notifications for new messages
+
+`src/features/message-notifications/` turns new guild messages into OS notifications (`@tauri-apps/plugin-notification`). `MessageNotificationsListener` is mounted in `SidebarLayout`, so it runs on every authenticated screen. It subscribes to `personal:#{userId}:messages`, where `services.messages` broadcasts a `NEW_GUILD_MESSAGE` event (a `NotificationType` key) to every guild member except the author and banned members. The event is realtime-only and is never stored in the notification bell. A notification is skipped when the window is focused and the event's channel is the `activeTextChannel`. Notifications are throttled to one per channel every 3 s. Outside Tauri (`npm run dev`) nothing is shown. On desktop, clicking a notification does nothing: `onAction` is mobile-only in plugin v2.
+
 ### State management
 
 - **Server/remote state**: TanStack Query (`src/shared/api/query-client.api.ts` for the client, `src/shared/api/queries/` for hooks like `use-current-user.ts`, `use-user-servers.ts`, `use-guild-members.ts`).

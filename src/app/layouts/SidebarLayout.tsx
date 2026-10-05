@@ -1,3 +1,4 @@
+import { MessageNotificationsListener } from "@/features";
 import { TooltipProvider } from "@/shared/ui/tooltip";
 import { SideBarPanel } from "@/widgets";
 import { Outlet } from "react-router";
@@ -5,6 +6,7 @@ import { Outlet } from "react-router";
 export function SidebarLayout() {
   return (
     <div className="flex h-svh bg-surface-000 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
+      <MessageNotificationsListener />
       <TooltipProvider>
         <SideBarPanel />
       </TooltipProvider>

@@ -9,3 +9,4 @@ export * from "./logout";
 export * from "./create-board";
 export * from "./guild-board";
 export * from "./voice-channel";
+export * from "./message-notifications";

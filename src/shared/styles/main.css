@@ -300,5 +300,10 @@
   }
   html {
     @apply font-sans;
+    /* Как в нативном приложении: без pinch-zoom и зума по двойному тапу.
+       Excalidraw обрабатывает жесты на холсте сам (touch-action: none). */
+    touch-action: pan-x pan-y;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 }

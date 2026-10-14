@@ -24,8 +24,12 @@ export interface SendMessageRequestDto {
      */
     'guildId': string;
     /**
-     * Текст сообщения
+     * Текст сообщения. Может быть пустым, если прикреплены файлы
      */
-    'content': string;
+    'content'?: string;
+    /**
+     * ID подтверждённых файлов (/file/upload/confirm), максимум 10. Файлы должны быть загружены вами
+     */
+    'attachmentFileIds'?: Array<string>;
 }
 

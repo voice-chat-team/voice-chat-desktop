@@ -16,6 +16,7 @@
 
 export * from './api/auth-api';
 export * from './api/board-api';
+export * from './api/file-api';
 export * from './api/guild-api';
 export * from './api/invitation-api';
 export * from './api/message-api';

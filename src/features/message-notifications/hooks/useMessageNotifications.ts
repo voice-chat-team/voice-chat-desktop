@@ -1,7 +1,14 @@
 import { useEffect } from "react";
 
 import { useServerStore } from "@/entities/server";
-import { NotificationType, useCurrentUser } from "@/shared";
+import { useQueryClient } from "@tanstack/react-query";
+
+import {
+  NotificationType,
+  upsertCreatedMessage,
+  useCurrentUser,
+  type MessageDto,
+} from "@/shared";
 import { useCentrifuge } from "@/shared/lib";
 
 import {
@@ -23,6 +30,7 @@ type NewGuildMessageEvent = {
     senderAvatarUrl: string;
     preview: string;
     createdAt: string;
+    message: MessageDto;
   };
 };
 
@@ -32,6 +40,7 @@ const CHANNEL_THROTTLE_MS = 3_000;
 
 export const useMessageNotifications = () => {
   const centrifuge = useCentrifuge();
+  const queryClient = useQueryClient();
   const { data: currentUser } = useCurrentUser();
   const currentUserId = currentUser?.id;
 
@@ -62,6 +71,11 @@ export const useMessageNotifications = () => {
       // Сервер автору и так не шлёт, это страховка.
       if (payload.senderId === currentUserId) return;
 
+      // Чат закрыт — подписки на guild-channel нет, поэтому кэш канала
+      // пополняем отсюда. Если кэша нет, ничего не делаем: первый заход в
+      // канал загрузит историю целиком вместе с этим сообщением.
+      if (payload.message) upsertCreatedMessage(queryClient, payload.message);
+
       const { activeTextChannel } = useServerStore.getState().state;
       if (isFocused && activeTextChannel?.id === payload.channelId) return;
 
@@ -86,5 +100,5 @@ export const useMessageNotifications = () => {
       sub.removeAllListeners();
       centrifuge.removeSubscription(sub);
     };
-  }, [centrifuge, currentUserId]);
+  }, [centrifuge, currentUserId, queryClient]);
 };

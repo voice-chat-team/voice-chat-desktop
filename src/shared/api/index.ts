@@ -7,3 +7,4 @@ export * from "./queries";
 export * from "./query-client.api";
 export * from "./centrifuge";
 export * from "./boards";
+export * from "./attachments";

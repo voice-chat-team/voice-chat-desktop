@@ -4,12 +4,15 @@ import {
   AvatarImage,
   cn,
   getAvatarColorClass,
+  type AttachmentDto,
 } from "@/shared";
+import { GuildChatAttachments } from "./GuildChatAttachments";
 
 interface GuildChatMessageProps {
   authorId: string;
   username: string;
   content: string;
+  attachments?: AttachmentDto[];
   createdAt: string;
   avatarUrl?: string;
   isEdited?: boolean;
@@ -20,6 +23,7 @@ export const GuildChatMessage = ({
   authorId,
   username,
   content,
+  attachments = [],
   createdAt,
   avatarUrl,
   isEdited,
@@ -31,12 +35,17 @@ export const GuildChatMessage = ({
   });
 
   const body = (
-    <p className="text-[15px] leading-[22px] whitespace-pre-wrap wrap-break-word text-text-secondary">
-      {content}
-      {isEdited && (
-        <span className="ml-1 text-xs text-text-muted">(изменено)</span>
+    <>
+      {(content || isEdited) && (
+        <p className="text-[15px] leading-[22px] whitespace-pre-wrap wrap-break-word text-text-secondary">
+          {content}
+          {isEdited && (
+            <span className="ml-1 text-xs text-text-muted">(изменено)</span>
+          )}
+        </p>
       )}
-    </p>
+      <GuildChatAttachments attachments={attachments} />
+    </>
   );
 
   if (!isGroupStart) {

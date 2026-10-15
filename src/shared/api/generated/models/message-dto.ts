@@ -13,6 +13,9 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import type { AttachmentDto } from './attachment-dto';
 
 export interface MessageDto {
     /**
@@ -51,5 +54,9 @@ export interface MessageDto {
      * Дата обновления
      */
     'updatedAt': string;
+    /**
+     * Вложения сообщения
+     */
+    'attachments': Array<AttachmentDto>;
 }
 

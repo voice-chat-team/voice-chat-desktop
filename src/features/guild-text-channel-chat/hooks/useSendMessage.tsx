@@ -3,16 +3,22 @@ import { toast } from "sonner";
 
 import { messageApi, upsertCreatedMessage } from "@/shared";
 
+type SendMessageInput = {
+  content: string;
+  attachmentFileIds: string[];
+};
+
 export const useSendMessage = (channelId: string, guildId: string) => {
   const queryClient = useQueryClient();
 
   const { mutateAsync, isPending } = useMutation({
     mutationKey: ["send-message", channelId],
-    mutationFn: async (content: string) =>
+    mutationFn: async ({ content, attachmentFileIds }: SendMessageInput) =>
       await messageApi.messageControllerSendMessage({
         channelId,
         guildId,
         content,
+        attachmentFileIds,
       }),
     onSuccess: ({ data }) => {
       upsertCreatedMessage(queryClient, data.message);
@@ -24,9 +30,9 @@ export const useSendMessage = (channelId: string, guildId: string) => {
     },
   });
 
-  const sendMessage = async (content: string) => {
+  const sendMessage = async (input: SendMessageInput) => {
     try {
-      await mutateAsync(content);
+      await mutateAsync(input);
       return true;
     } catch {
       return false;

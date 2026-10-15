@@ -125,6 +125,7 @@ export const GuildChat = ({ channel }: { channel: ChannelDto }) => {
                 username={author?.username ?? "Неизвестный пользователь"}
                 avatarUrl={author?.avatarUrl}
                 content={message.content}
+                attachments={message.attachments}
                 createdAt={message.createdAt}
                 isEdited={message.isEdited}
                 isGroupStart={isGroupStart(previous, message)}

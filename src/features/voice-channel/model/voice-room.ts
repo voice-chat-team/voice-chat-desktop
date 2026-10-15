@@ -37,6 +37,23 @@ const applyDeafenToElements = (isDeafened: boolean) => {
   });
 };
 
+type AndroidAudioBridge = { setSpeakerphoneOn(enabled: boolean): void };
+
+/** Нативный мост из MainActivity.kt; вне Android-сборки его нет. */
+const getAudioBridge = () =>
+  (window as { AndroidAudio?: AndroidAudioBridge }).AndroidAudio;
+
+export const hasSpeakerphoneControl = () => getAudioBridge() !== undefined;
+
+const setSpeakerphone = (enabled: boolean) =>
+  getAudioBridge()?.setSpeakerphoneOn(enabled);
+
+/** Переключатель «громкая связь ↔ разговорный динамик» для кнопки в панели. */
+export const setSpeakerphoneEnabled = (enabled: boolean) => {
+  setSpeakerphone(enabled);
+  useVoiceStore.getState().actions.setSpeakerphone(enabled);
+};
+
 const createRoom = async (): Promise<Room> => {
   const {
     Room: LiveKitRoom,
@@ -155,6 +172,10 @@ export const connectToVoiceChannel = async (
     // иначе звук удалённых участников может не начать играть.
     await room.startAudio();
 
+    // Режим звонка включается при захвате микрофона, поэтому выбираем
+    // динамик только после него.
+    setSpeakerphone(useVoiceStore.getState().state.isSpeakerphone);
+
     actions.setConnected();
   } catch (error) {
     await disconnectFromVoiceChannel();
@@ -172,6 +193,7 @@ export const disconnectFromVoiceChannel = async () => {
   }
 
   getAudioContainer().replaceChildren();
+  setSpeakerphone(false);
   useVoiceStore.getState().actions.setDisconnected();
 };
 

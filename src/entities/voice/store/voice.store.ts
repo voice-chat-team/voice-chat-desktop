@@ -14,6 +14,8 @@ type VoiceState = {
     status: VoiceConnectionStatus;
     isMicMuted: boolean;
     isDeafened: boolean;
+    /** Только Android: звук в громкий динамик, а не в разговорный как при звонке */
+    isSpeakerphone: boolean;
     /** id говорящих прямо сейчас, приходит из LiveKit */
     speakingUserIds: string[];
     /** id тех, у кого микрофон выключен — своих и чужих */
@@ -30,6 +32,7 @@ type VoiceState = {
     setDisconnected: () => void;
     setMicMuted: (isMicMuted: boolean) => void;
     setDeafened: (isDeafened: boolean) => void;
+    setSpeakerphone: (isSpeakerphone: boolean) => void;
     setSpeakingUserIds: (speakingUserIds: string[]) => void;
     setMutedUserIds: (mutedUserIds: string[]) => void;
   };
@@ -42,6 +45,7 @@ const initialState: VoiceState["state"] = {
   status: "idle",
   isMicMuted: false,
   isDeafened: false,
+  isSpeakerphone: true,
   speakingUserIds: [],
   mutedUserIds: [],
 };
@@ -83,6 +87,10 @@ export const useVoiceStore = create<VoiceState>((set) => ({
     setDeafened: (isDeafened) =>
       set((prev) => ({
         state: { ...prev.state, isDeafened },
+      })),
+    setSpeakerphone: (isSpeakerphone) =>
+      set((prev) => ({
+        state: { ...prev.state, isSpeakerphone },
       })),
     setSpeakingUserIds: (speakingUserIds) =>
       set((prev) => ({

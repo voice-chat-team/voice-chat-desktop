@@ -84,7 +84,7 @@ export const VoiceChannelStage = ({ channel }: { channel: ChannelDto }) => {
       ) : (
         <div className="flex-1 min-h-0 overflow-auto scrollbar-none">
           <div
-            className="flex h-full flex-wrap content-stretch justify-center gap-3"
+            className="flex h-full flex-wrap content-center justify-center gap-3"
             style={
               {
                 "--cols": gridSize.cols,
@@ -95,7 +95,7 @@ export const VoiceChannelStage = ({ channel }: { channel: ChannelDto }) => {
             {stageParticipants.map(({ userId, username }) => (
               <div
                 key={userId}
-                className="w-[calc((100%-(var(--cols)-1)*0.75rem)/var(--cols))] h-[calc((100%-(var(--rows)-1)*0.75rem)/var(--rows))] min-h-35"
+                className="w-[calc((100%-(var(--cols)-1)*0.75rem)/var(--cols))] h-[calc((100%-(var(--rows)-1)*0.75rem)/var(--rows))] min-h-35 max-w-100 max-h-56"
               >
                 <VoiceParticipantTile
                   username={username}

@@ -8,6 +8,7 @@ import {
   disconnectFromVoiceChannel,
   setDeafened,
   setMicrophoneMuted,
+  setSpeakerphoneEnabled,
 } from "../model/voice-room";
 
 export const useVoiceConnection = () => {
@@ -15,6 +16,7 @@ export const useVoiceConnection = () => {
   const channelId = useVoiceStore((store) => store.state.channelId);
   const isMicMuted = useVoiceStore((store) => store.state.isMicMuted);
   const isDeafened = useVoiceStore((store) => store.state.isDeafened);
+  const isSpeakerphone = useVoiceStore((store) => store.state.isSpeakerphone);
 
   const join = useCallback(
     async (guildId: string, targetChannelId: string, channelName: string) => {
@@ -47,11 +49,17 @@ export const useVoiceConnection = () => {
     await setDeafened(!useVoiceStore.getState().state.isDeafened);
   }, []);
 
+  const toggleSpeakerphone = useCallback(() => {
+    setSpeakerphoneEnabled(!useVoiceStore.getState().state.isSpeakerphone);
+  }, []);
+
   return {
     status,
     channelId,
     isMicMuted,
     isDeafened,
+    isSpeakerphone,
+    toggleSpeakerphone,
     isConnected: status === "connected",
     join,
     leave,

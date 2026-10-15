@@ -3,6 +3,7 @@ import {
   HeadphoneOff,
   Mic,
   MicOff,
+  Phone,
   PhoneOff,
   Volume2,
 } from "lucide-react";
@@ -16,14 +17,22 @@ import {
   useCurrentUser,
 } from "@/shared";
 import { useVoiceConnection } from "../hooks/useVoiceConnection";
+import { hasSpeakerphoneControl } from "../model/voice-room";
 
 export const VoiceControlPanel = () => {
   const { data: user } = useCurrentUser();
 
   const status = useVoiceStore((store) => store.state.status);
   const channelName = useVoiceStore((store) => store.state.channelName);
-  const { isMicMuted, isDeafened, leave, toggleMic, toggleDeafen } =
-    useVoiceConnection();
+  const {
+    isMicMuted,
+    isDeafened,
+    isSpeakerphone,
+    leave,
+    toggleMic,
+    toggleDeafen,
+    toggleSpeakerphone,
+  } = useVoiceConnection();
 
   if (status === "idle") return null;
 
@@ -52,6 +61,22 @@ export const VoiceControlPanel = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          {hasSpeakerphoneControl() && (
+            <Button
+              variant="ghost"
+              size="sm"
+              type="button"
+              title={isSpeakerphone ? "Разговорный динамик" : "Громкая связь"}
+              aria-label={
+                isSpeakerphone ? "Разговорный динамик" : "Громкая связь"
+              }
+              onClick={toggleSpeakerphone}
+              className="cursor-pointer h-8 w-8"
+            >
+              {isSpeakerphone ? <Volume2 size={18} /> : <Phone size={18} />}
+            </Button>
+          )}
+
           <Button
             variant="ghost"
             size="sm"

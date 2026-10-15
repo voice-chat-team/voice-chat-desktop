@@ -9,8 +9,10 @@ import type { MessageDto } from "@/shared/api/generated/models/message-dto";
 
 export const MESSAGES_PAGE_SIZE = 50;
 
+export const channelMessagesRootQueryKey = ["channel-messages"];
+
 export const channelMessagesQueryKey = (channelId: string) => [
-  "channel-messages",
+  ...channelMessagesRootQueryKey,
   channelId,
 ];
 
@@ -67,6 +69,14 @@ export const useChannelMessages = (channelId: string, guildId: string) =>
     refetchOnWindowFocus: false,
   });
 
+// События приходят «хотя бы один раз» и не обязательно по порядку, поэтому
+// всё применяется идемпотентно: старая версия сообщения не затирает новую.
+const isNewer = (incoming: MessageDto, cached: MessageDto) =>
+  Date.parse(incoming.updatedAt) > Date.parse(cached.updatedAt);
+
+const hasMessage = (cache: ChannelMessagesCache, messageId: string) =>
+  cache.pages.some((page) => page.messages.some((m) => m.id === messageId));
+
 const replaceInCache = (
   cache: ChannelMessagesCache,
   message: MessageDto,
@@ -75,7 +85,7 @@ const replaceInCache = (
 
   const pages = cache.pages.map((page) => {
     const index = page.messages.findIndex((m) => m.id === message.id);
-    if (index === -1) return page;
+    if (index === -1 || !isNewer(message, page.messages[index])) return page;
 
     changed = true;
     const messages = page.messages.slice();
@@ -87,6 +97,8 @@ const replaceInCache = (
   return changed ? { ...cache, pages } : cache;
 };
 
+// Если кэша канала нет, ничего не делаем: при открытии канала история
+// загрузится целиком, вместе с этим сообщением.
 export const upsertCreatedMessage = (
   queryClient: QueryClient,
   message: MessageDto,
@@ -96,21 +108,20 @@ export const upsertCreatedMessage = (
     (old) => {
       if (!old || old.pages.length === 0) return old;
 
-      const exists = old.pages.some((page) =>
-        page.messages.some((m) => m.id === message.id),
-      );
-
-      if (exists) return old;
+      if (hasMessage(old, message.id)) return replaceInCache(old, message);
 
       const [newest, ...older] = old.pages;
 
-      return {
-        ...old,
-        pages: [
-          { ...newest, messages: [message, ...newest.messages] },
-          ...older,
-        ],
-      };
+      // Страница отсортирована от новых к старым; обычно сообщение встаёт
+      // в начало, но событие от другого инстанса может прийти с опозданием.
+      const createdAt = Date.parse(message.createdAt);
+      const index = newest.messages.findIndex(
+        (m) => Date.parse(m.createdAt) < createdAt,
+      );
+      const messages = newest.messages.slice();
+      messages.splice(index === -1 ? messages.length : index, 0, message);
+
+      return { ...old, pages: [{ ...newest, messages }, ...older] };
     },
   );
 

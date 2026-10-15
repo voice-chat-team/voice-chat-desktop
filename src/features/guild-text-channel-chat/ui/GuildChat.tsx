@@ -7,7 +7,7 @@ import {
   type ChannelDto,
 } from "@/shared";
 
-import { useChannelMessageEvents, useSendMessage } from "../hooks";
+import { useSendMessage } from "../hooks";
 import { formatDayLabel, isGroupStart, isNewDay } from "../lib";
 import { GuildChatHeader } from "./GuildChatHeader";
 import { GuildChatFooter } from "./GuildChatFooter";
@@ -32,8 +32,6 @@ export const GuildChat = ({ channel }: { channel: ChannelDto }) => {
     channel.id,
     channel.guildId,
   );
-
-  useChannelMessageEvents(channel.id);
 
   const authors = useMemo(
     () => new Map(members.map((member) => [member.userId, member.user])),

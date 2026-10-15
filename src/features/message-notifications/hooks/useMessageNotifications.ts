@@ -1,15 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
+import { useChatMessageEvents } from "@/entities/message";
 import { useServerStore } from "@/entities/server";
-import { useQueryClient } from "@tanstack/react-query";
-
-import {
-  NotificationType,
-  upsertCreatedMessage,
-  useCurrentUser,
-  type MessageDto,
-} from "@/shared";
-import { useCentrifuge } from "@/shared/lib";
+import { useCurrentUser } from "@/shared";
 
 import {
   ensureNotificationPermission,
@@ -17,88 +10,63 @@ import {
   trackWindowFocus,
 } from "../lib";
 
-type NewGuildMessageEvent = {
-  type?: string;
-  payload?: {
-    messageId: string;
-    guildId: string;
-    guildName: string;
-    channelId: string;
-    channelName: string;
-    senderId: string;
-    senderName: string;
-    senderAvatarUrl: string;
-    preview: string;
-    createdAt: string;
-    message: MessageDto;
-  };
-};
-
 // Быстрая переписка в одном канале не должна засыпать уведомлениями:
 // не чаще одного на канал за этот интервал.
 const CHANNEL_THROTTLE_MS = 3_000;
+const PREVIEW_LENGTH = 200;
+const SEEN_IDS_LIMIT = 200;
 
 export const useMessageNotifications = () => {
-  const centrifuge = useCentrifuge();
-  const queryClient = useQueryClient();
   const { data: currentUser } = useCurrentUser();
   const currentUserId = currentUser?.id;
 
+  const isFocusedRef = useRef(true);
+  const lastShownAtRef = useRef(new Map<string, number>());
+  const seenIdsRef = useRef(new Set<string>());
+
   useEffect(() => {
     void ensureNotificationPermission();
+
+    return trackWindowFocus((focused) => {
+      isFocusedRef.current = focused;
+    });
   }, []);
 
-  useEffect(() => {
-    if (!centrifuge || !currentUserId) return;
+  useChatMessageEvents({
+    onEvent: (event) => {
+      if (event.type !== "MESSAGE_CREATED") return;
 
-    let isFocused = true;
-    const stopTrackingFocus = trackWindowFocus((focused) => {
-      isFocused = focused;
-    });
+      const { message, guildName, channelName, senderName } = event.payload;
 
-    const lastShownAt = new Map<string, number>();
+      // Своё сообщение приходит только для синхронизации других устройств.
+      if (message.senderId === currentUserId) return;
 
-    const channel = `personal:#${currentUserId}:messages`;
-
-    const sub =
-      centrifuge.getSubscription(channel) ??
-      centrifuge.newSubscription(channel);
-
-    sub.on("publication", (ctx) => {
-      const { type, payload } = (ctx.data ?? {}) as NewGuildMessageEvent;
-
-      if (type !== NotificationType.NewGuildMessage || !payload) return;
-      // Сервер автору и так не шлёт, это страховка.
-      if (payload.senderId === currentUserId) return;
-
-      // Чат закрыт — подписки на guild-channel нет, поэтому кэш канала
-      // пополняем отсюда. Если кэша нет, ничего не делаем: первый заход в
-      // канал загрузит историю целиком вместе с этим сообщением.
-      if (payload.message) upsertCreatedMessage(queryClient, payload.message);
+      // Доставка «хотя бы один раз»: повтор рассылки не должен дать второе
+      // уведомление о том же сообщении.
+      const seenIds = seenIdsRef.current;
+      if (seenIds.has(message.id)) return;
+      seenIds.add(message.id);
+      if (seenIds.size > SEEN_IDS_LIMIT) {
+        seenIds.delete(seenIds.values().next().value!);
+      }
 
       const { activeTextChannel } = useServerStore.getState().state;
-      if (isFocused && activeTextChannel?.id === payload.channelId) return;
+      if (isFocusedRef.current && activeTextChannel?.id === message.channelId) {
+        return;
+      }
 
       const now = Date.now();
-      const last = lastShownAt.get(payload.channelId) ?? 0;
+      const lastShownAt = lastShownAtRef.current;
+      const last = lastShownAt.get(message.channelId) ?? 0;
       if (now - last < CHANNEL_THROTTLE_MS) return;
-      lastShownAt.set(payload.channelId, now);
+      lastShownAt.set(message.channelId, now);
+
+      const preview = message.content.slice(0, PREVIEW_LENGTH);
 
       void showSystemNotification({
-        title: `${payload.senderName} • #${payload.channelName}`,
-        body: payload.guildName
-          ? `${payload.guildName}: ${payload.preview}`
-          : payload.preview,
+        title: `${senderName} • #${channelName}`,
+        body: guildName ? `${guildName}: ${preview}` : preview,
       });
-    });
-
-    sub.subscribe();
-
-    return () => {
-      stopTrackingFocus();
-      sub.unsubscribe();
-      sub.removeAllListeners();
-      centrifuge.removeSubscription(sub);
-    };
-  }, [centrifuge, currentUserId, queryClient]);
+    },
+  });
 };

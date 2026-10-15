@@ -48,6 +48,18 @@ export const hasSpeakerphoneControl = () => getAudioBridge() !== undefined;
 const setSpeakerphone = (enabled: boolean) =>
   getAudioBridge()?.setSpeakerphoneOn(enabled);
 
+type AndroidVoiceCallBridge = {
+  start(channelName: string): void;
+  stop(): void;
+};
+
+/**
+ * Foreground-сервис Android: держит процесс и микрофон живыми при свёрнутом
+ * приложении и показывает уведомление «Вы в голосовом канале».
+ */
+const getVoiceCallBridge = () =>
+  (window as { AndroidVoiceCall?: AndroidVoiceCallBridge }).AndroidVoiceCall;
+
 /** Переключатель «громкая связь ↔ разговорный динамик» для кнопки в панели. */
 export const setSpeakerphoneEnabled = (enabled: boolean) => {
   setSpeakerphone(enabled);
@@ -176,6 +188,10 @@ export const connectToVoiceChannel = async (
     // динамик только после него.
     setSpeakerphone(useVoiceStore.getState().state.isSpeakerphone);
 
+    // После захвата микрофона: foreground-сервис с типом microphone нельзя
+    // стартовать без выданного RECORD_AUDIO.
+    getVoiceCallBridge()?.start(channelName);
+
     actions.setConnected();
   } catch (error) {
     await disconnectFromVoiceChannel();
@@ -194,6 +210,7 @@ export const disconnectFromVoiceChannel = async () => {
 
   getAudioContainer().replaceChildren();
   setSpeakerphone(false);
+  getVoiceCallBridge()?.stop();
   useVoiceStore.getState().actions.setDisconnected();
 };
 

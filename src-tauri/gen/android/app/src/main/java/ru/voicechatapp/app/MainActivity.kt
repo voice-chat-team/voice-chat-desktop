@@ -4,6 +4,7 @@ import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import androidx.activity.OnBackPressedCallback
@@ -47,7 +48,24 @@ class MainActivity : TauriActivity() {
     }
   }
 
+  private inner class VoiceCallBridge {
+    @JavascriptInterface
+    fun start(channelName: String) {
+      // Пока приложение на экране, старт разрешён; если система всё же
+      // откажет, голос просто останется без фонового режима.
+      try {
+        VoiceCallService.start(this@MainActivity, channelName)
+      } catch (error: RuntimeException) {
+        Log.w("VoiceCallBridge", "Не удалось запустить foreground-сервис", error)
+      }
+    }
+
+    @JavascriptInterface
+    fun stop() = VoiceCallService.stop(this@MainActivity)
+  }
+
   override fun onWebViewCreate(webView: WebView) {
+    webView.addJavascriptInterface(VoiceCallBridge(), "AndroidVoiceCall")
     webView.addJavascriptInterface(AudioRouteBridge(), "AndroidAudio")
 
     onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {

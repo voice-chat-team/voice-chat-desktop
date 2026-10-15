@@ -45,13 +45,20 @@ export const uploadAttachment = async (
   return upload.fileId;
 };
 
+type LongLike = { low: number; high: number; unsigned?: boolean };
+
+const toNumber = (v: number | LongLike) =>
+  typeof v === "number" ? v : v.high * 2 ** 32 + (v.low >>> 0);
+
 export const getAttachmentDownloadUrl = async (fileId: string) => {
   const { data } = await fileApi.fileControllerGetDownloadUrl(fileId);
 
   return data.url;
 };
 
-export const formatFileSize = (bytes: number) => {
+export const formatFileSize = (value: number | LongLike) => {
+  const bytes = toNumber(value);
+
   if (bytes < 1024) return `${bytes} Б`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} КБ`;
 

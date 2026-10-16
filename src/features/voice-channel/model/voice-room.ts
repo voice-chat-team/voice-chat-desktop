@@ -1,5 +1,6 @@
 import { useVoiceStore, useAudioSettingsStore } from "@/entities/voice";
 import { voiceApi } from "@/shared";
+import { playVoiceSound } from "../lib/voice-sounds";
 import type {
   Participant,
   RemoteTrack,
@@ -181,6 +182,18 @@ const createRoom = async (): Promise<Room> => {
   instance.on(RoomEvent.ParticipantConnected, refreshMutedUserIds);
   instance.on(RoomEvent.ParticipantDisconnected, refreshMutedUserIds);
 
+  // Только в установленном соединении: на переподключении LiveKit может
+  // заново объявить уже сидевших в комнате, и звенело бы на каждого.
+  const isConnected = () =>
+    useVoiceStore.getState().state.status === "connected";
+
+  instance.on(RoomEvent.ParticipantConnected, () => {
+    if (isConnected()) playVoiceSound("join");
+  });
+  instance.on(RoomEvent.ParticipantDisconnected, () => {
+    if (isConnected()) playVoiceSound("leave");
+  });
+
   instance.on(RoomEvent.Reconnecting, () => actions.setReconnecting());
   instance.on(RoomEvent.Reconnected, () => {
     actions.setConnected();
@@ -194,6 +207,8 @@ const createRoom = async (): Promise<Room> => {
 
     room = null;
     attempt += 1;
+    // До сброса стора: playVoiceSound смотрит, не включены ли «наушники».
+    playVoiceSound("leave");
     resetVoiceState();
   });
 
@@ -252,7 +267,10 @@ export const connectToVoiceChannel = async (
   // Переход между каналами — это разрыв и новое подключение: одновременно
   // в двух голосовых каналах находиться нельзя. Обрывает и подключение,
   // которое ещё в процессе.
-  if (state.status !== "idle") await disconnectFromVoiceChannel();
+  // Без звука выхода: при переходе прозвучит только вход в новый канал.
+  if (state.status !== "idle") {
+    await disconnectFromVoiceChannel({ silent: true });
+  }
 
   const currentAttempt = ++attempt;
   const isStale = () => attempt !== currentAttempt;
@@ -310,6 +328,7 @@ export const connectToVoiceChannel = async (
 
   // Комната подключена — дальше только микрофон, статус не держим.
   actions.setConnected();
+  playVoiceSound("join");
 
   // Политика автовоспроизведения: вызываем в цепочке от клика пользователя,
   // иначе звук удалённых участников может не начать играть.
@@ -353,10 +372,16 @@ export const connectToVoiceChannel = async (
  * «Отключиться» срабатывает мгновенно, даже если сеть подвисла и disconnect()
  * отвечает долго или падает.
  */
-export const disconnectFromVoiceChannel = async () => {
+export const disconnectFromVoiceChannel = async ({ silent = false } = {}) => {
   const current = room;
   room = null;
   attempt += 1;
+
+  // Отмена ещё не состоявшегося подключения выходом не считается.
+  const { status } = useVoiceStore.getState().state;
+  if (!silent && (status === "connected" || status === "reconnecting")) {
+    playVoiceSound("leave");
+  }
 
   // До disconnect(): иначе событие Disconnected этой комнаты, пришедшее
   // позже, сбросило бы уже новое подключение.

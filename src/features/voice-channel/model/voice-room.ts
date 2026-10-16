@@ -187,13 +187,58 @@ const createRoom = async (): Promise<Room> => {
     refreshMutedUserIds();
   });
 
+  // Сюда попадаем только при неожиданном обрыве: при выходе пользователя
+  // слушатели снимаются до disconnect().
   instance.on(RoomEvent.Disconnected, () => {
-    getAudioContainer().replaceChildren();
-    actions.setDisconnected();
+    if (room !== instance) return;
+
+    room = null;
+    attempt += 1;
+    resetVoiceState();
   });
 
   return instance;
 };
+
+/**
+ * Номер текущей попытки подключения. Выход или новое подключение увеличивают
+ * его, и все ещё не завершённые шаги старой попытки видят, что устарели, и не
+ * трогают ни стор, ни новую комнату.
+ */
+let attempt = 0;
+
+const resetVoiceState = () => {
+  getAudioContainer().replaceChildren();
+  setSpeakerphone(false);
+  getVoiceCallBridge()?.stop();
+  useVoiceStore.getState().actions.setDisconnected();
+};
+
+/**
+ * Все операции с микрофоном идут строго по очереди. Иначе быстрые клики или
+ * клик во время публикации трека пересекаются внутри LiveKit, и микрофон
+ * остаётся не в том состоянии, что показывает кнопка.
+ */
+let micQueue: Promise<void> = Promise.resolve();
+
+const enqueueMic = (task: () => Promise<void>) => {
+  const run = micQueue.then(task);
+  // Упавшая операция не должна блокировать следующие.
+  micQueue = run.catch(() => undefined);
+  return run;
+};
+
+/** Приводит микрофон в LiveKit к состоянию кнопки из стора. */
+const syncMicrophone = () =>
+  enqueueMic(async () => {
+    const current = room;
+    if (!current) return;
+
+    const enabled = !useVoiceStore.getState().state.isMicMuted;
+    if (current.localParticipant.isMicrophoneEnabled === enabled) return;
+
+    await current.localParticipant.setMicrophoneEnabled(enabled);
+  });
 
 export const connectToVoiceChannel = async (
   guildId: string,
@@ -205,8 +250,12 @@ export const connectToVoiceChannel = async (
   if (state.channelId === channelId && state.status !== "idle") return;
 
   // Переход между каналами — это разрыв и новое подключение: одновременно
-  // в двух голосовых каналах находиться нельзя.
-  if (room) await disconnectFromVoiceChannel();
+  // в двух голосовых каналах находиться нельзя. Обрывает и подключение,
+  // которое ещё в процессе.
+  if (state.status !== "idle") await disconnectFromVoiceChannel();
+
+  const currentAttempt = ++attempt;
+  const isStale = () => attempt !== currentAttempt;
 
   actions.setConnecting(guildId, channelId, channelName);
 
@@ -222,7 +271,10 @@ export const connectToVoiceChannel = async (
       (error: unknown) => ({ track: null, error }),
     );
 
-  let instance: Room | null = null;
+  const releaseMicrophone = () =>
+    void microphoneTrack.then(({ track }) => track?.stop());
+
+  let instance: Room;
 
   try {
     const [{ data }, created] = await Promise.all([
@@ -231,19 +283,29 @@ export const connectToVoiceChannel = async (
     ]);
 
     instance = created;
-    room = instance;
 
+    // Пока ждали токен, пользователь уже вышел или ушёл в другой канал.
+    if (isStale()) {
+      releaseMicrophone();
+      return;
+    }
+
+    room = instance;
     await instance.connect(data.url, data.token);
   } catch (error) {
-    // Трек мог успеть захватиться — освобождаем микрофон.
-    void microphoneTrack.then(({ track }) => track?.stop());
+    releaseMicrophone();
 
-    // Пока мы ждали, пользователь мог уйти в другой канал — тогда эту
-    // попытку уже убрал disconnectFromVoiceChannel, трогать стор нельзя.
-    if (room === instance) await disconnectFromVoiceChannel();
-    else void instance?.disconnect();
+    // Устаревшую попытку уже убрал disconnectFromVoiceChannel — трогать стор
+    // нельзя, там может быть уже новое подключение.
+    if (isStale()) return;
 
+    await disconnectFromVoiceChannel();
     throw error;
+  }
+
+  if (isStale()) {
+    releaseMicrophone();
+    return;
   }
 
   // Комната подключена — дальше только микрофон, статус не держим.
@@ -255,24 +317,27 @@ export const connectToVoiceChannel = async (
 
   const { track, error } = await microphoneTrack;
 
-  if (room !== instance) {
-    track?.stop();
-    return;
-  }
-
   try {
-    if (!track) throw error;
-    await instance.localParticipant.publishTrack(track);
+    // Публикация стоит в общей очереди с кликами по кнопке микрофона.
+    await enqueueMic(async () => {
+      if (isStale()) throw new Error("stale");
+      if (!track) throw error;
+
+      await instance.localParticipant.publishTrack(track);
+    });
 
     // Микрофон могли выключить (или включить наушники), пока трек публиковался.
-    if (useVoiceStore.getState().state.isMicMuted) {
-      await instance.localParticipant.setMicrophoneEnabled(false);
-    }
+    await syncMicrophone();
   } catch (publishError) {
     track?.stop();
+
+    if (isStale()) return;
+
     actions.setMicMuted(true);
     throw new MicrophoneUnavailableError(publishError);
   }
+
+  if (isStale()) return;
 
   // Режим звонка включается при захвате микрофона, поэтому выбираем
   // динамик только после него.
@@ -283,26 +348,45 @@ export const connectToVoiceChannel = async (
   getVoiceCallBridge()?.start(channelName);
 };
 
+/**
+ * Состояние сбрасывается сразу, а сам разрыв с сервером идёт следом: кнопка
+ * «Отключиться» срабатывает мгновенно, даже если сеть подвисла и disconnect()
+ * отвечает долго или падает.
+ */
 export const disconnectFromVoiceChannel = async () => {
   const current = room;
   room = null;
+  attempt += 1;
 
-  if (current) {
-    await current.disconnect();
-    current.removeAllListeners();
+  // До disconnect(): иначе событие Disconnected этой комнаты, пришедшее
+  // позже, сбросило бы уже новое подключение.
+  current?.removeAllListeners();
+  resetVoiceState();
+
+  try {
+    await current?.disconnect();
+  } catch (error) {
+    console.error("Ошибка при отключении от комнаты LiveKit:", error);
   }
-
-  getAudioContainer().replaceChildren();
-  setSpeakerphone(false);
-  getVoiceCallBridge()?.stop();
-  useVoiceStore.getState().actions.setDisconnected();
 };
 
+/**
+ * Кнопка меняется сразу, LiveKit догоняет через очередь. Если включить
+ * микрофон не вышло, кнопка возвращается к реальному состоянию.
+ */
 export const setMicrophoneMuted = async (isMicMuted: boolean) => {
-  if (!room) return;
+  const { state, actions } = useVoiceStore.getState();
 
-  await room.localParticipant.setMicrophoneEnabled(!isMicMuted);
-  useVoiceStore.getState().actions.setMicMuted(isMicMuted);
+  if (state.status === "idle") return;
+
+  actions.setMicMuted(isMicMuted);
+
+  try {
+    await syncMicrophone();
+  } catch (error) {
+    if (room) actions.setMicMuted(!room.localParticipant.isMicrophoneEnabled);
+    throw error;
+  }
 };
 
 /**

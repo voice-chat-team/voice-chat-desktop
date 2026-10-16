@@ -6,15 +6,15 @@ import { Outlet } from "react-router";
 
 export function SidebarLayout() {
   return (
-    <div className="flex h-svh bg-surface-000 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
-      <MessageCacheSync />
-      <MessageNotificationsListener />
-      <TooltipProvider>
+    <TooltipProvider>
+      <div className="flex h-svh bg-surface-000 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
+        <MessageCacheSync />
+        <MessageNotificationsListener />
         <SideBarPanel />
-      </TooltipProvider>
-      <main className="h-full min-w-0 w-full bg-card">
-        <Outlet />
-      </main>
-    </div>
+        <main className="h-full min-w-0 w-full bg-card">
+          <Outlet />
+        </main>
+      </div>
+    </TooltipProvider>
   );
 }

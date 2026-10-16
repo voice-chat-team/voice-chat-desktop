@@ -40,22 +40,32 @@ export const useVoiceConnection = () => {
   );
 
   const leave = useCallback(async () => {
-    await disconnectFromVoiceChannel();
-
     // Выход из разговора — явное действие пользователя, поэтому закрываем и
     // сцену. При неожиданном обрыве она остаётся открытой с кнопкой
     // «Подключиться»: так понятнее, что произошло.
     if (useServerStore.getState().state.activeVoiceChannel) {
       useServerStore.getState().actions.setActiveVoiceChannel(null);
     }
+
+    await disconnectFromVoiceChannel();
   }, []);
 
   const toggleMic = useCallback(async () => {
-    await setMicrophoneMuted(!useVoiceStore.getState().state.isMicMuted);
+    try {
+      await setMicrophoneMuted(!useVoiceStore.getState().state.isMicMuted);
+    } catch (error) {
+      console.error(error);
+      toast.error("Не удалось переключить микрофон");
+    }
   }, []);
 
   const toggleDeafen = useCallback(async () => {
-    await setDeafened(!useVoiceStore.getState().state.isDeafened);
+    try {
+      await setDeafened(!useVoiceStore.getState().state.isDeafened);
+    } catch (error) {
+      console.error(error);
+      toast.error("Не удалось переключить звук");
+    }
   }, []);
 
   const toggleSpeakerphone = useCallback(() => {

@@ -10,6 +10,7 @@ import {
 } from "@/shared";
 
 import { VoiceParticipantTile } from "./VoiceParticipantTile";
+import { VoiceStageControls } from "./VoiceStageControls";
 import { Skeleton } from "@/shared/ui/skeleton";
 
 type StageParticipant = {
@@ -110,6 +111,8 @@ export const VoiceChannelStage = ({ channel }: { channel: ChannelDto }) => {
           </div>
         </div>
       )}
+
+      {isConnectedHere && <VoiceStageControls />}
     </div>
   );
 };

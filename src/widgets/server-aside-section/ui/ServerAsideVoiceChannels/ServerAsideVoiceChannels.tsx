@@ -10,6 +10,7 @@ import {
   ServerAsideListTitle,
   ServerAsideListTitleButton,
   ServerAsideUnorderList,
+  prewarmVoiceConnection,
   useVoiceConnection,
 } from "@/features";
 import { useVoiceStore } from "@/entities/voice";
@@ -73,6 +74,7 @@ export const ServerAsideVoiceChannels = ({
               return (
                 <ServerAsideListItem
                   key={channel.id}
+                  onPointerEnter={prewarmVoiceConnection}
                   onClick={() => {
                     join(channel.guildId, channel.id, channel.name);
                     setActiveVoiceChannel(channel);

@@ -6,6 +6,7 @@ import { useVoiceStore } from "@/entities/voice";
 import {
   connectToVoiceChannel,
   disconnectFromVoiceChannel,
+  MicrophoneUnavailableError,
   setDeafened,
   setMicrophoneMuted,
   setSpeakerphoneEnabled,
@@ -24,6 +25,14 @@ export const useVoiceConnection = () => {
         await connectToVoiceChannel(guildId, targetChannelId, channelName);
       } catch (error) {
         console.error(error);
+
+        if (error instanceof MicrophoneUnavailableError) {
+          toast.error("Не удалось включить микрофон", {
+            description: "Вы в канале, но вас не слышно",
+          });
+          return;
+        }
+
         toast.error("Не удалось подключиться к голосовому каналу");
       }
     },

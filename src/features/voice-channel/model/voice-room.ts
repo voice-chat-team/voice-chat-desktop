@@ -66,23 +66,64 @@ export const setSpeakerphoneEnabled = (enabled: boolean) => {
   useVoiceStore.getState().actions.setSpeakerphone(enabled);
 };
 
-const createRoom = async (): Promise<Room> => {
-  const {
-    Room: LiveKitRoom,
-    RoomEvent,
-    Track,
-  } = await import("livekit-client");
+/**
+ * Публичный адрес LiveKit — тот же, что в CSP. Нужен только для прогрева:
+ * само подключение идёт по url из ответа /voice/join.
+ */
+const LIVEKIT_PREWARM_URL = "wss://livekit.voice-chat-app.ru";
 
-  const { inputDeviceId, outputDeviceId } =
-    useAudioSettingsStore.getState().state;
+/** Микрофон не удалось захватить или опубликовать, но в комнате мы остались. */
+export class MicrophoneUnavailableError extends Error {
+  constructor(readonly reason: unknown) {
+    super("Не удалось включить микрофон");
+    this.name = "MicrophoneUnavailableError";
+  }
+}
+
+let livekitModule: Promise<typeof import("livekit-client")> | null = null;
+
+/** Чанк livekit-client грузится один раз, повторные вызовы берут тот же промис. */
+const loadLiveKit = () => {
+  livekitModule ??= import("livekit-client").catch((error) => {
+    livekitModule = null;
+    throw error;
+  });
+
+  return livekitModule;
+};
+
+let isPrewarmed = false;
+
+/**
+ * Вызывается при наведении на голосовой канал: заранее грузит livekit-client
+ * и прогревает DNS + TLS до сервера, чтобы клик не платил за это сам.
+ */
+export const prewarmVoiceConnection = async () => {
+  if (isPrewarmed || room) return;
+  isPrewarmed = true;
+
+  try {
+    const { Room: LiveKitRoom } = await loadLiveKit();
+    await new LiveKitRoom().prepareConnection(LIVEKIT_PREWARM_URL);
+  } catch {
+    isPrewarmed = false;
+  }
+};
+
+const audioCaptureOptions = () => ({
+  deviceId: useAudioSettingsStore.getState().state.inputDeviceId,
+  echoCancellation: true,
+  noiseSuppression: true,
+  autoGainControl: true,
+});
+
+const createRoom = async (): Promise<Room> => {
+  const { Room: LiveKitRoom, RoomEvent, Track } = await loadLiveKit();
+
+  const { outputDeviceId } = useAudioSettingsStore.getState().state;
 
   const instance = new LiveKitRoom({
-    audioCaptureDefaults: {
-      deviceId: inputDeviceId,
-      echoCancellation: true,
-      noiseSuppression: true,
-      autoGainControl: true,
-    },
+    audioCaptureDefaults: audioCaptureOptions(),
     audioOutput: {
       deviceId: outputDeviceId,
     },
@@ -169,34 +210,77 @@ export const connectToVoiceChannel = async (
 
   actions.setConnecting(guildId, channelId, channelName);
 
+  // Захват микрофона (на Windows запуск устройства занимает до секунды)
+  // идёт параллельно с запросом токена и загрузкой livekit-client.
+  // Ошибку микрофона не роняем сразу: без него в канале всё равно можно слушать.
+  const microphoneTrack = loadLiveKit()
+    .then(({ createLocalAudioTrack }) =>
+      createLocalAudioTrack(audioCaptureOptions()),
+    )
+    .then(
+      (track) => ({ track, error: null }),
+      (error: unknown) => ({ track: null, error }),
+    );
+
+  let instance: Room | null = null;
+
   try {
-    const { data } = await voiceApi.voiceControllerJoinVoiceChannel({
-      guildId,
-      channelId,
-    });
+    const [{ data }, created] = await Promise.all([
+      voiceApi.voiceControllerJoinVoiceChannel({ guildId, channelId }),
+      createRoom(),
+    ]);
 
-    room = await createRoom();
+    instance = created;
+    room = instance;
 
-    await room.connect(data.url, data.token);
-    await room.localParticipant.setMicrophoneEnabled(true);
-
-    // Политика автовоспроизведения: вызываем после клика пользователя,
-    // иначе звук удалённых участников может не начать играть.
-    await room.startAudio();
-
-    // Режим звонка включается при захвате микрофона, поэтому выбираем
-    // динамик только после него.
-    setSpeakerphone(useVoiceStore.getState().state.isSpeakerphone);
-
-    // После захвата микрофона: foreground-сервис с типом microphone нельзя
-    // стартовать без выданного RECORD_AUDIO.
-    getVoiceCallBridge()?.start(channelName);
-
-    actions.setConnected();
+    await instance.connect(data.url, data.token);
   } catch (error) {
-    await disconnectFromVoiceChannel();
+    // Трек мог успеть захватиться — освобождаем микрофон.
+    void microphoneTrack.then(({ track }) => track?.stop());
+
+    // Пока мы ждали, пользователь мог уйти в другой канал — тогда эту
+    // попытку уже убрал disconnectFromVoiceChannel, трогать стор нельзя.
+    if (room === instance) await disconnectFromVoiceChannel();
+    else void instance?.disconnect();
+
     throw error;
   }
+
+  // Комната подключена — дальше только микрофон, статус не держим.
+  actions.setConnected();
+
+  // Политика автовоспроизведения: вызываем в цепочке от клика пользователя,
+  // иначе звук удалённых участников может не начать играть.
+  void instance.startAudio();
+
+  const { track, error } = await microphoneTrack;
+
+  if (room !== instance) {
+    track?.stop();
+    return;
+  }
+
+  try {
+    if (!track) throw error;
+    await instance.localParticipant.publishTrack(track);
+
+    // Микрофон могли выключить (или включить наушники), пока трек публиковался.
+    if (useVoiceStore.getState().state.isMicMuted) {
+      await instance.localParticipant.setMicrophoneEnabled(false);
+    }
+  } catch (publishError) {
+    track?.stop();
+    actions.setMicMuted(true);
+    throw new MicrophoneUnavailableError(publishError);
+  }
+
+  // Режим звонка включается при захвате микрофона, поэтому выбираем
+  // динамик только после него.
+  setSpeakerphone(useVoiceStore.getState().state.isSpeakerphone);
+
+  // После захвата микрофона: foreground-сервис с типом microphone нельзя
+  // стартовать без выданного RECORD_AUDIO.
+  getVoiceCallBridge()?.start(channelName);
 };
 
 export const disconnectFromVoiceChannel = async () => {

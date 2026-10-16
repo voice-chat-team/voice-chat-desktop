@@ -21,7 +21,7 @@ export const SideBarActionButton = ({
   );
 };
 
-const railIconClass =
+export const railIconClass =
   "flex size-11 items-center justify-center rounded-full text-[13px] font-bold text-text-on-brand select-none transition-[border-radius,background-color] duration-150 group-hover:rounded-squircle group-focus-visible:rounded-squircle";
 
 const railItemClass =

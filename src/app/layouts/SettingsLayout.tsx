@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { SettingsAsideSection } from "@/widgets/setting-aside-section";
+import { ServerSettingsAsideSection } from "@/widgets/server-settings-aside-section";
 import { Outlet, useLocation } from "react-router";
 import { Pane, SplitPane } from "react-split-pane";
 import { Menu } from "lucide-react";
@@ -13,7 +14,12 @@ import {
   useIsMobile,
 } from "@/shared";
 
-const MobileSettingsLayout = () => {
+type SettingsShellProps = {
+  aside: ReactNode;
+  title: string;
+};
+
+const MobileSettingsShell = ({ aside, title }: SettingsShellProps) => {
   const location = useLocation();
   const [openedAt, setOpenedAt] = useState<string | null>(null);
 
@@ -36,12 +42,12 @@ const MobileSettingsLayout = () => {
             showCloseButton={false}
             className="bg-surface-100 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
           >
-            <SheetTitle className="sr-only">Настройки</SheetTitle>
-            <SettingsAsideSection />
+            <SheetTitle className="sr-only">{title}</SheetTitle>
+            {aside}
           </SheetContent>
         </Sheet>
-        <span className="text-sm font-semibold text-text-primary">
-          Настройки
+        <span className="truncate text-sm font-semibold text-text-primary">
+          {title}
         </span>
       </div>
 
@@ -52,10 +58,10 @@ const MobileSettingsLayout = () => {
   );
 };
 
-export const SettingsLayout = () => {
+const SettingsShell = ({ aside, title }: SettingsShellProps) => {
   const isMobile = useIsMobile();
 
-  if (isMobile) return <MobileSettingsLayout />;
+  if (isMobile) return <MobileSettingsShell aside={aside} title={title} />;
 
   return (
     <div className="flex h-svh">
@@ -64,7 +70,7 @@ export const SettingsLayout = () => {
         dividerStyle={{ backgroundColor: "var(--border-subtle)" }}
       >
         <Pane minSize={200} defaultSize={250} maxSize={500}>
-          <SettingsAsideSection />
+          {aside}
         </Pane>
         <Pane>
           <main className="h-svh w-full bg-surface-200 p-4">
@@ -75,3 +81,14 @@ export const SettingsLayout = () => {
     </div>
   );
 };
+
+export const SettingsLayout = () => (
+  <SettingsShell aside={<SettingsAsideSection />} title="Настройки" />
+);
+
+export const ServerSettingsLayout = () => (
+  <SettingsShell
+    aside={<ServerSettingsAsideSection />}
+    title="Настройки сервера"
+  />
+);

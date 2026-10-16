@@ -3,7 +3,12 @@ import { createBrowserRouter } from "react-router";
 import { ROUTES } from "@/shared";
 
 import { authMiddleware } from "./middlewares";
-import { IndexLayout, SettingsLayout, SidebarLayout } from "./layouts";
+import {
+  IndexLayout,
+  ServerSettingsLayout,
+  SettingsLayout,
+  SidebarLayout,
+} from "./layouts";
 
 const SuspenseFallback = () => (
   <div className="flex items-center justify-center h-screen">
@@ -27,6 +32,27 @@ export const router = createBrowserRouter([
                 await import("@/pages/settings-page/ui/SettingsPage");
 
               return {
+                Component,
+              };
+            },
+          },
+        ],
+      },
+      {
+        Component: ServerSettingsLayout,
+        children: [
+          {
+            path: ROUTES.SERVER_SETTINGS(":serverId"),
+            lazy: async () => {
+              const { serverLoader } =
+                await import("@/pages/server-page/loader/page.loader");
+
+              const { default: Component } =
+                await import("@/pages/server-settings-page/ui/ServerSettingsPage");
+
+              return {
+                loader: serverLoader,
+                HydrateFallback: SuspenseFallback,
                 Component,
               };
             },

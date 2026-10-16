@@ -4,6 +4,7 @@ import {
   AvatarFallback,
   AvatarImage,
   Button,
+  SettingsSection,
   cn,
   createAbbr,
   getAvatarColorClass,
@@ -12,7 +13,6 @@ import {
 } from "@/shared";
 import { Camera, Trash2, Upload } from "lucide-react";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
-import { SettingsSection } from "./SettingsSection";
 
 export const AccountSettingsTab = () => {
   const { data: user } = useCurrentUser();

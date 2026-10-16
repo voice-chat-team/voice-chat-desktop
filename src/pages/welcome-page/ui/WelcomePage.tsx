@@ -2,7 +2,7 @@ import { WelcomeUpSection } from "@/widgets";
 
 function WelcomePage() {
   return (
-    <div className="flex justify-center items-center h-full">
+    <div className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-surface-raised scrollbar-track-transparent">
       <WelcomeUpSection />
     </div>
   );

@@ -19,3 +19,4 @@ export * from "./progress";
 export * from "./tabs";
 export * from "./badge";
 export * from "./sheet";
+export * from "./settings-section";

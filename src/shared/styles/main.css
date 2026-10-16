@@ -307,3 +307,11 @@
     text-size-adjust: 100%;
   }
 }
+
+/* «Голосовой отпечаток» на стартовой странице: столбики один раз поднимаются при загрузке. */
+@keyframes voiceprint-rise {
+  from {
+    transform: scaleY(0.04);
+    opacity: 0;
+  }
+}

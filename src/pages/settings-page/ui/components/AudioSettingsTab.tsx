@@ -1,6 +1,7 @@
 import {
   Badge,
   Button,
+  SettingsSection,
   cn,
   FormSwitch,
   Label,
@@ -17,7 +18,6 @@ import {
 } from "@/shared";
 import { Mic, Radio, Speaker } from "lucide-react";
 import { useId, useState, type ReactNode } from "react";
-import { SettingsSection } from "./SettingsSection";
 import { useAudioSettingsStore } from "@/entities/voice";
 import { toast } from "sonner";
 import {

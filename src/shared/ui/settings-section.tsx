@@ -1,4 +1,4 @@
-import { cn } from "@/shared";
+import { cn } from "@/shared/lib/utils";
 import type { PropsWithChildren, ReactNode } from "react";
 
 type SettingsSectionProps = PropsWithChildren<{

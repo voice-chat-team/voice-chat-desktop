@@ -150,6 +150,7 @@ export const ServerAsideListItemUser = ({
   user,
   isOwner,
   isSelf,
+  nameColor,
   size = "default",
   ...props
 }: PropsWithChildren<ComponentProps<"div">> & {
@@ -157,6 +158,8 @@ export const ServerAsideListItemUser = ({
   isOwner?: boolean;
   /** Своё имя в списке выделяется жирным. */
   isSelf?: boolean;
+  /** Цвет ника — цвет высшей роли участника. */
+  nameColor?: string;
   size?: "default" | "sm";
 }) => {
   return (
@@ -184,7 +187,9 @@ export const ServerAsideListItemUser = ({
         </AvatarFallback>
       </Avatar>
       <p className="flex min-w-0 items-center gap-1">
-        <span className="truncate">{user?.username}</span>
+        <span className="truncate" style={{ color: nameColor }}>
+          {user?.username}
+        </span>
         {isOwner && (
           <Crown
             className="size-3.5 shrink-0 fill-current text-status-idle"

@@ -3,7 +3,7 @@ import {
   CreateInviteDtoSchema,
 } from "../models/invite-form.model";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateInvitationRequestDtoInvitedRoleEnum, inviteApi } from "@/shared";
+import { inviteApi } from "@/shared";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -14,7 +14,6 @@ export const useInviteUsers = (guildId: string) => {
     resolver: zodResolver(CreateInviteDtoSchema),
     defaultValues: {
       guildId,
-      invitedRole: CreateInvitationRequestDtoInvitedRoleEnum.NUMBER_3,
     },
   });
 

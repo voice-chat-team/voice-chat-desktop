@@ -12,6 +12,7 @@ import { DEFAILT_ICONS_TITLE_SIZE } from "../../models";
 import { ChannelDto } from "@/shared";
 import { useState } from "react";
 import { useServerStore } from "@/entities/server";
+import { useGuildPermissions } from "@/entities/role";
 
 export const ServerAsideTextChannels = ({
   channels,
@@ -27,6 +28,8 @@ export const ServerAsideTextChannels = ({
   );
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  // Внутри ServerPage сервер в сторе есть всегда.
+  const canCreate = useGuildPermissions(guildId!).has("MANAGE_GUILD");
 
   return (
     <>
@@ -34,14 +37,18 @@ export const ServerAsideTextChannels = ({
         renderTitle={() => (
           <ServerAsideListTitle>Текстовые каналы</ServerAsideListTitle>
         )}
-        renderTitleButton={() => (
-          <ServerAsideListTitleButton
-            onClick={() => setIsCreateModalOpen(!isCreateModalOpen)}
-            aria-label="Создать текстовый канал"
-          >
-            <Plus />
-          </ServerAsideListTitleButton>
-        )}
+        renderTitleButton={
+          canCreate
+            ? () => (
+                <ServerAsideListTitleButton
+                  onClick={() => setIsCreateModalOpen(!isCreateModalOpen)}
+                  aria-label="Создать текстовый канал"
+                >
+                  <Plus />
+                </ServerAsideListTitleButton>
+              )
+            : undefined
+        }
         renderList={() => (
           <ServerAsideUnorderList>
             {channels.map((ch) => (

@@ -23,19 +23,5 @@ export interface CreateInvitationRequestDto {
      * ID получателя приглашения
      */
     'receiverId': string;
-    /**
-     * Роль пользователя при вступлении на сервер:    - 0 — OWNER (владелец)    - 1 — ADMIN (администратор)    - 2 — MODERATOR (модератор)    - 3 — MEMBER (участник)
-     */
-    'invitedRole': CreateInvitationRequestDtoInvitedRoleEnum;
 }
-
-export const CreateInvitationRequestDtoInvitedRoleEnum = {
-    NUMBER_0: 0,
-    NUMBER_1: 1,
-    NUMBER_2: 2,
-    NUMBER_3: 3,
-} as const;
-
-export type CreateInvitationRequestDtoInvitedRoleEnum = typeof CreateInvitationRequestDtoInvitedRoleEnum[keyof typeof CreateInvitationRequestDtoInvitedRoleEnum];
-
 

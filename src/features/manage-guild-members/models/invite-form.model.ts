@@ -1,11 +1,10 @@
 import { z } from "zod/v4";
-import { CreateInvitationRequestDto, CreateInvitationRequestDtoInvitedRoleEnum, schemaFor } from "@/shared";
+import { CreateInvitationRequestDto, schemaFor } from "@/shared";
 
 export const CreateInviteDtoSchema = schemaFor<CreateInvitationRequestDto>()(
   z.object({
     guildId: z.string().nonempty(),
     receiverId: z.string().nonempty(),
-    invitedRole: z.enum(CreateInvitationRequestDtoInvitedRoleEnum),
   })
 )
 

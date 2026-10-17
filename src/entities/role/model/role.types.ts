@@ -1,32 +1,28 @@
-// Роли пока существуют только на клиенте: на бэкенде нет ни ролей, ни прав,
-// единственная «роль» — флаг isGuildOwner у участника.
+import type { PermissionKey } from "@/shared";
 
-export type PermissionKey =
-  | "MANAGE_GUILD"
-  | "MANAGE_ROLES"
-  | "INVITE_MEMBERS"
-  | "KICK_MEMBERS"
-  | "SEND_MESSAGES"
-  | "ATTACH_FILES"
-  | "DELETE_MESSAGES"
-  | "VOICE_CONNECT"
-  | "VOICE_SPEAK"
-  | "VOICE_MUTE_MEMBERS"
-  | "CREATE_BOARDS"
-  | "DELETE_BOARDS";
+export type { PermissionKey };
 
 export type RoleMember = {
   id: string;
   username: string;
+  avatarUrl?: string;
 };
 
+/**
+ * Роль в редакторе настроек: RoleDto с участниками. Порядок в списке ролей —
+ * иерархия сверху вниз, @everyone последняя.
+ */
 export type GuildRole = {
   id: string;
   name: string;
   /** Цвет имени участника в чате и списках, hex. */
   color: string;
+  /** Позиция на сервере; у ещё не сохранённой роли — 0. */
+  position: number;
   members: RoleMember[];
-  permissions: Record<PermissionKey, boolean>;
+  permissions: PermissionKey[];
   /** Роль по умолчанию: есть у всех участников, её нельзя переименовать и удалить. */
   isDefault?: boolean;
+  /** Создана в редакторе и ещё не сохранена. */
+  isNew?: boolean;
 };

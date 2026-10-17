@@ -56,6 +56,13 @@ export const useGuildVoiceEvents = (guildId: string) => {
       } else {
         removeVoiceParticipant(queryClient, payload);
       }
+
+      // Запрос, начатый до события (например, VoiceChannelStage при входе
+      // перечитывает устаревший состав), вернёт снимок без этого изменения
+      // и затрёт кэш. Перезапускаем его: новый ответ уже будет с изменением.
+      if (queryClient.isFetching({ queryKey }) > 0) {
+        void queryClient.invalidateQueries({ queryKey });
+      }
     };
 
     const handleSubscribed = () => {

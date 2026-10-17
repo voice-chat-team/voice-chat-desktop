@@ -41,7 +41,7 @@ import type { UpdateMessageResponseDto } from '../models';
 export const MessageApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * Удалять можно только свои сообщения
+         * Свои сообщения удалить может автор, чужие — участник с правом DELETE_MESSAGES
          * @summary Удалить сообщение
          * @param {DeleteMessageRequestDto} deleteMessageRequestDto 
          * @param {*} [options] Override http request option.
@@ -80,7 +80,7 @@ export const MessageApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         * Сообщения возвращаются от новых к старым. Для подгрузки более старых передайте beforeMessageId последнего полученного сообщения
+         * Доступно участникам сервера. Сообщения возвращаются от новых к старым. Для подгрузки более старых передайте beforeMessageId последнего полученного сообщения
          * @summary Получить историю сообщений текстового канала
          * @param {string} channelId ID текстового канала
          * @param {string} guildId ID сервера
@@ -138,7 +138,7 @@ export const MessageApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         * Отправлять сообщения могут только участники сервера
+         * Нужно право SEND_MESSAGES, для вложений — ещё и ATTACH_FILES
          * @summary Отправить сообщение в текстовый канал
          * @param {SendMessageRequestDto} sendMessageRequestDto 
          * @param {*} [options] Override http request option.
@@ -225,7 +225,7 @@ export const MessageApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = MessageApiAxiosParamCreator(configuration)
     return {
         /**
-         * Удалять можно только свои сообщения
+         * Свои сообщения удалить может автор, чужие — участник с правом DELETE_MESSAGES
          * @summary Удалить сообщение
          * @param {DeleteMessageRequestDto} deleteMessageRequestDto 
          * @param {*} [options] Override http request option.
@@ -238,7 +238,7 @@ export const MessageApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * Сообщения возвращаются от новых к старым. Для подгрузки более старых передайте beforeMessageId последнего полученного сообщения
+         * Доступно участникам сервера. Сообщения возвращаются от новых к старым. Для подгрузки более старых передайте beforeMessageId последнего полученного сообщения
          * @summary Получить историю сообщений текстового канала
          * @param {string} channelId ID текстового канала
          * @param {string} guildId ID сервера
@@ -254,7 +254,7 @@ export const MessageApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * Отправлять сообщения могут только участники сервера
+         * Нужно право SEND_MESSAGES, для вложений — ещё и ATTACH_FILES
          * @summary Отправить сообщение в текстовый канал
          * @param {SendMessageRequestDto} sendMessageRequestDto 
          * @param {*} [options] Override http request option.
@@ -289,7 +289,7 @@ export const MessageApiFactory = function (configuration?: Configuration, basePa
     const localVarFp = MessageApiFp(configuration)
     return {
         /**
-         * Удалять можно только свои сообщения
+         * Свои сообщения удалить может автор, чужие — участник с правом DELETE_MESSAGES
          * @summary Удалить сообщение
          * @param {DeleteMessageRequestDto} deleteMessageRequestDto 
          * @param {*} [options] Override http request option.
@@ -299,7 +299,7 @@ export const MessageApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.messageControllerDeleteMessage(deleteMessageRequestDto, options).then((request) => request(axios, basePath));
         },
         /**
-         * Сообщения возвращаются от новых к старым. Для подгрузки более старых передайте beforeMessageId последнего полученного сообщения
+         * Доступно участникам сервера. Сообщения возвращаются от новых к старым. Для подгрузки более старых передайте beforeMessageId последнего полученного сообщения
          * @summary Получить историю сообщений текстового канала
          * @param {string} channelId ID текстового канала
          * @param {string} guildId ID сервера
@@ -312,7 +312,7 @@ export const MessageApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.messageControllerGetChannelMessages(channelId, guildId, beforeMessageId, limit, options).then((request) => request(axios, basePath));
         },
         /**
-         * Отправлять сообщения могут только участники сервера
+         * Нужно право SEND_MESSAGES, для вложений — ещё и ATTACH_FILES
          * @summary Отправить сообщение в текстовый канал
          * @param {SendMessageRequestDto} sendMessageRequestDto 
          * @param {*} [options] Override http request option.
@@ -339,7 +339,7 @@ export const MessageApiFactory = function (configuration?: Configuration, basePa
  */
 export class MessageApi extends BaseAPI {
     /**
-     * Удалять можно только свои сообщения
+     * Свои сообщения удалить может автор, чужие — участник с правом DELETE_MESSAGES
      * @summary Удалить сообщение
      * @param {DeleteMessageRequestDto} deleteMessageRequestDto 
      * @param {*} [options] Override http request option.
@@ -350,7 +350,7 @@ export class MessageApi extends BaseAPI {
     }
 
     /**
-     * Сообщения возвращаются от новых к старым. Для подгрузки более старых передайте beforeMessageId последнего полученного сообщения
+     * Доступно участникам сервера. Сообщения возвращаются от новых к старым. Для подгрузки более старых передайте beforeMessageId последнего полученного сообщения
      * @summary Получить историю сообщений текстового канала
      * @param {string} channelId ID текстового канала
      * @param {string} guildId ID сервера
@@ -364,7 +364,7 @@ export class MessageApi extends BaseAPI {
     }
 
     /**
-     * Отправлять сообщения могут только участники сервера
+     * Нужно право SEND_MESSAGES, для вложений — ещё и ATTACH_FILES
      * @summary Отправить сообщение в текстовый канал
      * @param {SendMessageRequestDto} sendMessageRequestDto 
      * @param {*} [options] Override http request option.

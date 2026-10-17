@@ -15,6 +15,8 @@ interface GuildChatMessageProps {
   attachments?: AttachmentDto[];
   createdAt: string;
   avatarUrl?: string;
+  /** Цвет ника — цвет высшей роли автора. */
+  nameColor?: string;
   isEdited?: boolean;
   isGroupStart?: boolean;
 }
@@ -26,6 +28,7 @@ export const GuildChatMessage = ({
   attachments = [],
   createdAt,
   avatarUrl,
+  nameColor,
   isEdited,
   isGroupStart = true,
 }: GuildChatMessageProps) => {
@@ -79,7 +82,10 @@ export const GuildChatMessage = ({
       </Avatar>
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline gap-2">
-          <span className="truncate text-[15px] leading-5 font-semibold text-text-primary">
+          <span
+            className="truncate text-[15px] leading-5 font-semibold text-text-primary"
+            style={{ color: nameColor }}
+          >
             {username}
           </span>
           <time

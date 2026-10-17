@@ -15,6 +15,9 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
+import type { PermissionKey } from './permission-key';
+// May contain unused imports in some cases
+// @ts-ignore
 import type { UserProfileDto } from './user-profile-dto';
 
 export interface GuildMemberDto {
@@ -50,5 +53,13 @@ export interface GuildMemberDto {
      * Информация о пользоватле
      */
     'user': UserProfileDto;
+    /**
+     * ID ролей участника, без @everyone (она есть у всех)
+     */
+    'roleIds': Array<string>;
+    /**
+     * Эффективные права участника: владелец — все, забаненный — никаких, остальные — @everyone + роли
+     */
+    'permissions': Array<PermissionKey>;
 }
 

@@ -7,6 +7,8 @@ import {
   type ChannelDto,
 } from "@/shared";
 
+import { useGuildPermissions, useMemberRoleColor } from "@/entities/role";
+
 import { useSendMessage } from "../hooks";
 import { formatDayLabel, isGroupStart, isNewDay } from "../lib";
 import { GuildChatHeader } from "./GuildChatHeader";
@@ -28,6 +30,8 @@ export const GuildChat = ({ channel }: { channel: ChannelDto }) => {
 
   const { data: members } = useGuildMembers(channel.guildId);
   const { data: currentUser } = useCurrentUser();
+  const permissions = useGuildPermissions(channel.guildId);
+  const getNameColor = useMemberRoleColor(channel.guildId);
   const { sendMessage, isSending } = useSendMessage(
     channel.id,
     channel.guildId,
@@ -121,6 +125,7 @@ export const GuildChat = ({ channel }: { channel: ChannelDto }) => {
               <GuildChatMessage
                 authorId={message.senderId}
                 username={author?.username ?? "Неизвестный пользователь"}
+                nameColor={getNameColor(message.senderId)}
                 avatarUrl={author?.avatarUrl}
                 content={message.content}
                 attachments={message.attachments}
@@ -133,7 +138,12 @@ export const GuildChat = ({ channel }: { channel: ChannelDto }) => {
         })}
       </GuildChatWrapper>
 
-      <GuildChatFooter onSend={sendMessage} isSending={isSending} />
+      <GuildChatFooter
+        onSend={sendMessage}
+        isSending={isSending}
+        canWrite={permissions.has("SEND_MESSAGES")}
+        canAttach={permissions.has("ATTACH_FILES")}
+      />
     </div>
   );
 };

@@ -1,3 +1,5 @@
+import { useGuildPermissions } from "@/entities/role";
+import { useServerStore } from "@/entities/server";
 import {
   Dialog,
   DialogContent,
@@ -5,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/shared";
+import { Suspense } from "react";
 import { InviteSection } from "./InviteSection";
 import { MemberList } from "./MemberList";
 
@@ -13,10 +16,15 @@ interface ManageMembersDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
+const InviteSectionGate = ({ guildId }: { guildId: string }) =>
+  useGuildPermissions(guildId).has("INVITE_MEMBERS") ? <InviteSection /> : null;
+
 export function ManageMembersDialog({
   open,
   onOpenChange,
 }: ManageMembersDialogProps) {
+  const guildId = useServerStore((s) => s.state.guild?.id);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="min-w-xl">
@@ -28,8 +36,10 @@ export function ManageMembersDialog({
         </DialogHeader>
 
         <div className="flex flex-col gap-5">
-          <InviteSection />
-          <MemberList />
+          <Suspense fallback={null}>
+            {guildId && <InviteSectionGate guildId={guildId} />}
+            <MemberList />
+          </Suspense>
         </div>
       </DialogContent>
     </Dialog>

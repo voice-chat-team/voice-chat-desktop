@@ -1,4 +1,8 @@
-import { GetGuildMembersResponseDto, type GuildMemberDto } from "@/shared";
+import {
+  GetGuildMembersResponseDto,
+  removeGuildMember,
+  type GuildMemberDto,
+} from "@/shared";
 import { useCentrifuge } from "@/shared/lib";
 import { useQueryClient } from "@tanstack/react-query";
 import { AxiosResponse } from "axios";
@@ -30,6 +34,12 @@ export const useGuildChannelEvents = (guildId: string) => {
     // совсем другая форма payload, поэтому смотрим на type и берём только своё.
     const handlePublication = (ctx: { data?: unknown }) => {
       const { type, payload } = (ctx.data ?? {}) as GuildMemberEvent;
+
+      if (type === "GUILD_MEMBER_LEAVE") {
+        const userId = payload?.notificationPayload?.member?.userId;
+        if (userId) removeGuildMember(queryClient, guildId, userId);
+        return;
+      }
 
       if (type !== "GUILD_MEMBER_ADD") return;
 

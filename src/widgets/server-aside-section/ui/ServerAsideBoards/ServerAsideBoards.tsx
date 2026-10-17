@@ -12,6 +12,7 @@ import { DEFAILT_ICONS_TITLE_SIZE } from "../../models";
 import { type BoardDto } from "@/shared";
 import { useState } from "react";
 import { useServerStore } from "@/entities/server";
+import { useGuildPermissions } from "@/entities/role";
 
 export const ServerAsideBoards = ({ boards }: { boards: BoardDto[] }) => {
   const guildId = useServerStore((store) => store.state.guild?.id);
@@ -21,19 +22,25 @@ export const ServerAsideBoards = ({ boards }: { boards: BoardDto[] }) => {
   );
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  // Внутри ServerPage сервер в сторе есть всегда.
+  const canCreate = useGuildPermissions(guildId!).has("CREATE_BOARDS");
 
   return (
     <>
       <ServerAsideList
         renderTitle={() => <ServerAsideListTitle>Доски</ServerAsideListTitle>}
-        renderTitleButton={() => (
-          <ServerAsideListTitleButton
-            onClick={() => setIsCreateModalOpen(!isCreateModalOpen)}
-            aria-label="Создать доску"
-          >
-            <Plus />
-          </ServerAsideListTitleButton>
-        )}
+        renderTitleButton={
+          canCreate
+            ? () => (
+                <ServerAsideListTitleButton
+                  onClick={() => setIsCreateModalOpen(!isCreateModalOpen)}
+                  aria-label="Создать доску"
+                >
+                  <Plus />
+                </ServerAsideListTitleButton>
+              )
+            : undefined
+        }
         renderList={() => (
           <ServerAsideUnorderList>
             {boards.map((board) => (

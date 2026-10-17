@@ -40,16 +40,24 @@ import type { GetGuildMembersResponseDto } from '../models';
 // @ts-ignore
 import type { GetUserGuildsResponseDto } from '../models';
 // @ts-ignore
+import type { KickMemberRequestDto } from '../models';
+// @ts-ignore
+import type { KickMemberResponseDto } from '../models';
+// @ts-ignore
 import type { RemoveGuildDto } from '../models';
 // @ts-ignore
 import type { RemoveGuildResponseDto } from '../models';
+// @ts-ignore
+import type { UpdateGuildRequestDto } from '../models';
+// @ts-ignore
+import type { UpdateGuildResponseDto } from '../models';
 /**
  * GuildApi - axios parameter creator
  */
 export const GuildApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * 
+         * Нужно право MANAGE_GUILD
          * @summary Создать канал
          * @param {CreateChannelDto} createChannelDto 
          * @param {*} [options] Override http request option.
@@ -207,7 +215,7 @@ export const GuildApiAxiosParamCreator = function (configuration?: Configuration
             };
         },
         /**
-         * 
+         * Доступно участникам сервера
          * @summary Получить участников сервера
          * @param {string} guildId ID сервера
          * @param {*} [options] Override http request option.
@@ -282,6 +290,45 @@ export const GuildApiAxiosParamCreator = function (configuration?: Configuration
             };
         },
         /**
+         * Нужно право KICK_MEMBERS, исключить можно только участника ниже по роли. Событие GUILD_MEMBER_KICKED
+         * @summary Исключить участника
+         * @param {KickMemberRequestDto} kickMemberRequestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        guildControllerKickMember: async (kickMemberRequestDto: KickMemberRequestDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'kickMemberRequestDto' is not null or undefined
+            assertParamExists('guildControllerKickMember', 'kickMemberRequestDto', kickMemberRequestDto)
+            const localVarPath = `/guild/member`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(kickMemberRequestDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Выход доступен участникам сервера
          * @summary Выход с сервера
          * @param {RemoveGuildDto} removeGuildDto 
@@ -320,6 +367,45 @@ export const GuildApiAxiosParamCreator = function (configuration?: Configuration
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * Нужно право MANAGE_GUILD. Изменения приходят в guild:{guildId} событием GUILD_UPDATED
+         * @summary Изменить сервер
+         * @param {UpdateGuildRequestDto} updateGuildRequestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        guildControllerUpdateGuild: async (updateGuildRequestDto: UpdateGuildRequestDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'updateGuildRequestDto' is not null or undefined
+            assertParamExists('guildControllerUpdateGuild', 'updateGuildRequestDto', updateGuildRequestDto)
+            const localVarPath = `/guild`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateGuildRequestDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -330,7 +416,7 @@ export const GuildApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = GuildApiAxiosParamCreator(configuration)
     return {
         /**
-         * 
+         * Нужно право MANAGE_GUILD
          * @summary Создать канал
          * @param {CreateChannelDto} createChannelDto 
          * @param {*} [options] Override http request option.
@@ -382,7 +468,7 @@ export const GuildApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 
+         * Доступно участникам сервера
          * @summary Получить участников сервера
          * @param {string} guildId ID сервера
          * @param {*} [options] Override http request option.
@@ -407,6 +493,19 @@ export const GuildApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * Нужно право KICK_MEMBERS, исключить можно только участника ниже по роли. Событие GUILD_MEMBER_KICKED
+         * @summary Исключить участника
+         * @param {KickMemberRequestDto} kickMemberRequestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async guildControllerKickMember(kickMemberRequestDto: KickMemberRequestDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<KickMemberResponseDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.guildControllerKickMember(kickMemberRequestDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GuildApi.guildControllerKickMember']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * Выход доступен участникам сервера
          * @summary Выход с сервера
          * @param {RemoveGuildDto} removeGuildDto 
@@ -419,6 +518,19 @@ export const GuildApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['GuildApi.guildControllerRemoveGuild']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * Нужно право MANAGE_GUILD. Изменения приходят в guild:{guildId} событием GUILD_UPDATED
+         * @summary Изменить сервер
+         * @param {UpdateGuildRequestDto} updateGuildRequestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async guildControllerUpdateGuild(updateGuildRequestDto: UpdateGuildRequestDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UpdateGuildResponseDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.guildControllerUpdateGuild(updateGuildRequestDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['GuildApi.guildControllerUpdateGuild']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -429,7 +541,7 @@ export const GuildApiFactory = function (configuration?: Configuration, basePath
     const localVarFp = GuildApiFp(configuration)
     return {
         /**
-         * 
+         * Нужно право MANAGE_GUILD
          * @summary Создать канал
          * @param {CreateChannelDto} createChannelDto 
          * @param {*} [options] Override http request option.
@@ -469,7 +581,7 @@ export const GuildApiFactory = function (configuration?: Configuration, basePath
             return localVarFp.guildControllerGetChannels(guildId, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Доступно участникам сервера
          * @summary Получить участников сервера
          * @param {string} guildId ID сервера
          * @param {*} [options] Override http request option.
@@ -488,6 +600,16 @@ export const GuildApiFactory = function (configuration?: Configuration, basePath
             return localVarFp.guildControllerGetUserGuilds(options).then((request) => request(axios, basePath));
         },
         /**
+         * Нужно право KICK_MEMBERS, исключить можно только участника ниже по роли. Событие GUILD_MEMBER_KICKED
+         * @summary Исключить участника
+         * @param {KickMemberRequestDto} kickMemberRequestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        guildControllerKickMember(kickMemberRequestDto: KickMemberRequestDto, options?: RawAxiosRequestConfig): AxiosPromise<KickMemberResponseDto> {
+            return localVarFp.guildControllerKickMember(kickMemberRequestDto, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Выход доступен участникам сервера
          * @summary Выход с сервера
          * @param {RemoveGuildDto} removeGuildDto 
@@ -497,6 +619,16 @@ export const GuildApiFactory = function (configuration?: Configuration, basePath
         guildControllerRemoveGuild(removeGuildDto: RemoveGuildDto, options?: RawAxiosRequestConfig): AxiosPromise<RemoveGuildResponseDto> {
             return localVarFp.guildControllerRemoveGuild(removeGuildDto, options).then((request) => request(axios, basePath));
         },
+        /**
+         * Нужно право MANAGE_GUILD. Изменения приходят в guild:{guildId} событием GUILD_UPDATED
+         * @summary Изменить сервер
+         * @param {UpdateGuildRequestDto} updateGuildRequestDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        guildControllerUpdateGuild(updateGuildRequestDto: UpdateGuildRequestDto, options?: RawAxiosRequestConfig): AxiosPromise<UpdateGuildResponseDto> {
+            return localVarFp.guildControllerUpdateGuild(updateGuildRequestDto, options).then((request) => request(axios, basePath));
+        },
     };
 };
 
@@ -505,7 +637,7 @@ export const GuildApiFactory = function (configuration?: Configuration, basePath
  */
 export class GuildApi extends BaseAPI {
     /**
-     * 
+     * Нужно право MANAGE_GUILD
      * @summary Создать канал
      * @param {CreateChannelDto} createChannelDto 
      * @param {*} [options] Override http request option.
@@ -549,7 +681,7 @@ export class GuildApi extends BaseAPI {
     }
 
     /**
-     * 
+     * Доступно участникам сервера
      * @summary Получить участников сервера
      * @param {string} guildId ID сервера
      * @param {*} [options] Override http request option.
@@ -570,6 +702,17 @@ export class GuildApi extends BaseAPI {
     }
 
     /**
+     * Нужно право KICK_MEMBERS, исключить можно только участника ниже по роли. Событие GUILD_MEMBER_KICKED
+     * @summary Исключить участника
+     * @param {KickMemberRequestDto} kickMemberRequestDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public guildControllerKickMember(kickMemberRequestDto: KickMemberRequestDto, options?: RawAxiosRequestConfig) {
+        return GuildApiFp(this.configuration).guildControllerKickMember(kickMemberRequestDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * Выход доступен участникам сервера
      * @summary Выход с сервера
      * @param {RemoveGuildDto} removeGuildDto 
@@ -578,6 +721,17 @@ export class GuildApi extends BaseAPI {
      */
     public guildControllerRemoveGuild(removeGuildDto: RemoveGuildDto, options?: RawAxiosRequestConfig) {
         return GuildApiFp(this.configuration).guildControllerRemoveGuild(removeGuildDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Нужно право MANAGE_GUILD. Изменения приходят в guild:{guildId} событием GUILD_UPDATED
+     * @summary Изменить сервер
+     * @param {UpdateGuildRequestDto} updateGuildRequestDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public guildControllerUpdateGuild(updateGuildRequestDto: UpdateGuildRequestDto, options?: RawAxiosRequestConfig) {
+        return GuildApiFp(this.configuration).guildControllerUpdateGuild(updateGuildRequestDto, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

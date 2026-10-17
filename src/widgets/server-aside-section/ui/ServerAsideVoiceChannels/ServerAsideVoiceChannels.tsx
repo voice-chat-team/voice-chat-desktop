@@ -15,6 +15,8 @@ import {
 } from "@/features";
 import { useVoiceStore } from "@/entities/voice";
 import { useServerStore } from "@/entities/server";
+import { useGuildPermissions } from "@/entities/role";
+import { toast } from "sonner";
 import {
   CHANNEL_TYPE,
   cn,
@@ -45,6 +47,9 @@ export const ServerAsideVoiceChannels = ({
   const { join } = useVoiceConnection();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  // Внутри ServerPage сервер в сторе есть всегда.
+  const permissions = useGuildPermissions(guildId!);
+  const canConnect = permissions.has("VOICE_CONNECT");
 
   const memberByUserId = new Map(
     members.map((member) => [member.userId, member]),
@@ -56,14 +61,18 @@ export const ServerAsideVoiceChannels = ({
         renderTitle={() => (
           <ServerAsideListTitle>Голосовые каналы</ServerAsideListTitle>
         )}
-        renderTitleButton={() => (
-          <ServerAsideListTitleButton
-            onClick={() => setIsCreateModalOpen(!isCreateModalOpen)}
-            aria-label="Создать голосовой канал"
-          >
-            <Plus />
-          </ServerAsideListTitleButton>
-        )}
+        renderTitleButton={
+          permissions.has("MANAGE_GUILD")
+            ? () => (
+                <ServerAsideListTitleButton
+                  onClick={() => setIsCreateModalOpen(!isCreateModalOpen)}
+                  aria-label="Создать голосовой канал"
+                >
+                  <Plus />
+                </ServerAsideListTitleButton>
+              )
+            : undefined
+        }
         renderList={() => (
           <ServerAsideUnorderList>
             {channels.map((channel) => {
@@ -74,8 +83,15 @@ export const ServerAsideVoiceChannels = ({
               return (
                 <ServerAsideListItem
                   key={channel.id}
-                  onPointerEnter={prewarmVoiceConnection}
+                  onPointerEnter={canConnect ? prewarmVoiceConnection : undefined}
                   onClick={() => {
+                    if (!canConnect) {
+                      toast.error(
+                        "У вас нет права подключаться к голосовым каналам на этом сервере",
+                      );
+                      return;
+                    }
+
                     join(channel.guildId, channel.id, channel.name);
                     setActiveVoiceChannel(channel);
                   }}

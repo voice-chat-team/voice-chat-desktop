@@ -1,25 +1,16 @@
+import { useGuildPermissions } from "@/entities/role";
 import { useServerStore } from "@/entities/server";
-import {
-  ROUTES,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-  useCurrentUser,
-  useGuildMembers,
-} from "@/shared";
+import { ROUTES, Tooltip, TooltipContent, TooltipTrigger } from "@/shared";
 import { Lock, Settings } from "lucide-react";
 import { Suspense } from "react";
 import { Link } from "react-router";
 
 const ServerSettingsLink = ({ guildId }: { guildId: string }) => {
-  const { data: members } = useGuildMembers(guildId);
-  const { data: currentUser } = useCurrentUser();
+  const permissions = useGuildPermissions(guildId);
 
-  const isOwner = members.some(
-    (m) => m.userId === currentUser?.id && m.isGuildOwner,
-  );
-
-  if (!isOwner) return null;
+  if (!permissions.has("MANAGE_GUILD") && !permissions.has("MANAGE_ROLES")) {
+    return null;
+  }
 
   return (
     <Tooltip>

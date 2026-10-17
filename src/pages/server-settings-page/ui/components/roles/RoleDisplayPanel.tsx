@@ -15,6 +15,7 @@ const PREVIEW_AUTHOR = { id: "mock-1", username: "anya.k" };
 
 type RoleDisplayPanelProps = {
   role: GuildRole;
+  readOnly?: boolean;
   onChange: (patch: Partial<GuildRole>) => void;
   onDelete: () => void;
 };
@@ -24,6 +25,7 @@ const labelClass =
 
 export const RoleDisplayPanel = ({
   role,
+  readOnly = false,
   onChange,
   onDelete,
 }: RoleDisplayPanelProps) => {
@@ -37,7 +39,7 @@ export const RoleDisplayPanel = ({
           labelTitle="Название роли"
           value={role.name}
           maxLength={50}
-          disabled={role.isDefault}
+          disabled={role.isDefault || readOnly}
           onChange={(e) => onChange({ name: e.target.value })}
         />
         {role.isDefault && (
@@ -50,10 +52,11 @@ export const RoleDisplayPanel = ({
 
       <div className="flex flex-col gap-2">
         <p className={labelClass}>Цвет</p>
-        <div
+        <fieldset
           role="radiogroup"
           aria-label="Цвет роли"
-          className="flex flex-wrap gap-2"
+          disabled={readOnly}
+          className="flex flex-wrap gap-2 disabled:opacity-60"
         >
           {ROLE_COLORS.map((color) => (
             <button
@@ -64,7 +67,7 @@ export const RoleDisplayPanel = ({
               aria-label={color}
               onClick={() => onChange({ color })}
               className={cn(
-                "flex size-8 cursor-pointer items-center justify-center rounded-md outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+                "flex size-8 cursor-pointer items-center justify-center rounded-md outline-none disabled:cursor-not-allowed focus-visible:ring-3 focus-visible:ring-ring/50",
                 role.color === color &&
                   "ring-2 ring-text-primary ring-offset-2 ring-offset-surface-100",
               )}
@@ -93,10 +96,10 @@ export const RoleDisplayPanel = ({
               type="color"
               value={role.color}
               onChange={(e) => onChange({ color: e.target.value })}
-              className="absolute inset-0 size-full cursor-pointer opacity-0"
+              className="absolute inset-0 size-full cursor-pointer opacity-0 disabled:cursor-not-allowed"
             />
           </Label>
-        </div>
+        </fieldset>
       </div>
 
       <div className="flex flex-col gap-2">
@@ -132,7 +135,7 @@ export const RoleDisplayPanel = ({
         </div>
       </div>
 
-      {!role.isDefault && (
+      {!role.isDefault && !readOnly && (
         <div className="flex flex-wrap items-center justify-between gap-4 rounded-[12px] border border-status-dnd/40 bg-status-dnd/5 p-4">
           <div className="flex flex-col gap-1">
             <p className="text-sm font-semibold text-text-primary">

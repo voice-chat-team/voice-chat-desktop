@@ -88,7 +88,7 @@ export const BoardApiAxiosParamCreator = function (configuration?: Configuration
             };
         },
         /**
-         * Создавать доски может любой участник сервера
+         * Нужно право CREATE_BOARDS
          * @summary Создать доску
          * @param {CreateBoardRequestDto} createBoardRequestDto 
          * @param {*} [options] Override http request option.
@@ -127,7 +127,7 @@ export const BoardApiAxiosParamCreator = function (configuration?: Configuration
             };
         },
         /**
-         * Удалить доску может её автор или владелец сервера
+         * Удалить доску может её автор или участник с правом DELETE_BOARDS
          * @summary Удалить доску
          * @param {DeleteBoardRequestDto} deleteBoardRequestDto 
          * @param {*} [options] Override http request option.
@@ -303,7 +303,7 @@ export const BoardApiAxiosParamCreator = function (configuration?: Configuration
             };
         },
         /**
-         * 
+         * Переименовать доску может её автор или участник с правом DELETE_BOARDS
          * @summary Переименовать доску
          * @param {RenameBoardRequestDto} renameBoardRequestDto 
          * @param {*} [options] Override http request option.
@@ -364,7 +364,7 @@ export const BoardApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * Создавать доски может любой участник сервера
+         * Нужно право CREATE_BOARDS
          * @summary Создать доску
          * @param {CreateBoardRequestDto} createBoardRequestDto 
          * @param {*} [options] Override http request option.
@@ -377,7 +377,7 @@ export const BoardApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * Удалить доску может её автор или владелец сервера
+         * Удалить доску может её автор или участник с правом DELETE_BOARDS
          * @summary Удалить доску
          * @param {DeleteBoardRequestDto} deleteBoardRequestDto 
          * @param {*} [options] Override http request option.
@@ -431,7 +431,7 @@ export const BoardApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 
+         * Переименовать доску может её автор или участник с правом DELETE_BOARDS
          * @summary Переименовать доску
          * @param {RenameBoardRequestDto} renameBoardRequestDto 
          * @param {*} [options] Override http request option.
@@ -463,7 +463,7 @@ export const BoardApiFactory = function (configuration?: Configuration, basePath
             return localVarFp.boardControllerApplyBoardOps(applyBoardOpsRequestDto, options).then((request) => request(axios, basePath));
         },
         /**
-         * Создавать доски может любой участник сервера
+         * Нужно право CREATE_BOARDS
          * @summary Создать доску
          * @param {CreateBoardRequestDto} createBoardRequestDto 
          * @param {*} [options] Override http request option.
@@ -473,7 +473,7 @@ export const BoardApiFactory = function (configuration?: Configuration, basePath
             return localVarFp.boardControllerCreateBoard(createBoardRequestDto, options).then((request) => request(axios, basePath));
         },
         /**
-         * Удалить доску может её автор или владелец сервера
+         * Удалить доску может её автор или участник с правом DELETE_BOARDS
          * @summary Удалить доску
          * @param {DeleteBoardRequestDto} deleteBoardRequestDto 
          * @param {*} [options] Override http request option.
@@ -515,7 +515,7 @@ export const BoardApiFactory = function (configuration?: Configuration, basePath
             return localVarFp.boardControllerGetGuildBoards(guildId, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Переименовать доску может её автор или участник с правом DELETE_BOARDS
          * @summary Переименовать доску
          * @param {RenameBoardRequestDto} renameBoardRequestDto 
          * @param {*} [options] Override http request option.
@@ -543,7 +543,7 @@ export class BoardApi extends BaseAPI {
     }
 
     /**
-     * Создавать доски может любой участник сервера
+     * Нужно право CREATE_BOARDS
      * @summary Создать доску
      * @param {CreateBoardRequestDto} createBoardRequestDto 
      * @param {*} [options] Override http request option.
@@ -554,7 +554,7 @@ export class BoardApi extends BaseAPI {
     }
 
     /**
-     * Удалить доску может её автор или владелец сервера
+     * Удалить доску может её автор или участник с правом DELETE_BOARDS
      * @summary Удалить доску
      * @param {DeleteBoardRequestDto} deleteBoardRequestDto 
      * @param {*} [options] Override http request option.
@@ -600,7 +600,7 @@ export class BoardApi extends BaseAPI {
     }
 
     /**
-     * 
+     * Переименовать доску может её автор или участник с правом DELETE_BOARDS
      * @summary Переименовать доску
      * @param {RenameBoardRequestDto} renameBoardRequestDto 
      * @param {*} [options] Override http request option.

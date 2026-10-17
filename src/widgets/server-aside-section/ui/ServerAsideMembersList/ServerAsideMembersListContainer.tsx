@@ -9,5 +9,5 @@ export const ServerAsideMembersListContainer = () => {
 
   const { data: members } = useGuildMembers(guild.id);
 
-  return <ServerAsideMembersList members={members ?? []} />;
+  return <ServerAsideMembersList guildId={guild.id} members={members ?? []} />;
 };

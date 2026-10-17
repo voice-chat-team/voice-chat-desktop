@@ -3,6 +3,7 @@ import { Configuration } from "./generated/configuration";
 import {
   AuthApi,
   GuildApi,
+  GuildRoleApi,
   UserApi,
   InvitationApi,
   NotificationApi,
@@ -71,6 +72,7 @@ const config = new Configuration({
 
 export const authApi = new AuthApi(config, undefined, axiosInstance);
 export const guildApi = new GuildApi(config, undefined, axiosInstance);
+export const guildRoleApi = new GuildRoleApi(config, undefined, axiosInstance);
 export const userApi = new UserApi(config, undefined, axiosInstance);
 export const inviteApi = new InvitationApi(config, undefined, axiosInstance);
 export const notificationApi = new NotificationApi(

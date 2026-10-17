@@ -47,7 +47,8 @@ export interface InvitationDto {
      */
     'status': InvitationDtoStatusEnum;
     /**
-     * Роль, которая присвоена получателю
+     * Устарело: роли выдаются через /guild/role/members, приглашённый получает только @everyone
+     * @deprecated
      */
     'invitedRole': InvitationDtoInvitedRoleEnum;
     /**

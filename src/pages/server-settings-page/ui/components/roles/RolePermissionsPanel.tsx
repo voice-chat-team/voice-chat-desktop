@@ -8,11 +8,15 @@ import { useState } from "react";
 
 type RolePermissionsPanelProps = {
   role: GuildRole;
+  readOnly?: boolean;
+  canToggle: (key: PermissionKey) => boolean;
   onToggle: (key: PermissionKey, value: boolean) => void;
 };
 
 export const RolePermissionsPanel = ({
   role,
+  readOnly = false,
+  canToggle,
   onToggle,
 }: RolePermissionsPanelProps) => {
   const [query, setQuery] = useState("");
@@ -59,6 +63,7 @@ export const RolePermissionsPanel = ({
           <ul className="flex flex-col divide-y divide-border-subtle">
             {group.permissions.map((permission) => {
               const id = `permission-${permission.key}`;
+              const isLocked = !readOnly && !canToggle(permission.key);
 
               return (
                 <li
@@ -75,10 +80,16 @@ export const RolePermissionsPanel = ({
                     <span className="text-sm font-normal text-text-muted">
                       {permission.description}
                     </span>
+                    {isLocked && (
+                      <span className="text-xs font-normal text-text-faint">
+                        Этого права нет у вас — менять его нельзя.
+                      </span>
+                    )}
                   </Label>
                   <Switch
                     id={id}
-                    checked={role.permissions[permission.key]}
+                    checked={role.permissions.includes(permission.key)}
+                    disabled={readOnly || isLocked}
                     onCheckedChange={(value) => onToggle(permission.key, value)}
                   />
                 </li>

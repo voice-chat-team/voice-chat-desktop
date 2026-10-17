@@ -4,15 +4,19 @@ import {
   cn,
   createAbbr,
   FormInput,
+  getApiErrorMessage,
   getAvatarColorClass,
   FormTextarea,
+  guildApi,
   SettingsSection,
   type GuildDto,
 } from "@/shared";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { Camera, Trash2, Upload } from "lucide-react";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import {
   GeneralSettingsSchema,
   GUILD_DESCRIPTION_MAX_LENGTH,
@@ -21,8 +25,9 @@ import {
 } from "../../../model";
 import { UnsavedChangesBar } from "../UnsavedChangesBar";
 
-// Только вёрстка: на бэкенде пока нет обновления сервера и его иконки,
-// поэтому «Сохранить изменения» ничего не отправляет.
+// Название и описание сохраняются через PATCH /guild (остальные участники
+// получают GUILD_UPDATED). Загрузки иконки на бэкенде пока нет — аватар
+// остаётся только превью.
 export const GeneralSettingsTab = ({ guild }: { guild: GuildDto }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [iconPreview, setIconPreview] = useState<string | null>(null);
@@ -61,10 +66,29 @@ export const GeneralSettingsTab = ({ guild }: { guild: GuildDto }) => {
     setIconPreview(null);
   };
 
+  const { mutate: save, isPending: isSaving } = useMutation({
+    mutationFn: (values: GeneralSettingsModel) =>
+      guildApi.guildControllerUpdateGuild({
+        guildId: guild.id,
+        name: values.name.trim(),
+        description: values.description.trim(),
+      }),
+    onSuccess: (_, values) => {
+      // Новое состояние формы — точка отсчёта для следующих правок.
+      form.reset(values);
+      setIconPreview(null);
+      toast.success("Настройки сервера сохранены");
+    },
+    onError: (error) =>
+      toast.error(
+        getApiErrorMessage(error, "Не удалось сохранить настройки сервера"),
+      ),
+  });
+
   return (
     <form
       className="flex flex-col gap-6"
-      onSubmit={form.handleSubmit(() => {})}
+      onSubmit={form.handleSubmit((values) => save(values))}
       noValidate
     >
       <SettingsSection
@@ -174,7 +198,10 @@ export const GeneralSettingsTab = ({ guild }: { guild: GuildDto }) => {
       </SettingsSection>
 
       {hasChanges && (
-        <UnsavedChangesBar onReset={resetChanges} canSave={isValid} />
+        <UnsavedChangesBar
+          onReset={resetChanges}
+          canSave={isValid && isDirty && !isSaving}
+        />
       )}
     </form>
   );

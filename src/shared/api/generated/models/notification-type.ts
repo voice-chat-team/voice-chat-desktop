@@ -15,7 +15,7 @@
 
 
 /**
- * Тип уведомления: GUILD_MEMBER_ADD — добавлен участник, GUILD_MEMBER_LEAVE — участник вышел, NEW_INVITE_TO_GUILD — приглашение на сервер, UPDATE_NOTIFICATION — уведомление обновлено, NEW_GUILD_MESSAGE — новое сообщение в канале (только realtime в personal:#{userId}:messages, в списке уведомлений не встречается)
+ * Тип уведомления: GUILD_MEMBER_ADD — добавлен участник, GUILD_MEMBER_LEAVE — участник вышел, NEW_INVITE_TO_GUILD — приглашение на сервер, UPDATE_NOTIFICATION — уведомление обновлено, 
  */
 
 export const NotificationType = {

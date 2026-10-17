@@ -25,11 +25,17 @@ interface GuildChatFooterProps {
     attachmentFileIds: string[];
   }) => Promise<boolean>;
   isSending: boolean;
+  /** Право SEND_MESSAGES: без него вместо поля ввода — пояснение. */
+  canWrite?: boolean;
+  /** Право ATTACH_FILES: без него нельзя прикрепить или вставить файл. */
+  canAttach?: boolean;
 }
 
 export const GuildChatFooter = ({
   onSend,
   isSending,
+  canWrite = true,
+  canAttach = true,
 }: GuildChatFooterProps) => {
   const [value, setValue] = useState("");
   const isMobile = useIsMobile();
@@ -56,7 +62,7 @@ export const GuildChatFooter = ({
 
   const handlePaste = (event: ClipboardEvent<HTMLTextAreaElement>) => {
     const files = Array.from(event.clipboardData.files);
-    if (files.length === 0) return;
+    if (files.length === 0 || !canAttach) return;
 
     event.preventDefault();
     uploads.addFiles(files);
@@ -70,6 +76,16 @@ export const GuildChatFooter = ({
     event.preventDefault();
     void handleSend();
   };
+
+  if (!canWrite) {
+    return (
+      <div className="w-full shrink-0 px-4 pb-4">
+        <p className="rounded-[12px] border border-border-subtle bg-surface-300 px-4 py-3 text-sm text-text-muted">
+          У вас нет права отправлять сообщения на этом сервере.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full shrink-0 px-4 pb-4">
@@ -138,16 +154,18 @@ export const GuildChatFooter = ({
         />
 
         <InputGroupAddon align="inline-end" className="self-end pb-1.5">
-          <InputGroupButton
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            onClick={() => fileInputRef.current?.click()}
-            className="rounded-md text-text-faint hover:bg-surface-raised! hover:text-text-secondary [&_svg]:size-[18px]!"
-          >
-            <PaperclipIcon strokeWidth={1.6} />
-            <span className="sr-only">Прикрепить файл</span>
-          </InputGroupButton>
+          {canAttach && (
+            <InputGroupButton
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => fileInputRef.current?.click()}
+              className="rounded-md text-text-faint hover:bg-surface-raised! hover:text-text-secondary [&_svg]:size-[18px]!"
+            >
+              <PaperclipIcon strokeWidth={1.6} />
+              <span className="sr-only">Прикрепить файл</span>
+            </InputGroupButton>
+          )}
 
           <Popover>
             <PopoverTrigger asChild>

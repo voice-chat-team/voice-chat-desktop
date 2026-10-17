@@ -1,11 +1,13 @@
-import { useLoaderData } from "react-router";
+import { useLoaderData, useNavigate, useRevalidator } from "react-router";
 import { SplitPane, Pane } from "react-split-pane";
+import { toast } from "sonner";
 
 import { useServerStore, useGuildChannelEvents } from "@/entities/server";
 import { useGuildVoiceEvents } from "@/entities/voice";
 import { useGuildBoardEvents } from "@/entities/board";
+import { useGuildRoleEvents } from "@/entities/role";
 import { useEffect } from "react";
-import { GuildDto, useIsMobile } from "@/shared";
+import { GuildDto, ROUTES, useIsMobile } from "@/shared";
 import { ServerAsideSection } from "@/widgets";
 
 import { ServerActiveView } from "./ServerActiveView";
@@ -18,8 +20,21 @@ function ServerPage() {
   const setActiveBoard = useServerStore((s) => s.actions.setActiveBoard);
   const storeGuildId = useServerStore((s) => s.state.guild?.id);
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
+  const revalidator = useRevalidator();
 
   useGuildChannelEvents(guild.id);
+  useGuildRoleEvents(guild.id, {
+    // Шапка читает сервер из стора, лоадер — из уже обновлённого кэша.
+    onGuildUpdated: (updated) => {
+      setGuild(updated);
+      void revalidator.revalidate();
+    },
+    onKicked: () => {
+      toast.info(`Вас исключили с сервера «${guild.name}»`);
+      void navigate(ROUTES.WELCOME, { replace: true });
+    },
+  });
   useGuildVoiceEvents(guild.id);
   useGuildBoardEvents(guild.id, {
     // Открытая доска держит свою копию BoardDto в сторе — без этого
